@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-8 text-center">
@@ -8,7 +10,9 @@ export default function Home() {
       </p>
 
       <div className="flex gap-4">
-        <button className="btn btn-primary">Create Event</button>
+        <Link href="/event/create" className="btn btn-primary">
+          Create Event
+        </Link>
         <button className="btn btn-outline">Join Event</button>
       </div>
 
