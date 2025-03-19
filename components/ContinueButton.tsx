@@ -1,9 +1,11 @@
 "use client";
 
 import { ActionResponseCreate, addDates, createEvent } from "@/lib/actions";
+import { toZonedTime } from "date-fns-tz";
 import { useActionState, useRef } from "react";
 
 export default function ContinueButton({ availableDates, eventId }: { availableDates: Date[]; eventId?: string }) {
+  console.log(availableDates);
   const initialState: ActionResponseCreate = {
     success: false,
     message: "",
@@ -11,6 +13,7 @@ export default function ContinueButton({ availableDates, eventId }: { availableD
   const formRef = useRef<HTMLFormElement>(null);
 
   const doAction = async (formData: FormData) => {
+    availableDates = availableDates.map((date) => toZonedTime(date, "Etc/UTC"));
     return eventId ? addDates(formData, availableDates, eventId) : createEvent(formData, availableDates);
   };
 

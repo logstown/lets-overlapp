@@ -1,9 +1,9 @@
-import ChooseDates from "../../../components/ChooseDates";
+import ChooseNewDates from "./_ChooseNewDates";
 
 export default function CreateEvent() {
   return (
     <div className="p-4 max-w-5xl mx-auto">
-      <ChooseDates />
+      <ChooseNewDates />
     </div>
   );
 }
