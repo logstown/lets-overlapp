@@ -1,14 +1,24 @@
 "use client";
 
 import { MinusIcon, PlusIcon } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DayPicker } from "react-day-picker";
 import ContinueButton from "./ContinueButton";
-import { isSameDay } from "date-fns";
+import { max, min, differenceInCalendarMonths } from "date-fns";
 
 export default function ChooseDates({ setDates, eventId }: { setDates?: Date[]; eventId?: string }) {
   const [selectedDates, setSelectedDates] = useState<Date[] | undefined>();
   const [numberOfMonths, setNumberOfMonths] = useState(1);
+  const [minDate, setMinDate] = useState<Date | undefined>();
+
+  useEffect(() => {
+    if (!setDates) return;
+    const minDate = min(setDates);
+    const maxDate = max(setDates);
+    const numberOfMonths = differenceInCalendarMonths(maxDate, minDate) + 1;
+    setNumberOfMonths(numberOfMonths);
+    setMinDate(minDate);
+  }, [setDates]);
 
   const disabledMatcher = (day: Date) => {
     if (!setDates) return false;
@@ -35,20 +45,26 @@ export default function ChooseDates({ setDates, eventId }: { setDates?: Date[]; 
             </div>
           )}
         </div>
-        <div className="flex justify-center">
-          <DayPicker
-            disabled={disabledMatcher}
-            timeZone="UTC"
-            numberOfMonths={numberOfMonths}
-            mode="multiple"
-            selected={selectedDates}
-            onSelect={setSelectedDates}
-            classNames={{
-              root: "react-day-picker shadow-lg",
-              today: "text-base-content bg-base-100",
-            }}
-          />
-        </div>
+        {(minDate || !eventId) && (
+          <div className="flex justify-center">
+            <DayPicker
+              defaultMonth={eventId ? minDate : new Date()}
+              disabled={disabledMatcher}
+              timeZone="UTC"
+              numberOfMonths={numberOfMonths}
+              mode="multiple"
+              selected={selectedDates}
+              onSelect={setSelectedDates}
+              classNames={{
+                root: "react-day-picker shadow-lg",
+                today: "text-base-content bg-base-100",
+                disabled: "!text-base-content/50",
+                day: "text-info",
+              }}
+              hideNavigation={!!eventId}
+            />
+          </div>
+        )}
         <div className="card-actions justify-end mt-6">
           {selectedDates && <ContinueButton availableDates={selectedDates} eventId={eventId} />}
         </div>

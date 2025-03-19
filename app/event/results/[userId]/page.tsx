@@ -1,10 +1,11 @@
 import prisma from "@/lib/prisma";
 import CopyLink from "./_CopyLink";
 import { notFound } from "next/navigation";
-import _ from "lodash";
+import _, { groupBy } from "lodash";
 import { format } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 import { CheckIcon } from "lucide-react";
+import AggregatedDates from "./_AggregatedDates";
 
 export default async function EventResults(props: { params: Promise<{ userId: string }> }) {
   const { userId } = await props.params;
@@ -33,6 +34,8 @@ export default async function EventResults(props: { params: Promise<{ userId: st
   const { event } = user;
   const { users } = event;
 
+  console.log(users.map((user) => user.availableDates));
+
   const dates = _.chain(users)
     .flatMap((user) => user.availableDates)
     .uniqBy((date) => date.toUTCString())
@@ -49,10 +52,16 @@ export default async function EventResults(props: { params: Promise<{ userId: st
     .sortBy((date) => date.date)
     .value();
 
+  const { available, unavailable } = _.chain(dates)
+    .groupBy(({ dateUsers }) => (dateUsers.length === users.length ? "available" : "unavailable"))
+    .mapValues((dates) => dates.map(({ date }) => toZonedTime(date, "Etc/UTC")))
+    .value();
+
   return (
     <div className="p-4 max-w-5xl mx-auto">
       <div className="flex flex-col gap-4">
         <CopyLink id={event.id} />
+        <AggregatedDates available={available ?? []} unavailable={unavailable ?? []} test={users[0].availableDates} />
         <div className="overflow-x-auto">
           <table className="table table-pin-rows table-pin-cols">
             <thead>
@@ -77,21 +86,6 @@ export default async function EventResults(props: { params: Promise<{ userId: st
                   ))}
                 </tr>
               ))}
-              <tr>
-                <td className="font-bold border-2 border-base-100 w-1 whitespace-nowrap">Possible Dates</td>
-                {dates.map(({ date, dateUsers }) => (
-                  <td
-                    key={date.toISOString()}
-                    className={`border-2 border-base-100 ${dateUsers.length === users.length ? "bg-success" : "bg-error"}`}
-                  >
-                    {dateUsers.length === users.length && (
-                      <div className="flex justify-center items-center">
-                        <CheckIcon className="text-success-content" />
-                      </div>
-                    )}
-                  </td>
-                ))}
-              </tr>
             </tbody>
             {/* <tfoot>
               <tr>
