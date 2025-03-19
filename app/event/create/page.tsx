@@ -33,6 +33,7 @@ export default function CreateEvent() {
             <DayPicker
               required
               animate
+              timeZone="UTC"
               numberOfMonths={numberOfMonths}
               mode="multiple"
               selected={selectedDates}
