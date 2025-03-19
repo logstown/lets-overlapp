@@ -1,3 +1,4 @@
+import ChooseDates from "@/components/ChooseDates";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 
@@ -21,5 +22,11 @@ export default async function AddDates(props: { params: Promise<{ eventId: strin
     return notFound();
   }
 
-  return <div>Add Dates</div>;
+  const setDates = event.allowOthersToPropose ? undefined : event.users[0].availableDates;
+
+  return (
+    <div className="p-4 max-w-5xl mx-auto">
+      <ChooseDates setDates={setDates} eventId={eventId} />
+    </div>
+  );
 }

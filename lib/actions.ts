@@ -11,7 +11,7 @@ export interface CreateEventFormData {
   allowOthersToPropose: boolean;
 }
 
-export interface ActionResponse {
+export interface ActionResponseCreate {
   success: boolean;
   message: string;
   errors?: {
@@ -27,11 +27,7 @@ const newEventSchema = z.object({
   allowOthersToPropose: z.boolean(),
 });
 
-export async function createEvent(
-  prevState: ActionResponse | null,
-  formData: FormData,
-  dates: Date[]
-): Promise<ActionResponse | undefined> {
+export async function createEvent(formData: FormData, availableDates: Date[]): Promise<ActionResponseCreate | undefined> {
   let redirectUrl: string | null = null;
 
   try {
@@ -54,30 +50,88 @@ export async function createEvent(
 
     const { title, description, name, allowOthersToViewResults, allowOthersToPropose } = validatedFields.data;
 
-    const event = await prisma.event.create({
+    const user = await prisma.user.create({
       data: {
-        title,
-        description,
-        allowOthersToViewResults,
-        allowOthersToPropose,
-        users: {
+        name,
+        isCreator: true,
+        availableDates,
+        event: {
           create: {
-            name,
-            isCreator: true,
-            availableDates: dates,
-          },
-        },
-      },
-      include: {
-        users: {
-          select: {
-            id: true,
+            title,
+            description,
+            allowOthersToPropose,
+            allowOthersToViewResults,
           },
         },
       },
     });
 
-    redirectUrl = `/event/results/${event.users[0].id}`;
+    redirectUrl = `/event/results/${user.id}`;
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      message: "Error creating event",
+    };
+  } finally {
+    if (redirectUrl) {
+      redirect(redirectUrl);
+    }
+  }
+}
+
+export interface AddDatesFormData {
+  name: string;
+}
+
+export interface ActionResponseAdd {
+  success: boolean;
+  message: string;
+  errors?: {
+    [K in keyof AddDatesFormData]?: string[];
+  };
+}
+
+const addDatesSchema = z.object({
+  name: z.string().min(2, "Name is required"),
+});
+
+export async function addDates(
+  formData: FormData,
+  availableDates: Date[],
+  eventId: string
+): Promise<ActionResponseAdd | undefined> {
+  let redirectUrl: string | null = null;
+
+  try {
+    const validatedFields = addDatesSchema.safeParse({
+      name: formData.get("name"),
+    });
+
+    if (!validatedFields.success) {
+      console.log(validatedFields.error.flatten().fieldErrors);
+      return {
+        success: false,
+        message: "Please fix the errors in the form",
+        errors: validatedFields.error.flatten().fieldErrors,
+      };
+    }
+
+    const { name } = validatedFields.data;
+
+    const user = await prisma.user.create({
+      data: {
+        name,
+        availableDates,
+        event: {
+          connect: {
+            id: eventId,
+          },
+        },
+      },
+    });
+
+    redirectUrl = `/event/results/${user.id}`;
   } catch (error) {
     console.error(error);
     return {

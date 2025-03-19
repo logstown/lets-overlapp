@@ -3,6 +3,8 @@ import CopyLink from "./_CopyLink";
 import { notFound } from "next/navigation";
 import _ from "lodash";
 import { format } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
+import { CheckIcon } from "lucide-react";
 
 export default async function EventResults(props: { params: Promise<{ userId: string }> }) {
   const { userId } = await props.params;
@@ -24,49 +26,72 @@ export default async function EventResults(props: { params: Promise<{ userId: st
     },
   });
 
-  if (!user || (!user.isCreator && !user.event.allowOthersToViewResults)) {
+  //   if (!user || (!user.isCreator && !user.event.allowOthersToViewResults)) {
+  if (!user) {
     return notFound();
   }
   const { event } = user;
   const { users } = event;
 
-  console.log(users);
-
-  //   const flatDates = users.map((user) => user.availableDates).flat();
   const dates = _.chain(users)
-    .map((user) => user.availableDates)
-    .flatten()
-    .uniqBy((date) => date.toISOString())
-    .sortBy((date) => date.toISOString())
-    .value();
+    .flatMap((user) => user.availableDates)
+    .uniqBy((date) => date.toUTCString())
+    .map((date) => {
+      const dateUsers = users
+        .filter((user) => user.availableDates.some((x) => x.toISOString() === date.toISOString()))
+        .map((x) => x.id);
 
-  console.log(dates);
+      return {
+        date,
+        dateUsers,
+      };
+    })
+    .sortBy((date) => date.date)
+    .value();
 
   return (
     <div className="p-4 max-w-5xl mx-auto">
       <div className="flex flex-col gap-4">
         <CopyLink id={event.id} />
-        <div className="overflow-x-auto h-[500px]">
+        <div className="overflow-x-auto">
           <table className="table table-pin-rows table-pin-cols">
             <thead>
               <tr>
                 <th></th>
-                {dates.map((date) => (
-                  <th key={date.toISOString()}>{format(date, "MMM d")}</th>
+                {dates.map(({ date }) => (
+                  <th className="text-center" key={date.toISOString()}>
+                    {format(toZonedTime(date, "Etc/UTC"), "MMM d")}
+                  </th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {users.map((user) => (
-                <tr key={user.id}>
-                  <td>{user.name}</td>
-                  {dates.map((date) => (
-                    <td key={date.toISOString()}>
-                      {user.availableDates.some((d) => d.toISOString() === date.toISOString()) ? "Yes" : "No"}
-                    </td>
+              {users.map(({ id, name }) => (
+                <tr key={id}>
+                  <td className="border-2 border-base-100 w-1 whitespace-nowrap">{name}</td>
+                  {dates.map(({ date, dateUsers }) => (
+                    <td
+                      key={date.toISOString()}
+                      className={`border-2 border-base-100 ${dateUsers.includes(id) ? "bg-success" : "bg-error"}`}
+                    ></td>
                   ))}
                 </tr>
               ))}
+              <tr>
+                <td className="font-bold border-2 border-base-100 w-1 whitespace-nowrap">Possible Dates</td>
+                {dates.map(({ date, dateUsers }) => (
+                  <td
+                    key={date.toISOString()}
+                    className={`border-2 border-base-100 ${dateUsers.length === users.length ? "bg-success" : "bg-error"}`}
+                  >
+                    {dateUsers.length === users.length && (
+                      <div className="flex justify-center items-center">
+                        <CheckIcon className="text-success-content" />
+                      </div>
+                    )}
+                  </td>
+                ))}
+              </tr>
             </tbody>
             {/* <tfoot>
               <tr>
@@ -82,7 +107,7 @@ export default async function EventResults(props: { params: Promise<{ userId: st
             </tfoot> */}
           </table>
         </div>
-        {/* <CopyLink id={userId} isResults /> */}
+        <CopyLink id={userId} isResults />
       </div>
     </div>
   );
