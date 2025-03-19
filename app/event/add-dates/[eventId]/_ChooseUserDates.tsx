@@ -4,7 +4,7 @@ import { useState } from "react";
 import { DayPicker, Matcher } from "react-day-picker";
 import { max, min, differenceInCalendarMonths } from "date-fns";
 import ContinueButton from "@/components/ContinueButton";
-export default function ChooseDates({ setDates, eventId }: { setDates: Date[]; eventId: string }) {
+export default function ChooseUserDates({ setDates, eventId }: { setDates: Date[]; eventId: string }) {
   //   console.log(setDates, eventId);
   const minDate = min(setDates);
   const maxDate = max(setDates);
@@ -13,7 +13,7 @@ export default function ChooseDates({ setDates, eventId }: { setDates: Date[]; e
   const [selectedDates, setSelectedDates] = useState<Date[] | undefined>();
 
   const disabledMatcher: Matcher = (day: Date) => {
-    return !setDates.some((setDate) => setDate.toUTCString() === day.toUTCString());
+    return !setDates.some((setDate) => setDate.toISOString() === day.toISOString());
   };
 
   return (
@@ -24,7 +24,6 @@ export default function ChooseDates({ setDates, eventId }: { setDates: Date[]; e
           <DayPicker
             defaultMonth={minDate}
             disabled={disabledMatcher}
-            timeZone="UTC"
             numberOfMonths={numberOfMonths}
             mode="multiple"
             selected={selectedDates}

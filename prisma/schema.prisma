@@ -21,7 +21,7 @@ model User {
   updatedAt DateTime @updatedAt
   isCreator Boolean  @default(false)
 
-  availableDates DateTime[]
+  availableDates String[]
 
   event   Event  @relation(fields: [eventId], references: [id])
   eventId String

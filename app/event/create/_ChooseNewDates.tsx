@@ -31,7 +31,6 @@ export default function ChooseNewDates() {
         </div>
         <div className="flex justify-center">
           <DayPicker
-            timeZone="UTC"
             numberOfMonths={numberOfMonths}
             mode="multiple"
             selected={selectedDates}

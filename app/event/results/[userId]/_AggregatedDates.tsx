@@ -3,15 +3,7 @@
 import { min, max, differenceInCalendarMonths } from "date-fns";
 import { DayPicker } from "react-day-picker";
 
-export default function AggregatedDates({
-  available,
-  unavailable,
-  test,
-}: {
-  available: Date[];
-  unavailable: Date[];
-  test: Date[];
-}) {
+export default function AggregatedDates({ available, unavailable }: { available: Date[]; unavailable: Date[] }) {
   const minDate = min([...available, ...unavailable]);
   const maxDate = max([...available, ...unavailable]);
   const numberOfMonths = differenceInCalendarMonths(maxDate, minDate) + 1;
@@ -21,7 +13,6 @@ export default function AggregatedDates({
       <DayPicker
         defaultMonth={minDate}
         numberOfMonths={numberOfMonths}
-        timeZone="UTC"
         modifiers={{
           available,
           unavailable,

@@ -27,7 +27,7 @@ const newEventSchema = z.object({
   allowOthersToPropose: z.boolean(),
 });
 
-export async function createEvent(formData: FormData, availableDates: Date[]): Promise<ActionResponseCreate | undefined> {
+export async function createEvent(formData: FormData, availableDates: string[]): Promise<ActionResponseCreate | undefined> {
   let redirectUrl: string | null = null;
 
   try {
@@ -98,7 +98,7 @@ const addDatesSchema = z.object({
 
 export async function addDates(
   formData: FormData,
-  availableDates: Date[],
+  availableDates: string[],
   eventId: string
 ): Promise<ActionResponseAdd | undefined> {
   let redirectUrl: string | null = null;

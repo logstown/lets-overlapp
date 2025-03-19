@@ -5,7 +5,6 @@ import { toZonedTime } from "date-fns-tz";
 import { useActionState, useRef } from "react";
 
 export default function ContinueButton({ availableDates, eventId }: { availableDates: Date[]; eventId?: string }) {
-  console.log(availableDates);
   const initialState: ActionResponseCreate = {
     success: false,
     message: "",
@@ -13,8 +12,8 @@ export default function ContinueButton({ availableDates, eventId }: { availableD
   const formRef = useRef<HTMLFormElement>(null);
 
   const doAction = async (formData: FormData) => {
-    availableDates = availableDates.map((date) => toZonedTime(date, "Etc/UTC"));
-    return eventId ? addDates(formData, availableDates, eventId) : createEvent(formData, availableDates);
+    const stringDates = availableDates.map((date) => `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`);
+    return eventId ? addDates(formData, stringDates, eventId) : createEvent(formData, stringDates);
   };
 
   const [state, formAction, isPending] = useActionState(async (state: ActionResponseCreate | null, formData: FormData) => {

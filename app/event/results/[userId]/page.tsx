@@ -1,11 +1,12 @@
 import prisma from "@/lib/prisma";
 import CopyLink from "./_CopyLink";
 import { notFound } from "next/navigation";
-import _, { groupBy } from "lodash";
+import _, { groupBy, map } from "lodash";
 import { format } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 import { CheckIcon } from "lucide-react";
 import AggregatedDates from "./_AggregatedDates";
+import { getJSDateFromStr } from "@/lib/utilities";
 
 export default async function EventResults(props: { params: Promise<{ userId: string }> }) {
   const { userId } = await props.params;
@@ -38,11 +39,9 @@ export default async function EventResults(props: { params: Promise<{ userId: st
 
   const dates = _.chain(users)
     .flatMap((user) => user.availableDates)
-    .uniqBy((date) => date.toUTCString())
+    .uniq()
     .map((date) => {
-      const dateUsers = users
-        .filter((user) => user.availableDates.some((x) => x.toISOString() === date.toISOString()))
-        .map((x) => x.id);
+      const dateUsers = users.filter((user) => user.availableDates.includes(date)).map((x) => x.id);
 
       return {
         date,
@@ -50,18 +49,24 @@ export default async function EventResults(props: { params: Promise<{ userId: st
       };
     })
     .sortBy((date) => date.date)
+    .map(({ date, dateUsers }) => {
+      return {
+        date: getJSDateFromStr(date),
+        dateUsers,
+      };
+    })
     .value();
 
   const { available, unavailable } = _.chain(dates)
     .groupBy(({ dateUsers }) => (dateUsers.length === users.length ? "available" : "unavailable"))
-    .mapValues((dates) => dates.map(({ date }) => toZonedTime(date, "Etc/UTC")))
+    .mapValues((dates) => map(dates, "date"))
     .value();
 
   return (
     <div className="p-4 max-w-5xl mx-auto">
       <div className="flex flex-col gap-4">
         <CopyLink id={event.id} />
-        <AggregatedDates available={available ?? []} unavailable={unavailable ?? []} test={users[0].availableDates} />
+        <AggregatedDates available={available ?? []} unavailable={unavailable ?? []} />
         <div className="overflow-x-auto">
           <table className="table table-pin-rows table-pin-cols">
             <thead>
@@ -69,7 +74,7 @@ export default async function EventResults(props: { params: Promise<{ userId: st
                 <th></th>
                 {dates.map(({ date }) => (
                   <th className="text-center" key={date.toISOString()}>
-                    {format(toZonedTime(date, "Etc/UTC"), "MMM d")}
+                    {format(date, "MMM d")}
                   </th>
                 ))}
               </tr>
