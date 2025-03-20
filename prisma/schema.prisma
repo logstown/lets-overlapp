@@ -22,6 +22,7 @@ model User {
   isCreator Boolean  @default(false)
 
   availableDates String[]
+  preferredDates String[]
 
   event   Event  @relation(fields: [eventId], references: [id])
   eventId String

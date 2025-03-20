@@ -38,27 +38,37 @@ export default async function EventResults(props: { params: Promise<{ userId: st
   console.log(users.map((user) => user.availableDates));
 
   const dates = _.chain(users)
-    .flatMap((user) => user.availableDates)
+    .flatMap((user) => [...user.availableDates, ...user.preferredDates])
     .uniq()
     .map((date) => {
-      const dateUsers = users.filter((user) => user.availableDates.includes(date)).map((x) => x.id);
-
+      const availableDateUsers = users.filter((user) => user.availableDates.includes(date)).map((x) => x.id);
+      const preferredDateUsers = users.filter((user) => user.preferredDates.includes(date)).map((x) => x.id);
       return {
         date,
-        dateUsers,
+        availableDateUsers,
+        preferredDateUsers,
       };
     })
     .sortBy((date) => date.date)
-    .map(({ date, dateUsers }) => {
+    .map(({ date, availableDateUsers, preferredDateUsers }) => {
       return {
         date: getJSDateFromStr(date),
-        dateUsers,
+        availableDateUsers,
+        preferredDateUsers,
       };
     })
     .value();
 
-  const { available, unavailable } = _.chain(dates)
-    .groupBy(({ dateUsers }) => (dateUsers.length === users.length ? "available" : "unavailable"))
+  const { available, unavailable, preferred } = _.chain(dates)
+    .groupBy(({ availableDateUsers, preferredDateUsers }) => {
+      if (preferredDateUsers.length === users.length) {
+        return "preferred";
+      } else if (preferredDateUsers.length + availableDateUsers.length === users.length) {
+        return "available";
+      }
+
+      return "unavailable";
+    })
     .mapValues((dates) => map(dates, "date"))
     .value();
 
@@ -66,7 +76,7 @@ export default async function EventResults(props: { params: Promise<{ userId: st
     <div className="p-4 max-w-5xl mx-auto">
       <div className="flex flex-col gap-4">
         <CopyLink id={event.id} />
-        <AggregatedDates available={available ?? []} unavailable={unavailable ?? []} />
+        <AggregatedDates available={available ?? []} unavailable={unavailable ?? []} preferred={preferred ?? []} />
         <div className="overflow-x-auto">
           <table className="table table-pin-rows table-pin-cols">
             <thead>
@@ -83,10 +93,16 @@ export default async function EventResults(props: { params: Promise<{ userId: st
               {users.map(({ id, name }) => (
                 <tr key={id}>
                   <td className="border-2 border-base-100 w-1 whitespace-nowrap">{name}</td>
-                  {dates.map(({ date, dateUsers }) => (
+                  {dates.map(({ date, availableDateUsers, preferredDateUsers }) => (
                     <td
                       key={date.toISOString()}
-                      className={`border-2 border-base-100 ${dateUsers.includes(id) ? "bg-success" : "bg-error"}`}
+                      className={`border-2 border-base-100 ${
+                        preferredDateUsers.includes(id)
+                          ? "bg-success/80"
+                          : availableDateUsers.includes(id)
+                          ? "bg-neutral/80"
+                          : "bg-error/80"
+                      }`}
                     ></td>
                   ))}
                 </tr>

@@ -1,7 +1,8 @@
-import ChooseUserDates from "./_ChooseUserDates";
+import ChooseUserDates from "../../../../components/ChooseUserDates";
 import prisma from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { getJSDateFromStr } from "@/lib/utilities";
+
 export default async function AddDates(props: { params: Promise<{ eventId: string }> }) {
   const { eventId } = await props.params;
 
@@ -26,7 +27,9 @@ export default async function AddDates(props: { params: Promise<{ eventId: strin
   //     return notFound();
   //   }
 
-  const jsDates = event.users[0].availableDates.map(getJSDateFromStr);
+  const { availableDates, preferredDates } = event.users[0];
+
+  const jsDates = [...availableDates, ...preferredDates].map(getJSDateFromStr);
 
   return (
     <div className="p-4 max-w-5xl mx-auto">

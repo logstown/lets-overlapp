@@ -27,7 +27,11 @@ const newEventSchema = z.object({
   allowOthersToPropose: z.boolean(),
 });
 
-export async function createEvent(formData: FormData, availableDates: string[]): Promise<ActionResponseCreate | undefined> {
+export async function createEvent(
+  formData: FormData,
+  preferredDates: string[],
+  availableDates: string[]
+): Promise<ActionResponseCreate | undefined> {
   let redirectUrl: string | null = null;
 
   try {
@@ -54,6 +58,7 @@ export async function createEvent(formData: FormData, availableDates: string[]):
       data: {
         name,
         isCreator: true,
+        preferredDates,
         availableDates,
         event: {
           create: {
@@ -98,6 +103,7 @@ const addDatesSchema = z.object({
 
 export async function addDates(
   formData: FormData,
+  preferredDates: string[],
   availableDates: string[],
   eventId: string
 ): Promise<ActionResponseAdd | undefined> {
@@ -122,6 +128,7 @@ export async function addDates(
     const user = await prisma.user.create({
       data: {
         name,
+        preferredDates,
         availableDates,
         event: {
           connect: {

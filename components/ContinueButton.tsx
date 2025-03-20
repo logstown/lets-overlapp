@@ -4,7 +4,15 @@ import { ActionResponseCreate, addDates, createEvent } from "@/lib/actions";
 import { toZonedTime } from "date-fns-tz";
 import { useActionState, useRef } from "react";
 
-export default function ContinueButton({ availableDates, eventId }: { availableDates: Date[]; eventId?: string }) {
+export default function ContinueButton({
+  availableDates,
+  preferredDates,
+  eventId,
+}: {
+  availableDates: Date[];
+  preferredDates: Date[];
+  eventId?: string;
+}) {
   const initialState: ActionResponseCreate = {
     success: false,
     message: "",
@@ -12,8 +20,11 @@ export default function ContinueButton({ availableDates, eventId }: { availableD
   const formRef = useRef<HTMLFormElement>(null);
 
   const doAction = async (formData: FormData) => {
-    const stringDates = availableDates.map((date) => `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`);
-    return eventId ? addDates(formData, stringDates, eventId) : createEvent(formData, stringDates);
+    const availableDateStrs = availableDates.map((date) => `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`);
+    const preferredDateStrs = preferredDates.map((date) => `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`);
+    return eventId
+      ? addDates(formData, preferredDateStrs, availableDateStrs, eventId)
+      : createEvent(formData, preferredDateStrs, availableDateStrs);
   };
 
   const [state, formAction, isPending] = useActionState(async (state: ActionResponseCreate | null, formData: FormData) => {
