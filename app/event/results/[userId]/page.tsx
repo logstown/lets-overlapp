@@ -7,7 +7,7 @@ import { toZonedTime } from "date-fns-tz";
 import { CheckIcon } from "lucide-react";
 import AggregatedDates from "./_AggregatedDates";
 import { getJSDateFromStr } from "@/lib/utilities";
-
+import DaysLegend from "@/components/DaysLegend";
 export default async function EventResults(props: { params: Promise<{ userId: string }> }) {
   const { userId } = await props.params;
 
@@ -74,9 +74,12 @@ export default async function EventResults(props: { params: Promise<{ userId: st
 
   return (
     <div className="p-4 max-w-5xl mx-auto">
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-10">
         <CopyLink id={event.id} />
-        <AggregatedDates available={available ?? []} unavailable={unavailable ?? []} preferred={preferred ?? []} />
+        <div className="flex flex-row justify-center gap-12">
+          <AggregatedDates available={available ?? []} unavailable={unavailable ?? []} preferred={preferred ?? []} />
+          <DaysLegend includeUnavailable />
+        </div>
         <div className="overflow-x-auto">
           <table className="table table-pin-rows table-pin-cols">
             <thead>
@@ -98,10 +101,10 @@ export default async function EventResults(props: { params: Promise<{ userId: st
                       key={date.toISOString()}
                       className={`border-2 border-base-100 ${
                         preferredDateUsers.includes(id)
-                          ? "bg-success/80"
+                          ? "bg-success"
                           : availableDateUsers.includes(id)
-                          ? "bg-neutral/80"
-                          : "bg-error/80"
+                          ? "bg-primary"
+                          : "bg-error/70"
                       }`}
                     ></td>
                   ))}

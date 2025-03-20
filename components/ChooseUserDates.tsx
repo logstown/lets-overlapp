@@ -5,8 +5,7 @@ import { ClassNames, DayEventHandler, DayPicker, Matcher } from "react-day-picke
 import { max, min, differenceInCalendarMonths, isSameDay } from "date-fns";
 import { reject } from "lodash";
 import ContinueButton from "@/components/ContinueButton";
-import { MinusIcon } from "lucide-react";
-import { PlusIcon } from "lucide-react";
+import DaysLegend from "./DaysLegend";
 
 export default function ChooseUserDates({ setDates, eventId }: { setDates?: Date[]; eventId?: string }) {
   const minDate = setDates ? min(setDates) : new Date();
@@ -21,18 +20,20 @@ export default function ChooseUserDates({ setDates, eventId }: { setDates?: Date
     classNames.day = "text-primary";
   }
 
-  const [numberOfMonths, setNumberOfMonths] = useState(() => {
+  const [numberOfMonths] = useState(() => {
     if (setDates) {
       const maxDate = max(setDates);
       return differenceInCalendarMonths(maxDate, minDate) + 1;
     } else {
-      return 1;
+      return 2;
     }
   });
   const [availableDates, setAvailableDates] = useState<Date[]>([]);
   const [preferredDates, setPreferredDates] = useState<Date[]>([]);
   const disabledMatcher: Matcher = (day: Date) => {
-    if (!setDates) return false;
+    if (!setDates) {
+      return day < new Date();
+    }
     return !setDates.some((setDate) => setDate.toISOString() === day.toISOString());
   };
 
@@ -56,36 +57,16 @@ export default function ChooseUserDates({ setDates, eventId }: { setDates?: Date
   return (
     <div className="card bg-base-200 shadow-xl">
       <div className="card-body">
-        <div className="flex justify-between items-center mb-6">
+        <div className="flex justify-center items-center mb-6">
           <h2 className="card-title text-2xl">Choose Potential Dates</h2>
-          {!eventId && (
-            <>
-              {numberOfMonths === 1 ? (
-                <button className="btn btn-soft" onClick={() => setNumberOfMonths(numberOfMonths + 1)}>
-                  + Add month
-                </button>
-              ) : (
-                <div className="join">
-                  <button className="btn join-item btn-soft" onClick={() => setNumberOfMonths(Math.max(1, numberOfMonths - 1))}>
-                    <MinusIcon size={20} />
-                  </button>
-                  <button className="btn join-item btn-soft" onClick={() => setNumberOfMonths(numberOfMonths + 1)}>
-                    <PlusIcon size={20} />
-                  </button>
-                </div>
-              )}
-            </>
-          )}
         </div>
-        <div className="flex justify-center">
+        <div className="flex flex-col md:flex-row justify-evenly items-center gap-4">
           <DayPicker
-            // required
+            startMonth={new Date()}
+            fixedWeeks
             defaultMonth={minDate}
             disabled={disabledMatcher}
             numberOfMonths={numberOfMonths}
-            // mode="multiple"
-            // selected={availableDates}
-            // onSelect={onSelected}
             onDayClick={onSelected}
             modifiers={{
               preferredDates,
@@ -93,11 +74,12 @@ export default function ChooseUserDates({ setDates, eventId }: { setDates?: Date
             }}
             modifiersClassNames={{
               preferredDates: "!bg-success !text-success-content",
-              availableDates: "!bg-neutral !text-neutral-content",
+              availableDates: "!bg-primary !text-primary-content",
             }}
             classNames={classNames}
             hideNavigation={!!eventId}
           />
+          <DaysLegend />
         </div>
         <div className="card-actions justify-end mt-6">
           {(availableDates.length > 0 || preferredDates.length > 0) && (
