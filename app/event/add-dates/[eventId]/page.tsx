@@ -31,9 +31,5 @@ export default async function AddDates(props: { params: Promise<{ eventId: strin
 
   const jsDates = [...availableDates, ...preferredDates].map(getJSDateFromStr);
 
-  return (
-    <div className="p-4 max-w-5xl mx-auto">
-      <ChooseUserDates setDates={jsDates} eventId={eventId} />
-    </div>
-  );
+  return <ChooseUserDates setDates={jsDates} eventId={eventId} />;
 }

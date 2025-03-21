@@ -55,37 +55,39 @@ export default function ChooseUserDates({ setDates, eventId }: { setDates?: Date
   };
 
   return (
-    <div className="card bg-base-200 shadow-xl">
-      <div className="card-body">
-        <div className="flex justify-center items-center mb-6">
-          <h2 className="card-title text-2xl">Choose Potential Dates</h2>
+    <div className="flex flex-col gap-10">
+      <div className="card bg-base-200 shadow-xl">
+        <div className="card-body">
+          <div className="flex justify-center items-center mb-6">
+            <h2 className="card-title text-2xl">Choose Potential Dates</h2>
+          </div>
+          <div className="flex flex-col md:flex-row justify-evenly items-center gap-4">
+            <DayPicker
+              startMonth={new Date()}
+              fixedWeeks
+              defaultMonth={minDate}
+              disabled={disabledMatcher}
+              numberOfMonths={numberOfMonths}
+              onDayClick={onSelected}
+              modifiers={{
+                preferredDates,
+                availableDates,
+              }}
+              modifiersClassNames={{
+                preferredDates: "!bg-success !text-success-content",
+                availableDates: "!bg-success/50 !text-success-content",
+              }}
+              classNames={classNames}
+              hideNavigation={!!eventId}
+            />
+            <DaysLegend />
+          </div>
         </div>
-        <div className="flex flex-col md:flex-row justify-evenly items-center gap-4">
-          <DayPicker
-            startMonth={new Date()}
-            fixedWeeks
-            defaultMonth={minDate}
-            disabled={disabledMatcher}
-            numberOfMonths={numberOfMonths}
-            onDayClick={onSelected}
-            modifiers={{
-              preferredDates,
-              availableDates,
-            }}
-            modifiersClassNames={{
-              preferredDates: "!bg-success !text-success-content",
-              availableDates: "!bg-success/50 !text-success-content",
-            }}
-            classNames={classNames}
-            hideNavigation={!!eventId}
-          />
-          <DaysLegend />
-        </div>
-        <div className="card-actions justify-end mt-6">
-          {(availableDates.length > 0 || preferredDates.length > 0) && (
-            <ContinueButton preferredDates={preferredDates} availableDates={availableDates} eventId={eventId} />
-          )}
-        </div>
+      </div>
+      <div className="flex justify-end">
+        {(availableDates.length > 0 || preferredDates.length > 0) && (
+          <ContinueButton preferredDates={preferredDates} availableDates={availableDates} eventId={eventId} />
+        )}
       </div>
     </div>
   );

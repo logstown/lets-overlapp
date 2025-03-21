@@ -49,7 +49,6 @@ export default async function EventResults(props: { params: Promise<{ userId: st
         preferredDateUsers,
       };
     })
-    .sortBy((date) => date.date)
     .map(({ date, availableDateUsers, preferredDateUsers }) => {
       return {
         date: getJSDateFromStr(date),
@@ -57,13 +56,16 @@ export default async function EventResults(props: { params: Promise<{ userId: st
         preferredDateUsers,
       };
     })
+    .sortBy((date) => date.date)
     .value();
 
   const { available, unavailable, preferred } = _.chain(dates)
     .groupBy(({ availableDateUsers, preferredDateUsers }) => {
       if (preferredDateUsers.length === users.length) {
         return "preferred";
-      } else if (preferredDateUsers.length + availableDateUsers.length === users.length) {
+      }
+
+      if (preferredDateUsers.length + availableDateUsers.length === users.length) {
         return "available";
       }
 

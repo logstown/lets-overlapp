@@ -1,7 +1,6 @@
 "use client";
 
-import { CheckCircleIcon, CheckIcon, ChevronDownIcon, PaletteIcon } from "lucide-react";
-import { useTheme } from "next-themes";
+import { ChevronDownIcon, PaletteIcon } from "lucide-react";
 
 export default function ThemeChooser() {
   const themes = [
@@ -62,7 +61,7 @@ export default function ThemeChooser() {
     </div> */}
 
       <div className="dropdown dropdown-end">
-        <div tabIndex={0} role="button" className="btn m-1 btn-sm">
+        <div tabIndex={0} role="button" className="btn btn-ghost rounded-field gap-3">
           <PaletteIcon size={20} /> <ChevronDownIcon size={15} />
         </div>
         <ul tabIndex={0} className="dropdown-content bg-base-300 rounded-box z-1 w-52 p-2 shadow-2xl">
