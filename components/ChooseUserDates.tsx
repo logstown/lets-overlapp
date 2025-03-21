@@ -74,7 +74,7 @@ export default function ChooseUserDates({ setDates, eventId }: { setDates?: Date
             }}
             modifiersClassNames={{
               preferredDates: "!bg-success !text-success-content",
-              availableDates: "!bg-primary !text-primary-content",
+              availableDates: "!bg-success/50 !text-success-content",
             }}
             classNames={classNames}
             hideNavigation={!!eventId}

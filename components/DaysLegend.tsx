@@ -2,7 +2,7 @@ export default function DaysLegend({ includeUnavailable }: { includeUnavailable?
   return (
     <div className="flex flex-col gap-4 justify-center mt-4 text-sm">
       <div className="flex items-center gap-2">
-        <div className="w-6 h-6 bg-primary"></div>
+        <div className="w-6 h-6 bg-success/50"></div>
         <span>Available</span>
       </div>
       <div className="flex items-center gap-2">

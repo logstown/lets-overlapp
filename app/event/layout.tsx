@@ -10,7 +10,7 @@ export default function EventLayout({ children }: { children: React.ReactNode })
             Let's Overlapp
           </Link>
         </div>
-        <div className="flex items-stretch gap-2">
+        <div className="flex items-center gap-2">
           <Link href="/event/create" className="btn btn-primary btn-sm">
             New Event
           </Link>

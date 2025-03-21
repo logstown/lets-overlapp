@@ -27,9 +27,9 @@ export default function AggregatedDates({
           preferred,
         }}
         modifiersClassNames={{
-          available: "bg-primary text-primary-content",
-          unavailable: "bg-error/70 text-error-content",
-          preferred: "bg-success text-success-content",
+          available: "bg-success/50 text-success-content border-2 border-base-100",
+          unavailable: "bg-error text-error-content border-2 border-base-100",
+          preferred: "bg-success text-success-content border-2 border-base-100",
         }}
         classNames={{
           root: "react-day-picker shadow-lg",
