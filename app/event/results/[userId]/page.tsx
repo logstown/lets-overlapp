@@ -1,13 +1,12 @@
 import prisma from "@/lib/prisma";
 import CopyLink from "./_CopyLink";
 import { notFound } from "next/navigation";
-import _, { groupBy, map } from "lodash";
+import _, { map } from "lodash";
 import { format } from "date-fns";
-import { toZonedTime } from "date-fns-tz";
-import { CheckIcon } from "lucide-react";
 import AggregatedDates from "./_AggregatedDates";
 import { getJSDateFromStr } from "@/lib/utilities";
 import DaysLegend from "@/components/DaysLegend";
+import { CircleUserIcon } from "lucide-react";
 export default async function EventResults(props: { params: Promise<{ userId: string }> }) {
   const { userId } = await props.params;
 
@@ -34,8 +33,6 @@ export default async function EventResults(props: { params: Promise<{ userId: st
   }
   const { event } = user;
   const { users } = event;
-
-  console.log(users.map((user) => user.availableDates));
 
   const dates = _.chain(users)
     .flatMap((user) => [...user.availableDates, ...user.preferredDates])
@@ -88,16 +85,21 @@ export default async function EventResults(props: { params: Promise<{ userId: st
               <tr>
                 <th></th>
                 {dates.map(({ date }) => (
-                  <th className="text-center" key={date.toISOString()}>
+                  <td className="text-center" key={date.toISOString()}>
                     {format(date, "MMM d")}
-                  </th>
+                  </td>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {users.map(({ id, name }) => (
+              {users.map(({ id, name, isCreator }) => (
                 <tr key={id}>
-                  <td className="border-2 border-base-100 w-1 whitespace-nowrap">{name}</td>
+                  <th className="border-2 border-base-100 w-1">
+                    <div className="flex items-center gap-2 whitespace-nowrap">
+                      {name}
+                      {isCreator && <CircleUserIcon size={15} />}
+                    </div>
+                  </th>
                   {dates.map(({ date, availableDateUsers, preferredDateUsers }) => (
                     <td
                       key={date.toISOString()}
