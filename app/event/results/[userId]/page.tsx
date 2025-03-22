@@ -72,50 +72,49 @@ export default async function EventResults(props: { params: Promise<{ userId: st
     .value();
 
   return (
-    <div className="p-4 max-w-5xl mx-auto">
-      <div className="flex flex-col gap-10">
-        <CopyLink id={event.id} />
-        <div className="flex flex-row justify-center gap-12">
-          <AggregatedDates available={available ?? []} unavailable={unavailable ?? []} preferred={preferred ?? []} />
-          <DaysLegend includeUnavailable />
-        </div>
-        <div className="overflow-x-auto">
-          <table className="table table-pin-rows table-pin-cols">
-            <thead>
-              <tr>
-                <th></th>
-                {dates.map(({ date }) => (
-                  <td className="text-center" key={date.toISOString()}>
-                    {format(date, "MMM d")}
-                  </td>
+    <div className="flex flex-col gap-10">
+      <CopyLink id={event.id} />
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-12">
+        <AggregatedDates available={available ?? []} unavailable={unavailable ?? []} preferred={preferred ?? []} />
+        <DaysLegend includeUnavailable />
+      </div>
+      <div className="overflow-x-auto">
+        <table className="table table-pin-rows table-xs sm:table-sm md:table-md table-pin-cols text-sm sm:text-base">
+          <thead>
+            <tr>
+              <th></th>
+              {dates.map(({ date }) => (
+                <td className="text-center" key={date.toISOString()}>
+                  {format(date, "MMM d")}
+                </td>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {users.map(({ id, name, isCreator }) => (
+              <tr key={id}>
+                <th className="border-2 border-base-100 w-1">
+                  <div className="flex items-center gap-2 whitespace-nowrap">
+                    {name}
+                    {isCreator && <CircleUserIcon size={15} />}
+                  </div>
+                </th>
+                {dates.map(({ date, availableDateUsers, preferredDateUsers }) => (
+                  <td
+                    key={date.toISOString()}
+                    className={`border-2 border-base-100 ${
+                      preferredDateUsers.includes(id)
+                        ? "bg-success"
+                        : availableDateUsers.includes(id)
+                        ? "bg-success/50"
+                        : "bg-error"
+                    }`}
+                  ></td>
                 ))}
               </tr>
-            </thead>
-            <tbody>
-              {users.map(({ id, name, isCreator }) => (
-                <tr key={id}>
-                  <th className="border-2 border-base-100 w-1">
-                    <div className="flex items-center gap-2 whitespace-nowrap">
-                      {name}
-                      {isCreator && <CircleUserIcon size={15} />}
-                    </div>
-                  </th>
-                  {dates.map(({ date, availableDateUsers, preferredDateUsers }) => (
-                    <td
-                      key={date.toISOString()}
-                      className={`border-2 border-base-100 ${
-                        preferredDateUsers.includes(id)
-                          ? "bg-success"
-                          : availableDateUsers.includes(id)
-                          ? "bg-success/50"
-                          : "bg-error"
-                      }`}
-                    ></td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-            {/* <tfoot>
+            ))}
+          </tbody>
+          {/* <tfoot>
               <tr>
                 <th></th>
                 <td>Name</td>
@@ -127,10 +126,9 @@ export default async function EventResults(props: { params: Promise<{ userId: st
                 <th></th>
               </tr>
             </tfoot> */}
-          </table>
-        </div>
-        <CopyLink id={userId} isResults />
+        </table>
       </div>
+      <CopyLink id={userId} isResults />
     </div>
   );
 }
