@@ -30,8 +30,8 @@ export default function CopyLink({ id, isResults }: { id: string; isResults?: bo
         <div className="card-body">
           <h2 className="card-title text-2xl mb-4">{isResults ? "View Results" : "Share with others"}</h2>
           <div className="join w-full">
-            <input type="text" className="input input-bordered join-item w-full" value={url} readOnly />
-            <button className="btn join-item btn-secondary" onClick={copyToClipboard}>
+            <input type="text" className="input join-item w-full" value={url} readOnly />
+            <button className="btn join-item btn-soft" onClick={copyToClipboard}>
               Copy
             </button>
           </div>
