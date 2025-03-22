@@ -1,9 +1,16 @@
 "use client";
 
 import { themes } from "@/lib/utilities";
-import { ChevronDownIcon, PaletteIcon } from "lucide-react";
+import { CheckIcon, ChevronDownIcon, PaletteIcon } from "lucide-react";
+import { useEffect } from "react";
+import { useState } from "react";
 
 export default function ThemeChooser() {
+  const [theme, setTheme] = useState(localStorage.getItem("lets-overlapp-theme") ?? "default");
+  useEffect(() => {
+    localStorage.setItem("lets-overlapp-theme", theme);
+  }, [theme]);
+
   return (
     <div className="dropdown dropdown-end">
       <div tabIndex={0} role="button" className="btn btn-ghost rounded-field gap-3">
@@ -15,9 +22,11 @@ export default function ThemeChooser() {
             <input
               type="radio"
               name="theme-dropdown"
-              className="theme-controller btn btn-sm btn-block btn-ghost justify-start"
-              aria-label={choice}
+              className="theme-controller btn btn-block btn-sm btn-ghost justify-start"
+              aria-label={choice + (theme === choice ? " ✓" : "")}
               value={choice}
+              checked={theme === choice}
+              onChange={() => setTheme(choice)}
             />
           </li>
         ))}
