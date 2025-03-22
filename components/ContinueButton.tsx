@@ -18,6 +18,7 @@ export default function ContinueButton({
     message: "",
   };
   const formRef = useRef<HTMLFormElement>(null);
+  const modal = useRef<HTMLDialogElement>(null);
 
   const doAction = async (formData: FormData) => {
     const availableDateStrs = availableDates.map((date) => `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`);
@@ -36,7 +37,7 @@ export default function ContinueButton({
   }, initialState);
 
   const cancel = () => {
-    document.getElementById("my_modal_1")?.close();
+    modal.current?.close();
     setTimeout(() => formRef.current?.reset(), 100);
   };
 
@@ -46,10 +47,10 @@ export default function ContinueButton({
 
   return (
     <>
-      <button className="btn btn-primary" onClick={() => document.getElementById("my_modal_1").showModal()}>
+      <button className="btn btn-primary" onClick={() => modal.current?.showModal()}>
         Continue
       </button>
-      <dialog id="my_modal_1" className="modal">
+      <dialog ref={modal} className="modal">
         <div className="modal-box">
           <h3 className="font-bold text-lg mb-4">{eventId ? "Last Step" : "Create Event"}</h3>
           <form action={formAction} ref={formRef}>
