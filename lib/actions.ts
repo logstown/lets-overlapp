@@ -1,58 +1,64 @@
-"use server";
+'use server'
 
-import { z } from "zod";
-import prisma from "./prisma";
-import { redirect } from "next/navigation";
+import { z } from 'zod'
+import prisma from './prisma'
+import { redirect } from 'next/navigation'
 export interface CreateEventFormData {
-  title: string;
-  description?: string;
-  name: string;
-  allowOthersToViewResults: boolean;
-  allowOthersToPropose: boolean;
+  title: string
+  description?: string
+  name: string
+  allowOthersToViewResults: boolean
+  allowOthersToPropose: boolean
 }
 
 export interface ActionResponseCreate {
-  success: boolean;
-  message: string;
+  success: boolean
+  message: string
   errors?: {
-    [K in keyof CreateEventFormData]?: string[];
-  };
+    [K in keyof CreateEventFormData]?: string[]
+  }
 }
 
 const newEventSchema = z.object({
-  title: z.string().min(2, "Title is required"),
+  title: z.string().min(2, 'Title is required'),
   description: z.string().optional(),
-  name: z.string().min(2, "Name is required"),
+  name: z.string().min(2, 'Name is required'),
   allowOthersToViewResults: z.boolean(),
   allowOthersToPropose: z.boolean(),
-});
+})
 
 export async function createEvent(
   formData: FormData,
   preferredDates: string[],
-  availableDates: string[]
+  availableDates: string[],
 ): Promise<ActionResponseCreate | undefined> {
-  let redirectUrl: string | null = null;
+  let redirectUrl: string | null = null
 
   try {
     const validatedFields = newEventSchema.safeParse({
-      title: formData.get("title"),
-      description: formData.get("description"),
-      name: formData.get("name"),
-      allowOthersToViewResults: formData.get("allowOthersToViewResults") === "on",
-      allowOthersToPropose: formData.get("allowOthersToPropose") === "on",
-    });
+      title: formData.get('title'),
+      description: formData.get('description'),
+      name: formData.get('name'),
+      allowOthersToViewResults: formData.get('allowOthersToViewResults') === 'on',
+      allowOthersToPropose: formData.get('allowOthersToPropose') === 'on',
+    })
 
     if (!validatedFields.success) {
-      console.log(validatedFields.error.flatten().fieldErrors);
+      console.log(validatedFields.error.flatten().fieldErrors)
       return {
         success: false,
-        message: "Please fix the errors in the form",
+        message: 'Please fix the errors in the form',
         errors: validatedFields.error.flatten().fieldErrors,
-      };
+      }
     }
 
-    const { title, description, name, allowOthersToViewResults, allowOthersToPropose } = validatedFields.data;
+    const {
+      title,
+      description,
+      name,
+      allowOthersToViewResults,
+      allowOthersToPropose,
+    } = validatedFields.data
 
     const user = await prisma.user.create({
       data: {
@@ -69,61 +75,61 @@ export async function createEvent(
           },
         },
       },
-    });
+    })
 
-    redirectUrl = `/event/results/${user.id}`;
+    redirectUrl = `/event/results/${user.id}`
   } catch (error) {
-    console.error(error);
+    console.error(error)
     return {
       success: false,
-      message: "Error creating event",
-    };
+      message: 'Error creating event',
+    }
   } finally {
     if (redirectUrl) {
-      redirect(redirectUrl);
+      redirect(redirectUrl)
     }
   }
 }
 
 export interface AddDatesFormData {
-  name: string;
+  name: string
 }
 
 export interface ActionResponseAdd {
-  success: boolean;
-  message: string;
+  success: boolean
+  message: string
   errors?: {
-    [K in keyof AddDatesFormData]?: string[];
-  };
+    [K in keyof AddDatesFormData]?: string[]
+  }
 }
 
 const addDatesSchema = z.object({
-  name: z.string().min(2, "Name is required"),
-});
+  name: z.string().min(2, 'Name is required'),
+})
 
 export async function addDates(
   formData: FormData,
   preferredDates: string[],
   availableDates: string[],
-  eventId: string
+  eventId: string,
 ): Promise<ActionResponseAdd | undefined> {
-  let redirectUrl: string | null = null;
+  let redirectUrl: string | null = null
 
   try {
     const validatedFields = addDatesSchema.safeParse({
-      name: formData.get("name"),
-    });
+      name: formData.get('name'),
+    })
 
     if (!validatedFields.success) {
-      console.log(validatedFields.error.flatten().fieldErrors);
+      console.log(validatedFields.error.flatten().fieldErrors)
       return {
         success: false,
-        message: "Please fix the errors in the form",
+        message: 'Please fix the errors in the form',
         errors: validatedFields.error.flatten().fieldErrors,
-      };
+      }
     }
 
-    const { name } = validatedFields.data;
+    const { name } = validatedFields.data
 
     const user = await prisma.user.create({
       data: {
@@ -136,18 +142,18 @@ export async function addDates(
           },
         },
       },
-    });
+    })
 
-    redirectUrl = `/event/results/${user.id}`;
+    redirectUrl = `/event/results/${user.id}`
   } catch (error) {
-    console.error(error);
+    console.error(error)
     return {
       success: false,
-      message: "Error creating event",
-    };
+      message: 'Error creating event',
+    }
   } finally {
     if (redirectUrl) {
-      redirect(redirectUrl);
+      redirect(redirectUrl)
     }
   }
 }

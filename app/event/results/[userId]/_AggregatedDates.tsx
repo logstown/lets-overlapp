@@ -1,23 +1,23 @@
-"use client";
+'use client'
 
-import { min, max, differenceInCalendarMonths } from "date-fns";
-import { DayPicker } from "react-day-picker";
+import { min, max, differenceInCalendarMonths } from 'date-fns'
+import { DayPicker } from 'react-day-picker'
 
 export default function AggregatedDates({
   available,
   unavailable,
   preferred,
 }: {
-  available: Date[];
-  unavailable: Date[];
-  preferred: Date[];
+  available: Date[]
+  unavailable: Date[]
+  preferred: Date[]
 }) {
-  const minDate = min([...available, ...unavailable, ...preferred]);
-  const maxDate = max([...available, ...unavailable, ...preferred]);
-  const numberOfMonths = differenceInCalendarMonths(maxDate, minDate) + 1;
+  const minDate = min([...available, ...unavailable, ...preferred])
+  const maxDate = max([...available, ...unavailable, ...preferred])
+  const numberOfMonths = differenceInCalendarMonths(maxDate, minDate) + 1
 
   return (
-    <div className="flex justify-center">
+    <div className='flex justify-center'>
       <DayPicker
         defaultMonth={minDate}
         numberOfMonths={numberOfMonths}
@@ -27,16 +27,16 @@ export default function AggregatedDates({
           preferred,
         }}
         modifiersClassNames={{
-          available: "bg-success/50 text-success-content border-2 border-base-100",
-          unavailable: "bg-base-300 text-base-content border-2 border-base-100",
-          preferred: "bg-success text-success-content border-2 border-base-100",
+          available: 'bg-success/50 text-success-content border-2 border-base-100',
+          unavailable: 'bg-base-300 text-base-content border-2 border-base-100',
+          preferred: 'bg-success text-success-content border-2 border-base-100',
         }}
         classNames={{
-          root: "react-day-picker shadow-lg",
-          today: "text-base-content bg-base-100",
+          root: 'react-day-picker shadow-lg',
+          today: 'text-base-content bg-base-100',
         }}
         hideNavigation
       />
     </div>
-  );
+  )
 }
