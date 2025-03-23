@@ -6,7 +6,7 @@ export default function EventLayout({ children }: { children: React.ReactNode })
     <>
       <div className="navbar">
         <div className="flex-1">
-          <Link href="/" className="btn btn-ghost text-xl">
+          <Link href="/" className="btn btn-ghost text-primary text-xl">
             Let's Overlapp
           </Link>
         </div>

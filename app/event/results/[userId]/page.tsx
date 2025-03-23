@@ -107,7 +107,7 @@ export default async function EventResults(props: { params: Promise<{ userId: st
                         ? "bg-success"
                         : availableDateUsers.includes(id)
                         ? "bg-success/50"
-                        : "bg-error"
+                        : "bg-base-300"
                     }`}
                   ></td>
                 ))}

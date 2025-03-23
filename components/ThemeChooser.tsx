@@ -6,9 +6,16 @@ import { useEffect } from "react";
 import { useState } from "react";
 
 export default function ThemeChooser() {
-  const [theme, setTheme] = useState(localStorage.getItem("lets-overlapp-theme") ?? "default");
+  const [theme, setTheme] = useState<string | null>(null);
+
   useEffect(() => {
-    localStorage.setItem("lets-overlapp-theme", theme);
+    setTheme(localStorage.getItem("lets-overlapp-theme") ?? "default");
+  }, []);
+
+  useEffect(() => {
+    if (theme) {
+      localStorage.setItem("lets-overlapp-theme", theme);
+    }
   }, [theme]);
 
   return (

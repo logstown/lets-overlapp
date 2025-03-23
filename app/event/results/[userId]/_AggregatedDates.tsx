@@ -28,7 +28,7 @@ export default function AggregatedDates({
         }}
         modifiersClassNames={{
           available: "bg-success/50 text-success-content border-2 border-base-100",
-          unavailable: "bg-error text-error-content border-2 border-base-100",
+          unavailable: "bg-base-300 text-base-content border-2 border-base-100",
           preferred: "bg-success text-success-content border-2 border-base-100",
         }}
         classNames={{

@@ -58,10 +58,10 @@ export default function ChooseUserDates({ setDates, eventId }: { setDates?: Date
     <div className="flex flex-col gap-10">
       <div className="card bg-base-200 shadow-xl">
         <div className="card-body">
-          <div className="flex justify-center items-center mb-6">
-            <h2 className="card-title text-2xl">Choose Potential Dates</h2>
-          </div>
-          <div className="flex flex-col md:flex-row justify-evenly items-center gap-4">
+          {/* <div className="flex justify-center items-center mb-6"> */}
+          <h2 className="card-title">Choose Potential Dates</h2>
+          {/* </div> */}
+          <div className="flex flex-col md:flex-row justify-evenly items-center gap-4 p-4">
             <DayPicker
               startMonth={new Date()}
               fixedWeeks
