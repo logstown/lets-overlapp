@@ -59,7 +59,7 @@ export default function ContinueButton({
       <dialog ref={modal} className='modal'>
         <div className='modal-box'>
           <h3 className='mb-4 text-lg font-bold'>
-            {eventId ? 'Last Step' : 'Create Event'}
+            {eventId ? 'Last Step' : 'Just a few more details...'}
           </h3>
           <form action={formAction} ref={formRef}>
             {!eventId && (

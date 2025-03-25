@@ -6,12 +6,12 @@ export default function EventLayout({ children }: { children: React.ReactNode })
     <>
       <div className='navbar'>
         <div className='flex-1'>
-          <Link href='/' className='btn btn-ghost text-primary text-xl'>
+          <Link href='/' className='btn btn-ghost text-primary text-2xl lg:text-3xl'>
             Let's Overlapp
           </Link>
         </div>
         <div className='flex items-center gap-2'>
-          <Link href='/event/create' className='btn btn-primary btn-sm'>
+          <Link href='/event/create' className='btn btn-primary btn-sm lg:btn-md'>
             New Event
           </Link>
           <ThemeChooser />
