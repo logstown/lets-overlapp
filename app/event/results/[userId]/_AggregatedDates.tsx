@@ -3,6 +3,7 @@
 import { min, max, differenceInCalendarMonths } from 'date-fns'
 import { DayPicker } from 'react-day-picker'
 import { flatMap } from 'lodash'
+import { useEffect, useState } from 'react'
 
 export default function AggregatedDates({
   dateGroups,
@@ -15,17 +16,23 @@ export default function AggregatedDates({
     [key: string]: string
   }
 }) {
-  const dates = flatMap(dateGroups)
-  const minDate = min(dates)
-  const maxDate = max(dates)
-  const numberOfMonths = differenceInCalendarMonths(maxDate, minDate) + 1
+  const [minDate, setMinDate] = useState<Date>(new Date())
+  const [numberOfMonths, setNumberOfMonths] = useState<number>(1)
 
-  console.log(dateGroups, modifierClassNames)
+  useEffect(() => {
+    const dates = flatMap(dateGroups)
+    const minDate = min(dates)
+    const maxDate = max(dates)
+    const numberOfMonths = differenceInCalendarMonths(maxDate, minDate) + 1
+
+    setMinDate(minDate)
+    setNumberOfMonths(numberOfMonths)
+  }, [dateGroups, modifierClassNames])
 
   return (
     <div className='flex justify-center'>
       <DayPicker
-        defaultMonth={minDate}
+        month={minDate}
         numberOfMonths={numberOfMonths}
         modifiers={dateGroups}
         modifiersClassNames={modifierClassNames}

@@ -151,16 +151,41 @@ function calculateData(users: User[]) {
   const modifierClassNames = mapValues(dateGroups, (dates, dateType) => {
     const baseClasses = 'border-2 border-base-100'
 
-    switch (dateType) {
-      case 'preferred':
-        return `${baseClasses} bg-success text-success-content`
-      case 'unavailable':
-        return `${baseClasses} bg-base-300 text-base-content`
-      default:
-        const opacity = dateType.split('-')[1]
-        const opacityClass = opacity === '100' ? '' : `/${opacity}`
+    if (dateType === 'unavailable') {
+      return `${baseClasses} bg-base-300 text-base-content`
+    }
 
-        return `${baseClasses} bg-success${opacityClass} text-success-content`
+    let classToReturn = `${baseClasses} bg-success text-success-content`
+
+    if (!dateType.startsWith('available-')) {
+      return classToReturn
+    }
+
+    const opacity = dateType.split('-')[1]
+
+    switch (opacity) {
+      case '50':
+        return `${classToReturn} bg-success/50`
+      case '55':
+        return `${classToReturn} bg-success/55`
+      case '60':
+        return `${classToReturn} bg-success/60`
+      case '65':
+        return `${classToReturn} bg-success/65`
+      case '70':
+        return `${classToReturn} bg-success/70`
+      case '75':
+        return `${classToReturn} bg-success/75`
+      case '80':
+        return `${classToReturn} bg-success/80`
+      case '85':
+        return `${classToReturn} bg-success/85`
+      case '90':
+        return `${classToReturn} bg-success/90`
+      case '95':
+        return `${classToReturn} bg-success/95`
+      default:
+        return classToReturn
     }
   })
 
