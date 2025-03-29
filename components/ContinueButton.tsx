@@ -73,14 +73,14 @@ export default function ContinueButton({
                   <input
                     type='text'
                     placeholder='Title *'
-                    className='input input-lg input-validator'
+                    className='input input-lg validator'
                     name='title'
                     minLength={2}
                     maxLength={100}
                     autoFocus
                     required
                   />
-                  {/* <div className="validator-hint">Enter event title</div> */}
+                  {/* <div className='validator-hint'>Enter event title</div> */}
                 </label>
                 <label className='floating-label fieldset-label'>
                   <span>Description (optional)</span>
@@ -108,14 +108,14 @@ export default function ContinueButton({
                 <input
                   type='text'
                   placeholder='Your name *'
-                  className='input input-lg'
+                  className='input input-lg validator'
                   name='name'
                   autoFocus={!eventId}
                   minLength={2}
                   maxLength={100}
                   required
                 />
-                {/* <div className="validator-hint">Enter event title</div> */}
+                {/* <div className='validator-hint'>Enter event title</div> */}
               </label>
             </fieldset>
             <div className='modal-action'>
