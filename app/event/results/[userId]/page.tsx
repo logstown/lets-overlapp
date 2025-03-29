@@ -1,7 +1,7 @@
 import prisma from '@/lib/prisma'
 import CopyLink from './_CopyLink'
 import { notFound } from 'next/navigation'
-import _, { map, mapKeys, mapValues } from 'lodash'
+import _, { filter, find, map, mapKeys, mapValues, maxBy } from 'lodash'
 import { format } from 'date-fns'
 import AggregatedDates from './_AggregatedDates'
 import { getJSDateFromStr } from '@/lib/utilities'
@@ -37,18 +37,12 @@ export default async function EventResults(props: {
   const { event } = user
   const { users } = event
 
-  const { dates, dateGroups, modifierClassNames } = calculateData(users)
+  const { dates, dateGroups, modifierClassNames, bestDates } = calculateData(users)
 
   return (
     <div className='flex flex-col gap-10'>
       <CopyLink id={event.id} />
-      <div className='flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-12'>
-        <AggregatedDates
-          dateGroups={dateGroups}
-          modifierClassNames={modifierClassNames}
-        />
-        <DaysLegend includeUnavailable />
-      </div>
+      <CopyLink id={userId} isResults />
       <div className='overflow-x-auto'>
         <table className='table-pin-rows table-xs sm:table-sm md:table-md table-pin-cols table text-sm sm:text-base'>
           <thead>
@@ -85,21 +79,39 @@ export default async function EventResults(props: {
               </tr>
             ))}
           </tbody>
-          {/* <tfoot>
-              <tr>
-                <th></th>
-                <td>Name</td>
-                <td>Job</td>
-                <td>company</td>
-                <td>location</td>
-                <td>Last Login</td>
-                <td>Favorite Color</td>
-                <th></th>
-              </tr>
-            </tfoot> */}
         </table>
       </div>
-      <CopyLink id={userId} isResults />
+      <DaysLegend includeUnavailable />
+      <div className='flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-12'>
+        {users.length > 1 && (
+          <div>
+            {bestDates.length === 0 ? (
+              <p>No Dates work</p>
+            ) : (
+              <div className='text-center'>
+                {bestDates.length === 1 ? (
+                  <p>Based on the responses, the best date is</p>
+                ) : (
+                  <p>Based on the responses, the best dates are</p>
+                )}
+                <div className='text-3xl font-bold'>
+                  {bestDates.map((x, i) => {
+                    let str = format(x, 'MMMM d')
+                    if (i < bestDates.length - 1) {
+                      str += ', '
+                    }
+                    return str
+                  })}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+        <AggregatedDates
+          dateGroups={dateGroups}
+          modifierClassNames={modifierClassNames}
+        />
+      </div>
     </div>
   )
 }
@@ -122,28 +134,32 @@ function calculateData(users: User[]) {
       }
     })
     .map(({ date, availableDateUsers, preferredDateUsers }) => {
+      let score = 0
+
+      if (preferredDateUsers.length + availableDateUsers.length === users.length) {
+        score =
+          Math.round(((preferredDateUsers.length / users.length) * 50) / 5) * 5 + 50
+      }
+
       return {
         date: getJSDateFromStr(date),
         availableDateUsers,
         preferredDateUsers,
+        score,
       }
     })
     .sortBy(date => date.date)
     .value()
 
   const dateGroups = _.chain(dates)
-    .groupBy(({ availableDateUsers, preferredDateUsers }) => {
-      if (preferredDateUsers.length === users.length) {
+    .groupBy(({ score }) => {
+      if (score === 1) {
         return 'preferred'
+      } else if (score === 0) {
+        return 'unavailable'
+      } else {
+        return `available-${score}`
       }
-
-      if (preferredDateUsers.length + availableDateUsers.length === users.length) {
-        const opacity =
-          Math.round(((preferredDateUsers.length / users.length) * 50) / 5) * 5 + 50
-        return `available-${opacity}`
-      }
-
-      return 'unavailable'
     })
     .mapValues(dates => map(dates, 'date'))
     .value()
@@ -189,5 +205,9 @@ function calculateData(users: User[]) {
     }
   })
 
-  return { dates, dateGroups, modifierClassNames }
+  const best = maxBy(dates, 'score')
+  const bestDates =
+    best?.score === 0 ? [] : filter(dates, { score: best?.score }).map(x => x.date)
+
+  return { dates, dateGroups, modifierClassNames, bestDates }
 }

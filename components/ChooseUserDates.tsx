@@ -68,6 +68,7 @@ export default function ChooseUserDates({
           <h2 className='card-title'>Choose Potential Dates</h2>
           {/* </div> */}
           <div className='flex flex-col items-center justify-evenly gap-4 p-4 md:flex-row'>
+            <DaysLegend />
             <DayPicker
               startMonth={new Date()}
               fixedWeeks
@@ -86,7 +87,6 @@ export default function ChooseUserDates({
               classNames={classNames}
               hideNavigation={!!eventId}
             />
-            <DaysLegend />
           </div>
         </div>
       </div>

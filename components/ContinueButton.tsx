@@ -53,7 +53,10 @@ export default function ContinueButton({
 
   return (
     <>
-      <button className='btn btn-primary' onClick={() => modal.current?.showModal()}>
+      <button
+        className='btn btn-primary btn-xl'
+        onClick={() => modal.current?.showModal()}
+      >
         Continue
       </button>
       <dialog ref={modal} className='modal'>
