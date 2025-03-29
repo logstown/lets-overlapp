@@ -26,6 +26,8 @@ model User {
 
   event   Event  @relation(fields: [eventId], references: [id])
   eventId String
+
+  @@unique([eventId, name])
 }
 
 model Event {
@@ -34,7 +36,6 @@ model Event {
   description              String?
   createdAt                DateTime @default(now())
   updatedAt                DateTime @updatedAt
-  allowOthersToPropose     Boolean  @default(false)
   allowOthersToViewResults Boolean  @default(true)
 
   users User[]

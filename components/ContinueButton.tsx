@@ -72,7 +72,7 @@ export default function ContinueButton({
                   <span>Title *</span>
                   <input
                     type='text'
-                    placeholder='Title'
+                    placeholder='Title *'
                     className='input input-lg input-validator'
                     name='title'
                     minLength={2}
@@ -100,14 +100,6 @@ export default function ContinueButton({
                   />
                   Allow others to view results
                 </label>
-                <label className='fieldset-label'>
-                  <input
-                    type='checkbox'
-                    className='checkbox checkbox-primary'
-                    name='allowOthersToPropose'
-                  />
-                  Allow others to propose dates
-                </label>
               </fieldset>
             )}
             <fieldset className='fieldset w-full p-4'>
@@ -115,7 +107,7 @@ export default function ContinueButton({
                 <span>Your Name *</span>
                 <input
                   type='text'
-                  placeholder='Your name'
+                  placeholder='Your name *'
                   className='input input-lg'
                   name='name'
                   autoFocus={!eventId}
