@@ -81,8 +81,11 @@ export default async function EventResults(props: {
           </tbody>
         </table>
       </div>
-      <DaysLegend includeUnavailable />
-      <div className='flex flex-col items-center justify-center gap-4 sm:flex-row sm:gap-12'>
+      <div className='flex flex-col items-center justify-center gap-10 sm:flex-row sm:gap-20'>
+        <AggregatedDates
+          dateGroups={dateGroups}
+          modifierClassNames={modifierClassNames}
+        />
         {users.length > 1 && (
           <div>
             {bestDates.length === 0 ? (
@@ -107,10 +110,9 @@ export default async function EventResults(props: {
             )}
           </div>
         )}
-        <AggregatedDates
-          dateGroups={dateGroups}
-          modifierClassNames={modifierClassNames}
-        />
+      </div>
+      <div className='flex justify-center'>
+        <DaysLegend includeUnavailable />
       </div>
     </div>
   )

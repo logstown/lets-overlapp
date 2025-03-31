@@ -65,7 +65,7 @@ export default function ChooseUserDates({
       <div className='card bg-base-200 shadow-xl'>
         <div className='card-body'>
           <h2 className='card-title'>Choose Potential Dates</h2>
-          <div className='flex flex-col items-center justify-evenly gap-6 p-8'>
+          <div className='flex flex-col items-center justify-evenly gap-10 p-8'>
             <DayPicker
               startMonth={new Date()}
               fixedWeeks
