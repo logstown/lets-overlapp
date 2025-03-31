@@ -66,8 +66,8 @@ export default function ContinueButton({
           </h3>
           <form action={formAction} ref={formRef}>
             {!eventId && (
-              <fieldset className='fieldset w-full gap-6 p-4'>
-                {/* <legend className="fieldset-legend">Event</legend> */}
+              <fieldset className='fieldset w-full gap-4 p-4'>
+                <legend className='fieldset-legend'>Event</legend>
                 <label className='floating-label fieldset-label'>
                   <span>Title *</span>
                   <input
@@ -102,9 +102,10 @@ export default function ContinueButton({
                 </label>
               </fieldset>
             )}
-            <fieldset className='fieldset w-full p-4'>
+            <fieldset className='fieldset w-full gap-4 p-4'>
+              <legend className='fieldset-legend'>Your info</legend>
               <label className='floating-label fieldset-label'>
-                <span>Your Name *</span>
+                <span>Name *</span>
                 <input
                   type='text'
                   placeholder='Your name *'
@@ -114,6 +115,18 @@ export default function ContinueButton({
                   minLength={2}
                   maxLength={100}
                   required
+                />
+                {/* <div className='validator-hint'>Enter event title</div> */}
+              </label>
+              <label className='floating-label fieldset-label'>
+                <span>Email (optional)</span>
+                <input
+                  type='email'
+                  placeholder='Email (optional)'
+                  className='input input-lg validator'
+                  name='email'
+                  minLength={2}
+                  maxLength={100}
                 />
                 {/* <div className='validator-hint'>Enter event title</div> */}
               </label>

@@ -8,7 +8,7 @@ export interface CreateEventFormData {
   description?: string
   name: string
   allowOthersToViewResults: boolean
-  allowOthersToPropose: boolean
+  email?: string
 }
 
 export interface ActionResponseCreate {
@@ -24,6 +24,7 @@ const newEventSchema = z.object({
   description: z.string().optional(),
   name: z.string().min(2, 'Name is required'),
   allowOthersToViewResults: z.boolean(),
+  email: z.string().email('Invalid email').optional(),
 })
 
 export async function createEvent(
@@ -39,6 +40,7 @@ export async function createEvent(
       description: formData.get('description'),
       name: formData.get('name'),
       allowOthersToViewResults: formData.get('allowOthersToViewResults') === 'on',
+      email: formData.get('email') || undefined,
     })
 
     if (!validatedFields.success) {
@@ -50,12 +52,13 @@ export async function createEvent(
       }
     }
 
-    const { title, description, name, allowOthersToViewResults } =
+    const { title, description, name, allowOthersToViewResults, email } =
       validatedFields.data
 
     const user = await prisma.user.create({
       data: {
         name,
+        email,
         isCreator: true,
         preferredDates,
         availableDates,
