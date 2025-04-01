@@ -1,8 +1,8 @@
 'use client'
 
 import { ActionResponseCreate, addDates, createEvent } from '@/lib/actions'
-import { useActionState, useRef } from 'react'
-
+import { useActionState, useRef, useEffect } from 'react'
+import { useRouter } from 'next/navigation'
 export default function ContinueButton({
   availableDates,
   preferredDates,
@@ -13,11 +13,12 @@ export default function ContinueButton({
   eventId?: string
 }) {
   const initialState: ActionResponseCreate = {
-    success: false,
+    userId: '',
     message: '',
   }
   const formRef = useRef<HTMLFormElement>(null)
   const modal = useRef<HTMLDialogElement>(null)
+  const router = useRouter()
 
   const doAction = async (formData: FormData) => {
     const availableDateStrs = availableDates.map(
@@ -34,21 +35,20 @@ export default function ContinueButton({
   const [state, formAction, isPending] = useActionState(
     async (state: ActionResponseCreate | null, formData: FormData) => {
       const result = await doAction(formData)
-      if (result) {
-        return result
-      }
-      return state
+      return result || state
     },
     initialState,
   )
 
+  useEffect(() => {
+    if (state?.userId) {
+      router.push(`/event/results/${state.userId}`)
+    }
+  }, [state, router])
+
   const cancel = () => {
     modal.current?.close()
     setTimeout(() => formRef.current?.reset(), 100)
-  }
-
-  if (state?.success) {
-    return <div className='alert alert-success'>{state.message}</div>
   }
 
   return (

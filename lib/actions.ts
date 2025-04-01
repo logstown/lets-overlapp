@@ -3,6 +3,10 @@
 import { z } from 'zod'
 import prisma from './prisma'
 import { redirect } from 'next/navigation'
+import { Resend } from 'resend'
+import { EmailTemplate } from '@/components/email-template'
+const resend = new Resend(process.env.RESEND_API_KEY)
+
 export interface CreateEventFormData {
   title: string
   description?: string
@@ -12,7 +16,7 @@ export interface CreateEventFormData {
 }
 
 export interface ActionResponseCreate {
-  success: boolean
+  userId: string
   message: string
   errors?: {
     [K in keyof CreateEventFormData]?: string[]
@@ -32,8 +36,6 @@ export async function createEvent(
   preferredDates: string[],
   availableDates: string[],
 ): Promise<ActionResponseCreate | undefined> {
-  let redirectUrl: string | null = null
-
   try {
     const validatedFields = newEventSchema.safeParse({
       title: formData.get('title'),
@@ -46,7 +48,7 @@ export async function createEvent(
     if (!validatedFields.success) {
       console.log(validatedFields.error.flatten().fieldErrors)
       return {
-        success: false,
+        userId: '',
         message: 'Please fix the errors in the form',
         errors: validatedFields.error.flatten().fieldErrors,
       }
@@ -72,16 +74,24 @@ export async function createEvent(
       },
     })
 
-    redirectUrl = `/event/results/${user.id}`
-  } catch (error) {
-    console.error(error)
-    return {
-      success: false,
-      message: 'Error creating event',
+    if (email) {
+      resend.emails.send({
+        from: 'Welcome <onboarding@letsoverl.app>',
+        to: [email],
+        subject: 'Hello world',
+        react: await EmailTemplate({ firstName: name }),
+      })
     }
-  } finally {
-    if (redirectUrl) {
-      redirect(redirectUrl)
+
+    return {
+      userId: user.id,
+      message: 'Event created successfully',
+    }
+  } catch (error) {
+    console.error('**********', error)
+    return {
+      userId: '',
+      message: 'Error creating event',
     }
   }
 }
@@ -91,7 +101,7 @@ export interface AddDatesFormData {
 }
 
 export interface ActionResponseAdd {
-  success: boolean
+  userId: string
   message: string
   errors?: {
     [K in keyof AddDatesFormData]?: string[]
@@ -108,8 +118,6 @@ export async function addDates(
   availableDates: string[],
   eventId: string,
 ): Promise<ActionResponseAdd | undefined> {
-  let redirectUrl: string | null = null
-
   try {
     const validatedFields = addDatesSchema.safeParse({
       name: formData.get('name'),
@@ -118,7 +126,7 @@ export async function addDates(
     if (!validatedFields.success) {
       console.log(validatedFields.error.flatten().fieldErrors)
       return {
-        success: false,
+        userId: '',
         message: 'Please fix the errors in the form',
         errors: validatedFields.error.flatten().fieldErrors,
       }
@@ -139,16 +147,15 @@ export async function addDates(
       },
     })
 
-    redirectUrl = `/event/results/${user.id}`
-  } catch (error) {
-    console.error(error)
     return {
-      success: false,
-      message: 'Error creating event',
+      userId: user.id,
+      message: 'User added successfully',
     }
-  } finally {
-    if (redirectUrl) {
-      redirect(redirectUrl)
+  } catch (error) {
+    console.error('errrrrrrror;', error)
+    return {
+      userId: '',
+      message: 'Error adding user',
     }
   }
 }
