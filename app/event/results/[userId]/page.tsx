@@ -101,7 +101,7 @@ export default async function EventResults(props: {
                   {bestDates.map((x, i) => {
                     let str = format(x, 'MMMM d')
                     if (i < bestDates.length - 1) {
-                      str += ', '
+                      str += '  |  '
                     }
                     return str
                   })}

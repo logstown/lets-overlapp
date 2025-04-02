@@ -15,11 +15,11 @@ export interface CreateEventFormData {
   email?: string
 }
 
-export interface ActionResponseCreate {
+export interface ActionResponse {
   userId: string
   message: string
   errors?: {
-    [K in keyof CreateEventFormData]?: string[]
+    [K in keyof (CreateEventFormData | AddDatesFormData)]?: string[]
   }
 }
 
@@ -35,7 +35,7 @@ export async function createEvent(
   formData: FormData,
   preferredDates: string[],
   availableDates: string[],
-): Promise<ActionResponseCreate | undefined> {
+): Promise<ActionResponse | undefined> {
   try {
     const validatedFields = newEventSchema.safeParse({
       title: formData.get('title'),
@@ -98,18 +98,20 @@ export async function createEvent(
 
 export interface AddDatesFormData {
   name: string
+  email?: string
 }
 
-export interface ActionResponseAdd {
-  userId: string
-  message: string
-  errors?: {
-    [K in keyof AddDatesFormData]?: string[]
-  }
-}
+// export interface ActionResponseAdd {
+//   userId: string
+//   message: string
+//   errors?: {
+//     [K in keyof AddDatesFormData]?: string[]
+//   }
+// }
 
 const addDatesSchema = z.object({
   name: z.string().min(2, 'Name is required'),
+  email: z.string().email('Invalid email').optional(),
 })
 
 export async function addDates(
@@ -117,10 +119,11 @@ export async function addDates(
   preferredDates: string[],
   availableDates: string[],
   eventId: string,
-): Promise<ActionResponseAdd | undefined> {
+): Promise<ActionResponse | undefined> {
   try {
     const validatedFields = addDatesSchema.safeParse({
       name: formData.get('name'),
+      email: formData.get('email') || undefined,
     })
 
     if (!validatedFields.success) {
@@ -132,11 +135,12 @@ export async function addDates(
       }
     }
 
-    const { name } = validatedFields.data
+    const { name, email } = validatedFields.data
 
     const user = await prisma.user.create({
       data: {
         name,
+        email,
         preferredDates,
         availableDates,
         event: {
@@ -146,6 +150,15 @@ export async function addDates(
         },
       },
     })
+
+    if (email) {
+      resend.emails.send({
+        from: 'Welcome <onboarding@letsoverl.app>',
+        to: [email],
+        subject: 'Hello world',
+        react: await EmailTemplate({ firstName: name }),
+      })
+    }
 
     return {
       userId: user.id,
