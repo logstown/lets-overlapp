@@ -3,6 +3,7 @@
 import { ActionResponse, addDates, createEvent } from '@/lib/actions'
 import { useActionState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import { InfoIcon } from 'lucide-react'
 export default function ContinueButton({
   availableDates,
   preferredDates,
@@ -65,14 +66,14 @@ export default function ContinueButton({
           </h3>
           <form action={formAction} ref={formRef}>
             {!eventId && (
-              <fieldset className='fieldset w-full gap-4 p-4'>
+              <fieldset className='fieldset gap-3 p-4'>
                 <legend className='fieldset-legend'>Event</legend>
-                <label className='floating-label fieldset-label'>
-                  <span>Title *</span>
+                <label className='floating-label'>
+                  <span>Title</span>
                   <input
                     type='text'
-                    placeholder='Title *'
-                    className='input input-lg validator'
+                    placeholder='Title'
+                    className='input validator w-full'
                     name='title'
                     minLength={2}
                     maxLength={100}
@@ -81,19 +82,18 @@ export default function ContinueButton({
                   />
                   {/* <div className='validator-hint'>Enter event title</div> */}
                 </label>
-                <label className='floating-label fieldset-label'>
+                <label className='floating-label'>
                   <span>Description (optional)</span>
-                  <input
-                    type='text'
+                  <textarea
                     placeholder='Description (optional)'
-                    className='input input-lg'
+                    className='textarea w-full'
                     name='description'
                   />
                 </label>
-                <label className='fieldset-label'>
+                <label className='fieldset-label mt-2'>
                   <input
                     type='checkbox'
-                    className='checkbox checkbox-primary'
+                    className='checkbox checkbox-sm'
                     defaultChecked
                     name='allowOthersToViewResults'
                   />
@@ -101,14 +101,14 @@ export default function ContinueButton({
                 </label>
               </fieldset>
             )}
-            <fieldset className='fieldset w-full gap-4 p-4'>
+            <fieldset className='fieldset mt-6 w-full gap-3 p-4'>
               <legend className='fieldset-legend'>Your info</legend>
-              <label className='floating-label fieldset-label'>
-                <span>Name *</span>
+              <label className='floating-label'>
+                <span>Name</span>
                 <input
                   type='text'
-                  placeholder='Your name *'
-                  className='input input-lg validator'
+                  placeholder='Name'
+                  className='input validator w-full'
                   name='name'
                   autoFocus={!eventId}
                   minLength={2}
@@ -117,26 +117,36 @@ export default function ContinueButton({
                 />
                 {/* <div className='validator-hint'>Enter event title</div> */}
               </label>
-              <label className='floating-label fieldset-label'>
+              <label className='floating-label'>
                 <span>Email (optional)</span>
                 <input
                   type='email'
                   placeholder='Email (optional)'
-                  className='input input-lg validator'
+                  className='input validator w-full'
                   name='email'
                   minLength={2}
                   maxLength={100}
                 />
-                {/* <div className='validator-hint'>Enter event title</div> */}
               </label>
+              {/* <p className='text-base-content/70'>
+                Enter your email to receive a link to the event results, and to be
+                notified when others have voted
+              </p> */}
+              <div role='alert' className='alert alert-soft alert-info text-xs'>
+                <InfoIcon className='h-4 w-4' />
+                <span>
+                  Enter your email to receive a link to the event results, and to be
+                  notified when others have voted
+                </span>
+              </div>
             </fieldset>
             <div className='modal-action'>
               <button className='btn btn-primary' disabled={isPending}>
-                {isPending ? 'Saving...' : 'Save'}
+                {isPending ? 'Creating...' : 'Create Event'}
               </button>
               <button
                 type='button'
-                className='btn btn-ghost'
+                className='btn btn-ghost btn-soft'
                 onClick={() => cancel()}
               >
                 Cancel

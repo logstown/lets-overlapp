@@ -38,11 +38,15 @@ export default async function EventResults(props: {
   const { users } = event
 
   const { dates, dateGroups, modifierClassNames, bestDates } = calculateData(users)
+  const title = event.title || 'Event Results'
+  const description = event.description || 'View availability for all participants'
 
   return (
     <div className='flex flex-col gap-10'>
-      <CopyLink id={event.id} />
-      <CopyLink id={userId} isResults />
+      <div className='flex flex-col'>
+        <h1 className='text-2xl font-semibold'>{title}</h1>
+        <p className='text-base-content/70 max-w-prose'>{description}</p>
+      </div>
       <div className='overflow-x-auto'>
         <table className='table-pin-rows table-xs sm:table-sm md:table-md table-pin-cols table text-sm sm:text-base'>
           <thead>
@@ -81,12 +85,12 @@ export default async function EventResults(props: {
           </tbody>
         </table>
       </div>
-      <div className='flex flex-col items-center justify-center gap-10 sm:flex-row sm:gap-20'>
-        <AggregatedDates
-          dateGroups={dateGroups}
-          modifierClassNames={modifierClassNames}
-        />
-        {users.length > 1 && (
+      {users.length > 1 && (
+        <div className='flex flex-col items-center justify-center gap-10 sm:flex-row sm:gap-20'>
+          <AggregatedDates
+            dateGroups={dateGroups}
+            modifierClassNames={modifierClassNames}
+          />
           <div>
             {bestDates.length === 0 ? (
               <p>No Dates work</p>
@@ -109,11 +113,13 @@ export default async function EventResults(props: {
               </div>
             )}
           </div>
-        )}
-      </div>
+        </div>
+      )}
       <div className='flex justify-center'>
         <DaysLegend includeUnavailable />
       </div>
+      <CopyLink id={event.id} />
+      <CopyLink id={userId} isResults />
     </div>
   )
 }
