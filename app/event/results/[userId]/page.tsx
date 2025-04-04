@@ -2,7 +2,7 @@ import prisma from '@/lib/prisma'
 import CopyLink from './_CopyLink'
 import { notFound } from 'next/navigation'
 import _, { filter, find, map, mapKeys, mapValues, maxBy } from 'lodash'
-import { format } from 'date-fns'
+import { format, formatDistance } from 'date-fns'
 import AggregatedDates from './_AggregatedDates'
 import { getJSDateFromStr } from '@/lib/utilities'
 import DaysLegend from '@/components/DaysLegend'
@@ -40,83 +40,107 @@ export default async function EventResults(props: {
   const { dates, dateGroups, modifierClassNames, bestDates } = calculateData(users)
   const title = event.title || 'Event Results'
   const description = event.description || 'View availability for all participants'
-
+  const creator = event.users.find(x => x.isCreator)
   return (
-    <div className='flex flex-col gap-10'>
-      <div className='flex flex-col'>
-        <h1 className='text-2xl font-semibold'>{title}</h1>
-        <p className='text-base-content/70 max-w-prose'>{description}</p>
+    <div className='flex flex-col items-start gap-10'>
+      <div className='card bg-base-300 p-3 shadow-2xl'>
+        <div className='card-body gap-1'>
+          {/* <div className='flex items-baseline gap-3'> */}
+          <h1 className='text-3xl font-semibold'>{title}</h1>
+          <h5 className='text-base-content/70 text-xs'>
+            created by <span className='font-bold italic'>{creator?.name}</span>{' '}
+            {formatDistance(event.createdAt, new Date(), {
+              addSuffix: true,
+            })}
+          </h5>
+          {/* </div> */}
+          <p className='text-base-content/70 mt-4 max-w-prose text-base'>
+            {description}
+          </p>
+        </div>
       </div>
-      <div className='overflow-x-auto'>
-        <table className='table-pin-rows table-xs sm:table-sm md:table-md table-pin-cols table text-sm sm:text-base'>
-          <thead>
-            <tr>
-              <th></th>
-              {dates.map(({ date }) => (
-                <td className='text-center' key={date.toISOString()}>
-                  {format(date, 'MMM d')}
-                </td>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {users.map(({ id, name, isCreator }) => (
-              <tr key={id}>
-                <th className='border-base-100 w-1 border-2'>
-                  <div className='flex items-center gap-2 whitespace-nowrap'>
-                    {name}
-                    {isCreator && <CircleUserIcon size={15} />}
-                  </div>
-                </th>
-                {dates.map(({ date, availableDateUsers, preferredDateUsers }) => (
-                  <td
-                    key={date.toISOString()}
-                    className={`border-base-100 border-2 ${
-                      preferredDateUsers.includes(id)
-                        ? 'bg-success'
-                        : availableDateUsers.includes(id)
-                          ? 'bg-success/50'
-                          : 'bg-base-300'
-                    }`}
-                  ></td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      {users.length > 1 && (
-        <div className='flex flex-col items-center justify-center gap-10 sm:flex-row sm:gap-20'>
-          <AggregatedDates
-            dateGroups={dateGroups}
-            modifierClassNames={modifierClassNames}
-          />
-          <div>
-            {bestDates.length === 0 ? (
-              <p>No Dates work</p>
-            ) : (
-              <div className='text-center'>
-                {bestDates.length === 1 ? (
-                  <p>Based on the responses, the best date is</p>
-                ) : (
-                  <p>Based on the responses, the best dates are</p>
-                )}
-                <div className='text-3xl font-bold'>
-                  {bestDates.map((x, i) => {
-                    let str = format(x, 'MMMM d')
-                    if (i < bestDates.length - 1) {
-                      str += '  |  '
-                    }
-                    return str
-                  })}
+      <div className='card bg-base-300 w-full p-3 shadow-2xl'>
+        <div className='card-body'>
+          <h2 className='text-2xl font-semibold'>Availability</h2>
+          <div className='flex flex-col gap-20'>
+            <div className='overflow-x-auto'>
+              <table className='table-pin-rows table-xs sm:table-sm md:table-md table-pin-cols table text-sm sm:text-base'>
+                <thead>
+                  <tr>
+                    <th className='bg-base-300'></th>
+                    {dates.map(({ date }) => (
+                      <td
+                        className='bg-base-300 text-center'
+                        key={date.toISOString()}
+                      >
+                        {format(date, 'MMM d')}
+                      </td>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {users.map(({ id, name, isCreator }) => (
+                    <tr key={id}>
+                      <th className='border-base-300 bg-base-300 w-1 border-2'>
+                        <div className='flex items-center gap-2 whitespace-nowrap'>
+                          {name}
+                          {isCreator && <CircleUserIcon size={15} />}
+                        </div>
+                      </th>
+                      {dates.map(
+                        ({ date, availableDateUsers, preferredDateUsers }) => (
+                          <td
+                            key={date.toISOString()}
+                            className={`border-base-300 border-2 ${
+                              preferredDateUsers.includes(id)
+                                ? 'bg-success'
+                                : availableDateUsers.includes(id)
+                                  ? 'bg-success/50'
+                                  : 'bg-base-300'
+                            }`}
+                          ></td>
+                        ),
+                      )}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {users.length > 1 && (
+              <div className='flex flex-col items-center justify-center gap-10 sm:flex-row sm:gap-20'>
+                <AggregatedDates
+                  dateGroups={dateGroups}
+                  modifierClassNames={modifierClassNames}
+                />
+                <div>
+                  {bestDates.length === 0 ? (
+                    <p>No Dates work</p>
+                  ) : (
+                    <div className='text-center'>
+                      {bestDates.length === 1 ? (
+                        <p>Based on the responses, the best date is</p>
+                      ) : (
+                        <p>Based on the responses, the best dates are</p>
+                      )}
+                      <div className='text-3xl font-bold'>
+                        {bestDates.map((x, i) => {
+                          let str = format(x, 'MMMM d')
+                          if (i < bestDates.length - 1) {
+                            str += '  |  '
+                          }
+                          return str
+                        })}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
+            <div className='flex justify-center'>
+              <DaysLegend includeUnavailable />
+            </div>
           </div>
         </div>
-      )}
-      <div className='flex justify-center'>
-        <DaysLegend includeUnavailable />
       </div>
       <CopyLink id={event.id} />
       <CopyLink id={userId} isResults />

@@ -62,7 +62,7 @@ export default function ChooseUserDates({
 
   return (
     <div className='flex flex-col gap-10'>
-      <div className='card bg-base-200 shadow-xl'>
+      <div className='card bg-base-300 shadow-xl'>
         <div className='card-body'>
           <h2 className='card-title justify-center'>Choose Potential Dates</h2>
           <div className='mt-6 flex flex-col items-center justify-evenly gap-6'>

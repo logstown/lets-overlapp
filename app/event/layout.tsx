@@ -14,7 +14,7 @@ export default function EventLayout({ children }: { children: React.ReactNode })
           </Link>
         </div>
         <div className='flex items-center gap-2'>
-          <Link href='/event/create' className='btn btn-primary btn-sm lg:btn-md'>
+          <Link href='/event/create' className='btn btn-primary btn-sm'>
             New Event
           </Link>
           <ThemeChooser />

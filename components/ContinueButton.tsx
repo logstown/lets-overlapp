@@ -51,6 +51,9 @@ export default function ContinueButton({
     setTimeout(() => formRef.current?.reset(), 100)
   }
 
+  const saveText = eventId ? 'Save' : 'Create Event'
+  const savingText = eventId ? 'Saving...' : 'Creating...'
+
   return (
     <>
       <button
@@ -142,7 +145,7 @@ export default function ContinueButton({
             </fieldset>
             <div className='modal-action'>
               <button className='btn btn-primary' disabled={isPending}>
-                {isPending ? 'Creating...' : 'Create Event'}
+                {isPending ? savingText : saveText}
               </button>
               <button
                 type='button'
