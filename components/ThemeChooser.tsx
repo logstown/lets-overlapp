@@ -1,7 +1,7 @@
 'use client'
 
 import { themes } from '@/lib/utilities'
-import { CheckIcon, ChevronDownIcon, PaletteIcon } from 'lucide-react'
+import { ChevronDownIcon, PaletteIcon } from 'lucide-react'
 import { useEffect } from 'react'
 import { useState } from 'react'
 

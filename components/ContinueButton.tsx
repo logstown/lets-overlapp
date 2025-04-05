@@ -1,7 +1,7 @@
 'use client'
 
 import { ActionResponse, addDates, createEvent, editUser } from '@/lib/actions'
-import { useActionState, useRef, useEffect } from 'react'
+import { useActionState, useRef, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { InfoIcon } from 'lucide-react'
 import { User } from '@prisma/client'
@@ -24,6 +24,7 @@ export default function ContinueButton({
   const formRef = useRef<HTMLFormElement>(null)
   const modal = useRef<HTMLDialogElement>(null)
   const router = useRouter()
+  const [showInfo, setShowInfo] = useState(false)
 
   const doAction = async (formData: FormData) => {
     const availableDateStrs = availableDates.map(
@@ -135,29 +136,41 @@ export default function ContinueButton({
                 />
                 {/* <div className='validator-hint'>Enter event title</div> */}
               </label>
-              <label className='floating-label'>
-                <span>Email (optional)</span>
-                <input
-                  type='email'
-                  placeholder='Email (optional)'
-                  className='input validator w-full'
-                  name='email'
-                  defaultValue={user?.email ?? ''}
-                  minLength={2}
-                  maxLength={100}
-                />
-              </label>
-              {/* <p className='text-base-content/70'>
-                Enter your email to receive a link to the event results, and to be
-                notified when others have voted
-              </p> */}
-              <div role='alert' className='alert alert-soft alert-info text-xs'>
-                <InfoIcon className='h-4 w-4' />
-                <span>
-                  Enter your email to receive a link to the event results, and to be
-                  notified when others have voted
-                </span>
+              <div className='flex items-center gap-2'>
+                <label className='floating-label grow'>
+                  <span>Email (optional)</span>
+                  <input
+                    type='email'
+                    placeholder='Email (optional)'
+                    className='input validator w-full grow'
+                    name='email'
+                    defaultValue={user?.email ?? ''}
+                    minLength={2}
+                    maxLength={100}
+                  />
+                </label>
+                <div
+                  className='tooltip tooltip-left'
+                  data-tip='Enter your email to receive a link to the event results, and to be notified when others have voted'
+                >
+                  <InfoIcon
+                    className='h-4 w-4'
+                    onClick={() => setShowInfo(!showInfo)}
+                  />
+                </div>
               </div>
+              {/* <div role='alert' className='alert alert-soft alert-info text-xs'>
+                <InfoIcon
+                  className='h-4 w-4'
+                  onClick={() => setShowInfo(!showInfo)}
+                />
+                {showInfo && (
+                  <span>
+                    Enter your email to receive a link to the event results, and to
+                    be notified when others have voted
+                  </span>
+                )}
+              </div> */}
             </fieldset>
             <div className='modal-action'>
               <button className='btn btn-primary' disabled={isPending}>

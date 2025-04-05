@@ -41,11 +41,11 @@ export default async function EventResults(props: {
 
   const { dates, dateGroups, modifierClassNames, bestDates } = calculateData(users)
   const title = event.title || 'Event Results'
-  const description = event.description || 'View availability for all participants'
+  const description = event.description || ''
   const creator = event.users.find(x => x.isCreator)
   return (
     <div className='flex flex-col items-start gap-10'>
-      <div className='card bg-base-300 p-3 shadow-2xl'>
+      <div className='card bg-base-300 p-0 shadow-2xl sm:p-3'>
         <div className='card-body gap-1'>
           {/* <div className='flex items-baseline gap-3'> */}
           <h1 className='text-3xl font-semibold'>{title}</h1>
@@ -61,7 +61,7 @@ export default async function EventResults(props: {
           </p>
         </div>
       </div>
-      <div className='card bg-base-300 w-full p-3 shadow-2xl'>
+      <div className='card bg-base-300 w-full p-0 shadow-2xl sm:p-3'>
         <div className='card-body'>
           <h2 className='text-2xl font-semibold'>Availability</h2>
           <div className='flex flex-col gap-20'>
@@ -105,13 +105,14 @@ export default async function EventResults(props: {
                         ),
                       )}
                       <th className='border-base-300 bg-base-300 w-1 border-2'>
-                        {user.id === id && (
-                          <Link href={`/event/results/${userId}/edit`}>
-                            <button className='btn btn-sm btn-soft'>
-                              <PencilIcon size={15} />
-                            </button>
-                          </Link>
-                        )}
+                        <Link
+                          href={`/event/results/${userId}/edit`}
+                          className={user.id !== id ? 'invisible' : ''}
+                        >
+                          <button className='btn btn-xs btn-soft sm:btn-sm'>
+                            <PencilIcon className='h-3 w-3 sm:h-4 sm:w-4' />
+                          </button>
+                        </Link>
                       </th>
                     </tr>
                   ))}

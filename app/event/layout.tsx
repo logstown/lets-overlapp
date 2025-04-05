@@ -1,4 +1,4 @@
-import ThemeChooser from '@/components/ThemeChooser'
+import NavbarActions from '@/app/event/_NavbarActions'
 import Link from 'next/link'
 
 export default function EventLayout({ children }: { children: React.ReactNode }) {
@@ -13,12 +13,7 @@ export default function EventLayout({ children }: { children: React.ReactNode })
             Let's Overlapp
           </Link>
         </div>
-        <div className='flex items-center gap-2'>
-          <Link href='/event/create' className='btn btn-primary btn-sm'>
-            New Event
-          </Link>
-          <ThemeChooser />
-        </div>
+        <NavbarActions />
       </div>
       <div className='mx-auto mt-4 max-w-5xl p-4'>{children}</div>
     </>
