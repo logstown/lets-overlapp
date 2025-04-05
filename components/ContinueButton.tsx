@@ -1,20 +1,24 @@
 'use client'
 
-import { ActionResponse, addDates, createEvent } from '@/lib/actions'
+import { ActionResponse, addDates, createEvent, editUser } from '@/lib/actions'
 import { useActionState, useRef, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { InfoIcon } from 'lucide-react'
+import { User } from '@prisma/client'
+
 export default function ContinueButton({
   availableDates,
   preferredDates,
   eventId,
+  user,
 }: {
   availableDates: Date[]
   preferredDates: Date[]
   eventId?: string
+  user?: User
 }) {
   const initialState: ActionResponse = {
-    userId: '',
+    userId: user?.id ?? '',
     message: '',
   }
   const formRef = useRef<HTMLFormElement>(null)
@@ -28,9 +32,14 @@ export default function ContinueButton({
     const preferredDateStrs = preferredDates.map(
       date => `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
     )
-    return eventId
-      ? addDates(formData, preferredDateStrs, availableDateStrs, eventId)
-      : createEvent(formData, preferredDateStrs, availableDateStrs)
+
+    if (eventId) {
+      return addDates(formData, preferredDateStrs, availableDateStrs, eventId)
+    } else if (user) {
+      return editUser(formData, preferredDateStrs, availableDateStrs, user.id)
+    } else {
+      return createEvent(formData, preferredDateStrs, availableDateStrs)
+    }
   }
 
   const [state, formAction, isPending] = useActionState(
@@ -51,8 +60,15 @@ export default function ContinueButton({
     setTimeout(() => formRef.current?.reset(), 100)
   }
 
-  const saveText = eventId ? 'Save' : 'Create Event'
-  const savingText = eventId ? 'Saving...' : 'Creating...'
+  const saveText = eventId || user ? 'Save' : 'Create Event'
+  const savingText = eventId || user ? 'Saving...' : 'Creating...'
+  let title = ''
+
+  if (eventId) {
+    title = 'Last Step'
+  } else if (!user) {
+    title = 'Just a few more details...'
+  }
 
   return (
     <>
@@ -64,11 +80,9 @@ export default function ContinueButton({
       </button>
       <dialog ref={modal} className='modal'>
         <div className='modal-box'>
-          <h3 className='mb-4 text-lg font-bold'>
-            {eventId ? 'Last Step' : 'Just a few more details...'}
-          </h3>
+          <h3 className='mb-4 text-lg font-bold'>{title}</h3>
           <form action={formAction} ref={formRef}>
-            {!eventId && (
+            {!eventId && !user && (
               <fieldset className='fieldset gap-3 p-4'>
                 <legend className='fieldset-legend'>Event</legend>
                 <label className='floating-label'>
@@ -113,7 +127,8 @@ export default function ContinueButton({
                   placeholder='Name'
                   className='input validator w-full'
                   name='name'
-                  autoFocus={!eventId}
+                  defaultValue={user?.name ?? ''}
+                  autoFocus={!eventId && !user}
                   minLength={2}
                   maxLength={100}
                   required
@@ -127,6 +142,7 @@ export default function ContinueButton({
                   placeholder='Email (optional)'
                   className='input validator w-full'
                   name='email'
+                  defaultValue={user?.email ?? ''}
                   minLength={2}
                   maxLength={100}
                 />

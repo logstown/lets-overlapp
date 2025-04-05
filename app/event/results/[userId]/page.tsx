@@ -6,8 +6,10 @@ import { format, formatDistance } from 'date-fns'
 import AggregatedDates from './_AggregatedDates'
 import { getJSDateFromStr } from '@/lib/utilities'
 import DaysLegend from '@/components/DaysLegend'
-import { CircleUserIcon } from 'lucide-react'
+import { CircleUserIcon, PencilIcon } from 'lucide-react'
 import { User } from '@prisma/client'
+import Link from 'next/link'
+
 export default async function EventResults(props: {
   params: Promise<{ userId: string }>
 }) {
@@ -76,6 +78,7 @@ export default async function EventResults(props: {
                         {format(date, 'MMM d')}
                       </td>
                     ))}
+                    <th className='bg-base-300'></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -101,6 +104,15 @@ export default async function EventResults(props: {
                           ></td>
                         ),
                       )}
+                      <th className='border-base-300 bg-base-300 w-1 border-2'>
+                        {user.id === id && (
+                          <Link href={`/event/results/${userId}/edit`}>
+                            <button className='btn btn-sm btn-soft'>
+                              <PencilIcon size={15} />
+                            </button>
+                          </Link>
+                        )}
+                      </th>
                     </tr>
                   ))}
                 </tbody>

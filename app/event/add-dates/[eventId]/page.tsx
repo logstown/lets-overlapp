@@ -2,7 +2,8 @@ import ChooseUserDates from '../../../../components/ChooseUserDates'
 import prisma from '@/lib/prisma'
 import { notFound } from 'next/navigation'
 import { getJSDateFromStr } from '@/lib/utilities'
-
+import { formatDistance } from 'date-fns'
+import AddEditDatesHeader from '@/components/AddEditDatesHeader'
 export default async function AddDates(props: {
   params: Promise<{ eventId: string }>
 }) {
@@ -33,5 +34,14 @@ export default async function AddDates(props: {
 
   const jsDates = [...availableDates, ...preferredDates].map(getJSDateFromStr)
 
-  return <ChooseUserDates setDates={jsDates} eventId={eventId} />
+  return (
+    <div className='flex flex-col gap-6'>
+      <AddEditDatesHeader
+        title={event.title}
+        createdBy={event.users[0].name}
+        createdAt={event.createdAt}
+      />
+      <ChooseUserDates setDates={jsDates} eventId={eventId} />
+    </div>
+  )
 }

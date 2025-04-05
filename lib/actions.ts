@@ -172,3 +172,50 @@ export async function addDates(
     }
   }
 }
+
+export async function editUser(
+  formData: FormData,
+  preferredDates: string[],
+  availableDates: string[],
+  userId: string,
+): Promise<ActionResponse | undefined> {
+  try {
+    const validatedFields = addDatesSchema.safeParse({
+      name: formData.get('name'),
+      email: formData.get('email') || undefined,
+    })
+
+    if (!validatedFields.success) {
+      console.log(validatedFields.error.flatten().fieldErrors)
+      return {
+        userId: '',
+        message: 'Please fix the errors in the form',
+        errors: validatedFields.error.flatten().fieldErrors,
+      }
+    }
+
+    const { name, email } = validatedFields.data
+
+    const user = await prisma.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        name,
+        email,
+        preferredDates,
+        availableDates,
+      },
+    })
+
+    return {
+      userId: user.id,
+      message: 'User updated successfully',
+    }
+  } catch (error) {
+    return {
+      userId: '',
+      message: 'Error updating user',
+    }
+  }
+}

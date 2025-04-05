@@ -6,13 +6,17 @@ import { max, min, differenceInCalendarMonths, isSameDay } from 'date-fns'
 import { reject } from 'lodash'
 import ContinueButton from '@/components/ContinueButton'
 import DaysLegend from './DaysLegend'
-
+import { User } from '@prisma/client'
+import { getJSDateFromStr } from '@/lib/utilities'
+import Link from 'next/link'
 export default function ChooseUserDates({
   setDates,
   eventId,
+  user,
 }: {
   setDates?: Date[]
   eventId?: string
+  user?: User
 }) {
   const minDate = setDates ? min(setDates) : new Date()
   const classNames: Partial<ClassNames> = {
@@ -22,7 +26,7 @@ export default function ChooseUserDates({
     day_button: 'rdp-day_button hover:!bg-transparent',
   }
 
-  if (!!eventId) {
+  if (!!eventId || !!user) {
     classNames.day = 'text-primary'
   }
 
@@ -34,8 +38,14 @@ export default function ChooseUserDates({
       return 2
     }
   })
-  const [availableDates, setAvailableDates] = useState<Date[]>([])
-  const [preferredDates, setPreferredDates] = useState<Date[]>([])
+  const [availableDates, setAvailableDates] = useState<Date[]>(
+    user?.availableDates.map(getJSDateFromStr) ?? [],
+  )
+  const [preferredDates, setPreferredDates] = useState<Date[]>(
+    user?.preferredDates.map(getJSDateFromStr) ?? [],
+  )
+  const [isEditing, setIsEditing] = useState(false)
+
   const disabledMatcher: Matcher = (day: Date) => {
     if (!setDates) {
       return day < new Date()
@@ -58,6 +68,7 @@ export default function ChooseUserDates({
 
     setAvailableDates(newAvailableDates)
     setPreferredDates(newPreferredDates)
+    setIsEditing(true)
   }
 
   return (
@@ -82,19 +93,30 @@ export default function ChooseUserDates({
                 availableDates: '!bg-success/50 !text-success-content',
               }}
               classNames={classNames}
-              hideNavigation={!!eventId}
+              hideNavigation={!!eventId || !!user}
             />
             <DaysLegend />
           </div>
         </div>
       </div>
       <div className='flex justify-end'>
-        {(availableDates.length > 0 || preferredDates.length > 0) && (
-          <ContinueButton
-            preferredDates={preferredDates}
-            availableDates={availableDates}
-            eventId={eventId}
-          />
+        {(availableDates.length > 0 || preferredDates.length > 0) && isEditing && (
+          <div className='flex gap-4'>
+            <ContinueButton
+              preferredDates={preferredDates}
+              availableDates={availableDates}
+              eventId={eventId}
+              user={user}
+            />
+            {!!user && (
+              <Link
+                href={`/event/results/${user.id}`}
+                className='btn btn-soft btn-xl'
+              >
+                Cancel
+              </Link>
+            )}
+          </div>
         )}
       </div>
     </div>
