@@ -44,21 +44,26 @@ export default async function EventResults(props: {
   const description = event.description || ''
   const creator = event.users.find(x => x.isCreator)
   return (
-    <div className='flex flex-col items-start gap-10'>
-      <div className='card bg-base-300 p-0 shadow-2xl sm:p-3'>
-        <div className='card-body gap-1'>
-          {/* <div className='flex items-baseline gap-3'> */}
-          <h1 className='text-3xl font-semibold'>{title}</h1>
-          <h5 className='text-base-content/70 text-xs'>
-            created by <span className='font-bold italic'>{creator?.name}</span>{' '}
-            {formatDistance(event.createdAt, new Date(), {
-              addSuffix: true,
-            })}
-          </h5>
-          {/* </div> */}
-          <p className='text-base-content/70 mt-4 max-w-prose text-base'>
-            {description}
-          </p>
+    <div className='grid grid-flow-row gap-10'>
+      <div className='flex w-full gap-6'>
+        <div className='card bg-base-300 p-0 shadow-2xl sm:p-3'>
+          <div className='card-body gap-1'>
+            <h1 className='text-3xl font-semibold'>{title}</h1>
+            <p className='text-base-content/70 mt-4 max-w-prose text-base'>
+              {description}
+            </p>
+          </div>
+        </div>
+        <div className='card bg-base-300 hidden grow p-0 shadow-2xl sm:p-3 md:flex'>
+          <div className='card-body items-center justify-center whitespace-nowrap'>
+            <div className='text-sm italic'>Created by</div>
+            <div className='text-2xl font-bold'>{creator?.name}</div>
+            <div className='text-sm italic'>
+              {formatDistance(event.createdAt, new Date(), {
+                addSuffix: true,
+              })}
+            </div>
+          </div>
         </div>
       </div>
       <div className='card bg-base-300 w-full p-0 shadow-2xl sm:p-3'>
