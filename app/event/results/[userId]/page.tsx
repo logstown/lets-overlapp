@@ -1,14 +1,20 @@
 import prisma from '@/lib/prisma'
 import CopyLink from './_CopyLink'
 import { notFound } from 'next/navigation'
-import _, { filter, find, map, mapKeys, mapValues, maxBy } from 'lodash'
+import _, { filter, maxBy } from 'lodash'
 import { format, formatDistance } from 'date-fns'
 import AggregatedDates from './_AggregatedDates'
 import { getJSDateFromStr } from '@/lib/utilities'
 import DaysLegend from '@/components/DaysLegend'
-import { CircleUserIcon, PencilIcon } from 'lucide-react'
 import { User } from '@prisma/client'
-import Link from 'next/link'
+import AvailabilityTable from './_AvailabilityTable'
+
+export interface UsersDate {
+  date: Date
+  availableDateUsers: string[]
+  preferredDateUsers: string[]
+  score: number
+}
 
 export default async function EventResults(props: {
   params: Promise<{ userId: string }>
@@ -39,17 +45,18 @@ export default async function EventResults(props: {
   const { event } = user
   const { users } = event
 
-  const { dates, dateGroups, modifierClassNames, bestDates } = calculateData(users)
+  const { usersDates, bestDates } = calculateData(users)
   const title = event.title || 'Event Results'
   const description = event.description || ''
   const creator = event.users.find(x => x.isCreator)
+
   return (
     <div className='grid grid-flow-row gap-10'>
       <div className='flex w-full gap-6'>
         <div className='card bg-base-300 p-0 shadow-2xl sm:p-3'>
           <div className='card-body gap-1'>
             <h1 className='text-3xl font-semibold'>{title}</h1>
-            <p className='text-base-content/70 mt-4 max-w-prose text-base'>
+            <p className='text-base-content/70 mt-4 max-w-prose text-base text-pretty'>
               {description}
             </p>
           </div>
@@ -70,67 +77,15 @@ export default async function EventResults(props: {
         <div className='card-body'>
           <h2 className='text-2xl font-semibold'>Availability</h2>
           <div className='flex flex-col gap-20'>
-            <div className='overflow-x-auto'>
-              <table className='table-pin-rows table-xs sm:table-sm md:table-md table-pin-cols table text-sm sm:text-base'>
-                <thead>
-                  <tr>
-                    <th className='bg-base-300'></th>
-                    {dates.map(({ date }) => (
-                      <td
-                        className='bg-base-300 text-center'
-                        key={date.toISOString()}
-                      >
-                        {format(date, 'MMM d')}
-                      </td>
-                    ))}
-                    <th className='bg-base-300'></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {users.map(({ id, name, isCreator }) => (
-                    <tr key={id}>
-                      <th className='border-base-300 bg-base-300 w-1 border-2'>
-                        <div className='flex items-center gap-2 whitespace-nowrap'>
-                          {name}
-                          {isCreator && <CircleUserIcon size={15} />}
-                        </div>
-                      </th>
-                      {dates.map(
-                        ({ date, availableDateUsers, preferredDateUsers }) => (
-                          <td
-                            key={date.toISOString()}
-                            className={`border-base-300 border-2 ${
-                              preferredDateUsers.includes(id)
-                                ? 'bg-success'
-                                : availableDateUsers.includes(id)
-                                  ? 'bg-success/50'
-                                  : 'bg-base-300'
-                            }`}
-                          ></td>
-                        ),
-                      )}
-                      <th className='border-base-300 bg-base-300 w-1 border-2'>
-                        <Link
-                          href={`/event/results/${userId}/edit`}
-                          className={user.id !== id ? 'invisible' : ''}
-                        >
-                          <button className='btn btn-xs btn-soft sm:btn-sm'>
-                            <PencilIcon className='h-3 w-3 sm:h-4 sm:w-4' />
-                          </button>
-                        </Link>
-                      </th>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <AvailabilityTable
+              usersDates={usersDates}
+              users={users}
+              currentUserId={userId}
+            />
             {users.length > 1 && (
               <div className='flex flex-col items-center justify-center gap-10 sm:flex-row sm:gap-20'>
-                <AggregatedDates
-                  dateGroups={dateGroups}
-                  modifierClassNames={modifierClassNames}
-                />
-                <div>
+                <AggregatedDates usersDates={usersDates} />
+                <div className='md:text-xl'>
                   {bestDates.length === 0 ? (
                     <p>No Dates work</p>
                   ) : (
@@ -140,7 +95,7 @@ export default async function EventResults(props: {
                       ) : (
                         <p>Based on the responses, the best dates are</p>
                       )}
-                      <div className='text-3xl font-bold'>
+                      <div className='text-3xl font-bold md:text-5xl'>
                         {bestDates.map((x, i) => {
                           let str = format(x, 'MMMM d')
                           if (i < bestDates.length - 1) {
@@ -167,7 +122,7 @@ export default async function EventResults(props: {
 }
 
 function calculateData(users: User[]) {
-  const dates = _.chain(users)
+  const usersDates = _.chain(users)
     .flatMap(user => [...user.availableDates, ...user.preferredDates])
     .uniq()
     .map(date => {
@@ -201,63 +156,11 @@ function calculateData(users: User[]) {
     .sortBy(date => date.date)
     .value()
 
-  const dateGroups = _.chain(dates)
-    .groupBy(({ score }) => {
-      if (score === 1) {
-        return 'preferred'
-      } else if (score === 0) {
-        return 'unavailable'
-      } else {
-        return `available-${score}`
-      }
-    })
-    .mapValues(dates => map(dates, 'date'))
-    .value()
-
-  const modifierClassNames = mapValues(dateGroups, (dates, dateType) => {
-    const baseClasses = 'border-2 border-base-100'
-
-    if (dateType === 'unavailable') {
-      return `${baseClasses} bg-base-300 text-base-content`
-    }
-
-    let classToReturn = `${baseClasses} bg-success text-success-content`
-
-    if (!dateType.startsWith('available-')) {
-      return classToReturn
-    }
-
-    const opacity = dateType.split('-')[1]
-
-    switch (opacity) {
-      case '50':
-        return `${classToReturn} bg-success/50`
-      case '55':
-        return `${classToReturn} bg-success/55`
-      case '60':
-        return `${classToReturn} bg-success/60`
-      case '65':
-        return `${classToReturn} bg-success/65`
-      case '70':
-        return `${classToReturn} bg-success/70`
-      case '75':
-        return `${classToReturn} bg-success/75`
-      case '80':
-        return `${classToReturn} bg-success/80`
-      case '85':
-        return `${classToReturn} bg-success/85`
-      case '90':
-        return `${classToReturn} bg-success/90`
-      case '95':
-        return `${classToReturn} bg-success/95`
-      default:
-        return classToReturn
-    }
-  })
-
-  const best = maxBy(dates, 'score')
+  const best = maxBy(usersDates, 'score')
   const bestDates =
-    best?.score === 0 ? [] : filter(dates, { score: best?.score }).map(x => x.date)
+    best?.score === 0
+      ? []
+      : filter(usersDates, { score: best?.score }).map(x => x.date)
 
-  return { dates, dateGroups, modifierClassNames, bestDates }
+  return { usersDates, bestDates }
 }

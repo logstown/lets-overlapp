@@ -2,24 +2,28 @@
 
 import { min, max, differenceInCalendarMonths } from 'date-fns'
 import { DayPicker } from 'react-day-picker'
-import { flatMap } from 'lodash'
+import _, { flatMap, mapValues, map } from 'lodash'
 import { useEffect, useState } from 'react'
+import { UsersDate } from './page'
 
 export default function AggregatedDates({
-  dateGroups,
-  modifierClassNames,
+  usersDates,
 }: {
-  dateGroups: {
-    [key: string]: Date[]
-  }
-  modifierClassNames: {
-    [key: string]: string
-  }
+  usersDates: UsersDate[]
 }) {
   const [minDate, setMinDate] = useState<Date>(new Date())
   const [numberOfMonths, setNumberOfMonths] = useState<number>(1)
+  const [dateGroups, setDateGroups] = useState<Record<string, Date[]>>({})
+  const [modifierClassNames, setModifierClassNames] = useState<
+    Record<string, string>
+  >({})
 
   useEffect(() => {
+    const { dateGroups, modifierClassNames } = getDayPickerStuff(usersDates)
+
+    setDateGroups(dateGroups)
+    setModifierClassNames(modifierClassNames)
+
     const dates = flatMap(dateGroups)
     const minDate = min(dates)
     const maxDate = max(dates)
@@ -27,7 +31,7 @@ export default function AggregatedDates({
 
     setMinDate(minDate)
     setNumberOfMonths(numberOfMonths)
-  }, [dateGroups, modifierClassNames])
+  }, [usersDates])
 
   return (
     <div className='flex justify-center'>
@@ -44,4 +48,62 @@ export default function AggregatedDates({
       />
     </div>
   )
+}
+
+function getDayPickerStuff(usersDates: UsersDate[]) {
+  const dateGroups = _.chain(usersDates)
+    .groupBy(({ score }) => {
+      if (score === 1) {
+        return 'preferred'
+      } else if (score === 0) {
+        return 'unavailable'
+      } else {
+        return `available-${score}`
+      }
+    })
+    .mapValues(dates => map(dates, 'date'))
+    .value()
+
+  const modifierClassNames = mapValues(dateGroups, (dates, dateType) => {
+    const baseClasses = 'border-2 border-base-100'
+
+    if (dateType === 'unavailable') {
+      return `${baseClasses} bg-base-300 text-base-content`
+    }
+
+    let classToReturn = `${baseClasses} bg-success text-success-content`
+
+    if (!dateType.startsWith('available-')) {
+      return classToReturn
+    }
+
+    const opacity = dateType.split('-')[1]
+
+    switch (opacity) {
+      case '50':
+        return `${classToReturn} bg-success/50`
+      case '55':
+        return `${classToReturn} bg-success/55`
+      case '60':
+        return `${classToReturn} bg-success/60`
+      case '65':
+        return `${classToReturn} bg-success/65`
+      case '70':
+        return `${classToReturn} bg-success/70`
+      case '75':
+        return `${classToReturn} bg-success/75`
+      case '80':
+        return `${classToReturn} bg-success/80`
+      case '85':
+        return `${classToReturn} bg-success/85`
+      case '90':
+        return `${classToReturn} bg-success/90`
+      case '95':
+        return `${classToReturn} bg-success/95`
+      default:
+        return classToReturn
+    }
+  })
+
+  return { dateGroups, modifierClassNames }
 }
