@@ -36,9 +36,7 @@ export default function CopyLink({
 
   return (
     <>
-      <div
-        className={`card w-full shadow-2xl ${isResults ? 'bg-base-300 text-base-content' : 'bg-primary/70 text-primary-content'}`}
-      >
+      <div className={`card w-full shadow-2xl ${'bg-base-300 text-base-content'}`}>
         <div className='card-body'>
           <h2 className='card-title mb-4 text-2xl'>
             {isResults ? 'View Results' : 'Share with others'}

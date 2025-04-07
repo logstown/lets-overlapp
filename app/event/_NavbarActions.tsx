@@ -10,7 +10,7 @@ export default function NavbarActions() {
   return (
     <div className='flex items-center gap-2'>
       {pathname !== '/event/create' && (
-        <Link href='/event/create' className='btn btn-primary btn-sm'>
+        <Link href='/event/create' className='btn btn-sm md:btn-md btn-primary'>
           New Event
         </Link>
       )}
