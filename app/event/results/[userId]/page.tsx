@@ -2,12 +2,13 @@ import prisma from '@/lib/prisma'
 import CopyLink from './_CopyLink'
 import { notFound } from 'next/navigation'
 import _, { filter, maxBy } from 'lodash'
-import { format, formatDistance } from 'date-fns'
+import { formatDistance } from 'date-fns'
 import AggregatedDates from './_AggregatedDates'
 import { getJSDateFromStr } from '@/lib/utilities'
 import DaysLegend from '@/components/DaysLegend'
 import { User } from '@prisma/client'
 import AvailabilityTable from './_AvailabilityTable'
+import BestDates from './BestDates'
 
 export interface UsersDate {
   date: Date
@@ -53,19 +54,21 @@ export default async function EventResults(props: {
   return (
     <div className='grid grid-flow-row gap-10'>
       <div className='flex w-full gap-6'>
-        <div className='card bg-base-300 p-0 shadow-2xl sm:p-3'>
+        <div className='card bg-base-300 grow p-0 shadow-2xl sm:p-3'>
           <div className='card-body gap-1'>
             <h1 className='text-3xl font-semibold'>{title}</h1>
-            <p className='text-base-content/70 mt-4 max-w-prose text-base text-pretty'>
+            <p className='text-base-content/70 mt-4 w-full max-w-[65ch] text-base text-pretty'>
               {description}
             </p>
           </div>
         </div>
-        <div className='card bg-base-300 hidden grow p-0 shadow-2xl sm:p-3 md:flex'>
-          <div className='card-body items-center justify-center whitespace-nowrap'>
+        <div className='card bg-base-300 hidden p-0 shadow-2xl sm:p-3 md:flex'>
+          <div className='card-body items-center justify-center'>
             <div className='text-sm italic'>Created by</div>
-            <div className='text-2xl font-bold'>{creator?.name}</div>
-            <div className='text-sm italic'>
+            <div className='text-center text-3xl font-bold whitespace-nowrap'>
+              {creator?.name}
+            </div>
+            <div className='text-xs italic'>
               {formatDistance(event.createdAt, new Date(), {
                 addSuffix: true,
               })}
@@ -75,41 +78,19 @@ export default async function EventResults(props: {
       </div>
       <div className='card bg-base-300 w-full p-0 shadow-2xl sm:p-3'>
         <div className='card-body'>
-          <h2 className='text-2xl font-semibold'>Availability</h2>
-          <div className='flex flex-col gap-20'>
+          <div className='flex flex-col gap-15 py-4'>
+            {users.length > 1 && (
+              <>
+                <BestDates dates={bestDates} />
+                <AggregatedDates usersDates={usersDates} />
+              </>
+            )}
             <AvailabilityTable
               usersDates={usersDates}
               users={users}
               currentUserId={userId}
             />
-            {users.length > 1 && (
-              <div className='flex flex-col items-center justify-center gap-10 sm:flex-row sm:gap-20'>
-                <AggregatedDates usersDates={usersDates} />
-                <div className='md:text-xl'>
-                  {bestDates.length === 0 ? (
-                    <p>No Dates work</p>
-                  ) : (
-                    <div className='text-center'>
-                      {bestDates.length === 1 ? (
-                        <p>Based on the responses, the best date is</p>
-                      ) : (
-                        <p>Based on the responses, the best dates are</p>
-                      )}
-                      <div className='text-3xl font-bold md:text-5xl'>
-                        {bestDates.map((x, i) => {
-                          let str = format(x, 'MMMM d')
-                          if (i < bestDates.length - 1) {
-                            str += '  |  '
-                          }
-                          return str
-                        })}
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-            )}
-            <div className='flex justify-center'>
+            <div className='mt-10 flex justify-center'>
               <DaysLegend includeUnavailable />
             </div>
           </div>
