@@ -15,7 +15,7 @@ export default function EventLayout({ children }: { children: React.ReactNode })
         </div>
         <NavbarActions />
       </div>
-      <div className='mx-auto mt-4 max-w-5xl p-4'>{children}</div>
+      <div className='mx-auto mt-8 max-w-5xl p-4'>{children}</div>
     </>
   )
 }
