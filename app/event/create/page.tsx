@@ -1,4 +1,4 @@
-import ChooseUserDates from '../../../components/ChooseUserDates'
+import EventStepper from '../../../components/EventStepper'
 
 export default function CreateEvent() {
   return (
@@ -6,7 +6,7 @@ export default function CreateEvent() {
       <h1 className='text-base-content/50 text-2xl font-medium uppercase'>
         Create Event
       </h1>
-      <ChooseUserDates />
+      <EventStepper />
     </div>
   )
 }

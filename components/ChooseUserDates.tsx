@@ -6,17 +6,19 @@ import { max, min, differenceInCalendarMonths, isSameDay } from 'date-fns'
 import { reject } from 'lodash'
 import ContinueButton from '@/components/ContinueButton'
 import DaysLegend from './DaysLegend'
-import { User } from '@prisma/client'
-import { getJSDateFromStr } from '@/lib/utilities'
 import Link from 'next/link'
+import { UserDates } from './EventStepper'
+
 export default function ChooseUserDates({
   setDates,
-  eventId,
-  user,
+  isUpdating,
+  userDates,
+  setUserDates,
 }: {
   setDates?: Date[]
-  eventId?: string
-  user?: User
+  isUpdating: boolean
+  userDates: UserDates
+  setUserDates: (userDates: UserDates) => void
 }) {
   const minDate = setDates ? min(setDates) : new Date()
   const classNames: Partial<ClassNames> = {
@@ -26,7 +28,7 @@ export default function ChooseUserDates({
     day_button: 'rdp-day_button hover:!bg-transparent',
   }
 
-  if (!!eventId || !!user) {
+  if (isUpdating) {
     classNames.day = 'text-primary'
   }
 
@@ -38,12 +40,6 @@ export default function ChooseUserDates({
       return 2
     }
   })
-  const [availableDates, setAvailableDates] = useState<Date[]>(
-    user?.availableDates.map(getJSDateFromStr) ?? [],
-  )
-  const [preferredDates, setPreferredDates] = useState<Date[]>(
-    user?.preferredDates.map(getJSDateFromStr) ?? [],
-  )
   const [isEditing, setIsEditing] = useState(false)
 
   const disabledMatcher: Matcher = (day: Date) => {
@@ -54,8 +50,8 @@ export default function ChooseUserDates({
   }
 
   const onSelected: DayEventHandler<React.MouseEvent> = (day, modifiers) => {
-    let newAvailableDates = [...(availableDates ?? [])]
-    let newPreferredDates = [...(preferredDates ?? [])]
+    let newAvailableDates = [...(userDates.availableDates ?? [])]
+    let newPreferredDates = [...(userDates.preferredDates ?? [])]
 
     if (modifiers.availableDates) {
       newAvailableDates = reject(newAvailableDates, d => isSameDay(day, d))
@@ -66,8 +62,10 @@ export default function ChooseUserDates({
       newAvailableDates.push(day)
     }
 
-    setAvailableDates(newAvailableDates)
-    setPreferredDates(newPreferredDates)
+    setUserDates({
+      availableDates: newAvailableDates,
+      preferredDates: newPreferredDates,
+    })
     setIsEditing(true)
   }
 
@@ -85,26 +83,26 @@ export default function ChooseUserDates({
               numberOfMonths={numberOfMonths}
               onDayClick={onSelected}
               modifiers={{
-                preferredDates,
-                availableDates,
+                preferredDates: userDates.preferredDates,
+                availableDates: userDates.availableDates,
               }}
               modifiersClassNames={{
                 preferredDates: '!bg-success !text-success-content',
                 availableDates: '!bg-success/50 !text-success-content',
               }}
               classNames={classNames}
-              hideNavigation={!!eventId || !!user}
+              hideNavigation={isUpdating}
             />
             <DaysLegend />
           </div>
         </div>
       </div>
-      <div className='flex justify-end'>
-        {(availableDates.length > 0 || preferredDates.length > 0) && isEditing && (
+      {/* <div className='flex justify-end'>
+        {(userDates.availableDates.length > 0 || userDates.preferredDates.length > 0) && isEditing && (
           <div className='flex gap-4'>
             <ContinueButton
-              preferredDates={preferredDates}
-              availableDates={availableDates}
+              preferredDates={userDates.preferredDates}
+              availableDates={userDates.availableDates}
               eventId={eventId}
               user={user}
             />
@@ -118,7 +116,7 @@ export default function ChooseUserDates({
             )}
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   )
 }
