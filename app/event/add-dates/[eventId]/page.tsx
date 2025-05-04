@@ -4,6 +4,8 @@ import { notFound } from 'next/navigation'
 import { getJSDateFromStr } from '@/lib/utilities'
 import { formatDistance } from 'date-fns'
 import AddEditDatesHeader from '@/components/AddEditDatesHeader'
+import EventStepper from '@/components/EventStepper'
+
 export default async function AddDates(props: {
   params: Promise<{ eventId: string }>
 }) {
@@ -41,7 +43,7 @@ export default async function AddDates(props: {
         createdBy={event.users[0].name}
         createdAt={event.createdAt}
       />
-      <ChooseUserDates setDates={jsDates} eventId={eventId} />
+      <EventStepper setDates={jsDates} eventId={eventId} />
     </div>
   )
 }

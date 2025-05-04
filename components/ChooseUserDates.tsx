@@ -4,9 +4,7 @@ import { useState } from 'react'
 import { ClassNames, DayEventHandler, DayPicker, Matcher } from 'react-day-picker'
 import { max, min, differenceInCalendarMonths, isSameDay } from 'date-fns'
 import { reject } from 'lodash'
-import ContinueButton from '@/components/ContinueButton'
 import DaysLegend from './DaysLegend'
-import Link from 'next/link'
 import { UserDates } from './EventStepper'
 
 export default function ChooseUserDates({
@@ -70,34 +68,28 @@ export default function ChooseUserDates({
   }
 
   return (
-    <div className='flex flex-col gap-10'>
-      <div className='card bg-base-300 shadow-xl'>
-        <div className='card-body'>
-          <h2 className='card-title justify-center'>Choose Potential Dates</h2>
-          <div className='mt-6 flex flex-col items-center justify-evenly gap-6'>
-            <DayPicker
-              startMonth={new Date()}
-              fixedWeeks
-              defaultMonth={minDate}
-              disabled={disabledMatcher}
-              numberOfMonths={numberOfMonths}
-              onDayClick={onSelected}
-              modifiers={{
-                preferredDates: userDates.preferredDates,
-                availableDates: userDates.availableDates,
-              }}
-              modifiersClassNames={{
-                preferredDates: '!bg-success !text-success-content',
-                availableDates: '!bg-success/50 !text-success-content',
-              }}
-              classNames={classNames}
-              hideNavigation={isUpdating}
-            />
-            <DaysLegend />
-          </div>
-        </div>
-      </div>
-      {/* <div className='flex justify-end'>
+    <div className='flex flex-col items-center justify-evenly gap-6'>
+      <DayPicker
+        startMonth={new Date()}
+        fixedWeeks
+        defaultMonth={minDate}
+        disabled={disabledMatcher}
+        numberOfMonths={numberOfMonths}
+        onDayClick={onSelected}
+        modifiers={{
+          preferredDates: userDates.preferredDates,
+          availableDates: userDates.availableDates,
+        }}
+        modifiersClassNames={{
+          preferredDates: '!bg-success !text-success-content',
+          availableDates: '!bg-success/50 !text-success-content',
+        }}
+        classNames={classNames}
+        hideNavigation={isUpdating}
+      />
+      <DaysLegend />
+    </div>
+    /* <div className='flex justify-end'>
         {(userDates.availableDates.length > 0 || userDates.preferredDates.length > 0) && isEditing && (
           <div className='flex gap-4'>
             <ContinueButton
@@ -116,7 +108,6 @@ export default function ChooseUserDates({
             )}
           </div>
         )}
-      </div> */}
-    </div>
+      </div> */
   )
 }

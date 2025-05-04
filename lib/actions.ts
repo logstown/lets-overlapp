@@ -5,45 +5,34 @@ import prisma from './prisma'
 import { redirect } from 'next/navigation'
 import { Resend } from 'resend'
 import { EmailTemplate } from '@/components/email-template'
+import { FormDetails } from '@/components/EventStepper'
+import { User } from '@prisma/client'
 const resend = new Resend(process.env.RESEND_API_KEY)
-
-export interface CreateEventFormData {
-  title: string
-  description?: string
-  name: string
-  allowOthersToViewResults: boolean
-  email?: string
-}
 
 export interface ActionResponse {
   userId: string
   message: string
   errors?: {
-    [K in keyof (CreateEventFormData | AddDatesFormData)]?: string[]
+    [K in keyof FormDetails]?: string[]
   }
 }
 
 const newEventSchema = z.object({
-  title: z.string().min(2, 'Title is required'),
+  eventName: z.string().min(2, 'Title is required'),
   description: z.string().optional(),
-  name: z.string().min(2, 'Name is required'),
-  allowOthersToViewResults: z.boolean(),
-  email: z.string().email('Invalid email').optional(),
+  attendeeName: z.string().min(2, 'Name is required'),
+  attendeeEmail: z.string().email('Invalid email').optional(),
 })
 
 export async function createEvent(
-  formData: FormData,
+  formData: FormDetails,
   preferredDates: string[],
   availableDates: string[],
 ): Promise<ActionResponse | undefined> {
+  let user: User | null = null
+
   try {
-    const validatedFields = newEventSchema.safeParse({
-      title: formData.get('title'),
-      description: formData.get('description'),
-      name: formData.get('name'),
-      allowOthersToViewResults: formData.get('allowOthersToViewResults') === 'on',
-      email: formData.get('email') || undefined,
-    })
+    const validatedFields = newEventSchema.safeParse(formData)
 
     if (!validatedFields.success) {
       console.log(validatedFields.error.flatten().fieldErrors)
@@ -54,38 +43,32 @@ export async function createEvent(
       }
     }
 
-    const { title, description, name, allowOthersToViewResults, email } =
+    const { eventName, description, attendeeName, attendeeEmail } =
       validatedFields.data
 
-    const user = await prisma.user.create({
+    user = await prisma.user.create({
       data: {
-        name,
-        email,
+        name: attendeeName,
+        email: attendeeEmail,
         isCreator: true,
         preferredDates,
         availableDates,
         event: {
           create: {
-            title,
+            title: eventName,
             description,
-            allowOthersToViewResults,
           },
         },
       },
     })
 
-    if (email) {
+    if (attendeeEmail) {
       resend.emails.send({
         from: 'Welcome <onboarding@letsoverl.app>',
-        to: [email],
+        to: [attendeeEmail],
         subject: 'Hello world',
-        react: await EmailTemplate({ firstName: name }),
+        react: await EmailTemplate({ firstName: attendeeName }),
       })
-    }
-
-    return {
-      userId: user.id,
-      message: 'Event created successfully',
     }
   } catch (error) {
     console.error('**********', error)
@@ -93,38 +76,28 @@ export async function createEvent(
       userId: '',
       message: 'Error creating event',
     }
+  } finally {
+    if (user) {
+      redirect(`/event/results/${user.id}`)
+    }
   }
 }
 
-export interface AddDatesFormData {
-  name: string
-  email?: string
-}
-
-// export interface ActionResponseAdd {
-//   userId: string
-//   message: string
-//   errors?: {
-//     [K in keyof AddDatesFormData]?: string[]
-//   }
-// }
-
 const addDatesSchema = z.object({
-  name: z.string().min(2, 'Name is required'),
-  email: z.string().email('Invalid email').optional(),
+  attendeeName: z.string().min(2, 'Name is required'),
+  attendeeEmail: z.string().email('Invalid email').optional(),
 })
 
 export async function addDates(
-  formData: FormData,
+  formData: FormDetails,
   preferredDates: string[],
   availableDates: string[],
   eventId: string,
 ): Promise<ActionResponse | undefined> {
+  let user: User | null = null
+
   try {
-    const validatedFields = addDatesSchema.safeParse({
-      name: formData.get('name'),
-      email: formData.get('email') || undefined,
-    })
+    const validatedFields = addDatesSchema.safeParse(formData)
 
     if (!validatedFields.success) {
       console.log(validatedFields.error.flatten().fieldErrors)
@@ -135,12 +108,12 @@ export async function addDates(
       }
     }
 
-    const { name, email } = validatedFields.data
+    const { attendeeName, attendeeEmail } = validatedFields.data
 
-    const user = await prisma.user.create({
+    user = await prisma.user.create({
       data: {
-        name,
-        email,
+        name: attendeeName,
+        email: attendeeEmail,
         preferredDates,
         availableDates,
         event: {
@@ -151,18 +124,13 @@ export async function addDates(
       },
     })
 
-    if (email) {
+    if (attendeeEmail) {
       resend.emails.send({
         from: 'Welcome <onboarding@letsoverl.app>',
-        to: [email],
+        to: [attendeeEmail],
         subject: 'Hello world',
-        react: await EmailTemplate({ firstName: name }),
+        react: await EmailTemplate({ firstName: attendeeName }),
       })
-    }
-
-    return {
-      userId: user.id,
-      message: 'User added successfully',
     }
   } catch (error) {
     console.error('errrrrrrror;', error)
@@ -170,20 +138,23 @@ export async function addDates(
       userId: '',
       message: 'Error adding user',
     }
+  } finally {
+    if (user) {
+      redirect(`/event/results/${user.id}`)
+    }
   }
 }
 
 export async function editUser(
-  formData: FormData,
+  formData: FormDetails,
   preferredDates: string[],
   availableDates: string[],
   userId: string,
 ): Promise<ActionResponse | undefined> {
+  let user: User | null = null
+
   try {
-    const validatedFields = addDatesSchema.safeParse({
-      name: formData.get('name'),
-      email: formData.get('email') || undefined,
-    })
+    const validatedFields = addDatesSchema.safeParse(formData)
 
     if (!validatedFields.success) {
       console.log(validatedFields.error.flatten().fieldErrors)
@@ -194,28 +165,27 @@ export async function editUser(
       }
     }
 
-    const { name, email } = validatedFields.data
+    const { attendeeName, attendeeEmail } = validatedFields.data
 
-    const user = await prisma.user.update({
+    user = await prisma.user.update({
       where: {
         id: userId,
       },
       data: {
-        name,
-        email,
+        name: attendeeName,
+        email: attendeeEmail,
         preferredDates,
         availableDates,
       },
     })
-
-    return {
-      userId: user.id,
-      message: 'User updated successfully',
-    }
   } catch (error) {
     return {
       userId: '',
       message: 'Error updating user',
+    }
+  } finally {
+    if (user) {
+      redirect(`/event/results/${user.id}`)
     }
   }
 }
