@@ -11,13 +11,13 @@ export default function EventDetails({
 }) {
   return (
     <fieldset className='fieldset w-full max-w-sm gap-3 p-4'>
-      <legend className='fieldset-legend'>Event</legend>
+      {/* <legend className='fieldset-legend'>Event</legend> */}
       <label className='floating-label'>
-        <span>Name</span>
+        <span>Event Title</span>
         <input
           type='text'
-          placeholder='Name'
-          className='input validator w-full'
+          placeholder='Event Title'
+          className='input validator input-xl w-full'
           name='eventName'
           value={formData.eventName}
           onChange={e => handleFormDataChange({ eventName: e.target.value })}
@@ -36,7 +36,7 @@ export default function EventDetails({
           name='description'
         />
       </label>
-      <label className='fieldset-label mt-2'>
+      {/* <label className='fieldset-label mt-2'>
         <input
           type='checkbox'
           className='checkbox checkbox-sm'
@@ -44,7 +44,7 @@ export default function EventDetails({
           name='allowOthersToViewResults'
         />
         Allow others to view results
-      </label>
+      </label> */}
     </fieldset>
   )
 }

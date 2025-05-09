@@ -32,6 +32,7 @@ const EventStepper = ({
   user?: User
 }) => {
   const isNewEvent = !eventId && !user
+  const steps = ['Choose Dates', 'Event Details', 'Attendees']
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState<FormDetails>({
     eventName: '',
@@ -119,15 +120,18 @@ const EventStepper = ({
   return (
     <div className='w-full'>
       <ul className='steps w-full text-sm sm:text-base'>
-        <li className={`step step-primary`}>Choose Dates</li>
-        {isNewEvent && (
-          <li className={`step ${currentStep > 1 ? 'step-primary' : ''}`}>
-            Event Details
+        {steps.map((step, index) => (
+          <li
+            key={index}
+            className={`step ${currentStep >= index + 1 ? 'step-primary' : ''}`}
+          >
+            <span
+              className={`${currentStep === index + 1 ? 'text-3xl font-semibold' : ''}`}
+            >
+              {step}
+            </span>
           </li>
-        )}
-        <li className={`step ${currentStep === totalSteps ? 'step-primary' : ''}`}>
-          Attendees
-        </li>
+        ))}
       </ul>
       <div className={`card bg-base-300 mt-6 min-h-[450px] w-full shadow-xl`}>
         <div className='card-body items-center justify-center'>{renderStep()}</div>

@@ -1,8 +1,7 @@
 import AddEditDatesHeader from '@/components/AddEditDatesHeader'
-import ChooseUserDates from '@/components/ChooseUserDates'
+import EventStepper from '@/components/EventStepper'
 import prisma from '@/lib/prisma'
 import { getJSDateFromStr } from '@/lib/utilities'
-import { formatDistance } from 'date-fns'
 import { notFound } from 'next/navigation'
 
 export default async function EditEventResults(props: {
@@ -42,7 +41,8 @@ export default async function EditEventResults(props: {
         createdBy={user.event.users[0].name}
         createdAt={user.event.createdAt}
       />
-      <ChooseUserDates user={user} setDates={jsDates} />
+      {/* <ChooseUserDates user={user} setDates={jsDates} /> */}
+      <EventStepper setDates={jsDates} user={user} />
     </div>
   )
 }
