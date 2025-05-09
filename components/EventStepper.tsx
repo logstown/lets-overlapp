@@ -32,19 +32,20 @@ const EventStepper = ({
   user?: User
 }) => {
   const isNewEvent = !eventId && !user
-  const steps = ['Choose Dates', 'Event Details', 'Attendees']
+  const steps = isNewEvent
+    ? ['Choose Dates', 'Event Details', 'Attendees']
+    : ['Choose Dates', 'Your Info']
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState<FormDetails>({
     eventName: '',
-    attendeeName: '',
+    attendeeName: user?.name ?? '',
+    attendeeEmail: user?.email ?? '',
   })
   const [userDates, setUserDates] = useState<UserDates>({
     availableDates: user?.availableDates.map(getJSDateFromStr) ?? [],
     preferredDates: user?.preferredDates.map(getJSDateFromStr) ?? [],
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const totalSteps = isNewEvent ? 3 : 2
 
   const nextStep = () => {
     setCurrentStep(currentStep + 1)
@@ -133,46 +134,50 @@ const EventStepper = ({
           </li>
         ))}
       </ul>
-      <div className={`card bg-base-300 mt-6 min-h-[450px] w-full shadow-xl`}>
+      <div
+        className={`card bg-base-300 mt-6 w-full shadow-xl ${
+          isNewEvent ? 'min-h-[450px]' : 'min-h-[400]'
+        }`}
+      >
         <div className='card-body items-center justify-center'>{renderStep()}</div>
       </div>
-      <div className='mt-4 flex justify-end gap-4'>
-        {currentStep > 1 && (
-          <button
-            className='btn btn-secondary btn-soft'
-            disabled={isSubmitting}
-            onClick={prevStep}
-          >
-            Previous
-          </button>
-        )}
-        {currentStep < totalSteps && (
-          <button
-            className='btn btn-secondary'
-            onClick={nextStep}
-            disabled={
-              (userDates.availableDates.length === 0 &&
-                userDates.preferredDates.length === 0) ||
-              (currentStep > 1 && formData.eventName === '')
-            }
-          >
-            Next
-          </button>
-        )}
-        {currentStep === totalSteps && (
-          <button
-            className='btn btn-primary'
-            onClick={submitForm}
-            disabled={formData.attendeeName === '' || isSubmitting}
-          >
-            Submit
-          </button>
-        )}
-        {!!user && currentStep === 1 && (
-          <Link href={`/event/results/${user.id}`} className='btn btn-soft btn-lg'>
-            Cancel
-          </Link>
-        )}
+      <div className='mt-6 flex justify-between px-6'>
+        <button
+          className={`btn btn-secondary ${currentStep === 1 ? 'invisible' : ''}`}
+          disabled={isSubmitting}
+          onClick={prevStep}
+        >
+          Previous
+        </button>
+        <div className='flex gap-4'>
+          {!!user && (
+            <Link href={`/event/results/${user.id}`} className='btn btn-soft'>
+              Cancel
+            </Link>
+          )}
+          {currentStep < steps.length && (
+            <button
+              className='btn btn-secondary'
+              onClick={nextStep}
+              disabled={
+                (userDates.availableDates.length === 0 &&
+                  userDates.preferredDates.length === 0) ||
+                (currentStep > 1 && formData.eventName === '')
+              }
+            >
+              Next
+            </button>
+          )}
+          {currentStep === steps.length && (
+            <button
+              className='btn btn-primary'
+              onClick={submitForm}
+              disabled={formData.attendeeName === '' || isSubmitting}
+            >
+              Submit
+            </button>
+          )}
+        </div>
       </div>
     </div>
   )

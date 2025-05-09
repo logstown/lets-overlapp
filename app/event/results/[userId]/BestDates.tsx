@@ -4,7 +4,7 @@ export default function BestDates({ dates }: { dates: Date[] }) {
   return (
     <div className='lg:text-xl'>
       {dates.length === 0 ? (
-        <p>No Dates work</p>
+        <p className='text-center text-2xl italic'>No Dates work</p>
       ) : (
         <div className='flex flex-col gap-2 text-center'>
           {dates.length === 1 ? (

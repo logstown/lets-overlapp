@@ -17,11 +17,17 @@ export interface ActionResponse {
   }
 }
 
+const emptyStringToUndefined = z.literal('').transform(() => undefined)
+
+const asOptionalField = <T extends z.ZodTypeAny>(schema: T) => {
+  return schema.optional().or(emptyStringToUndefined)
+}
+
 const newEventSchema = z.object({
   eventName: z.string().min(2, 'Title is required'),
   description: z.string().optional(),
   attendeeName: z.string().min(2, 'Name is required'),
-  attendeeEmail: z.string().email('Invalid email').optional(),
+  attendeeEmail: asOptionalField(z.string().email('Invalid email')),
 })
 
 export async function createEvent(
@@ -85,7 +91,7 @@ export async function createEvent(
 
 const addDatesSchema = z.object({
   attendeeName: z.string().min(2, 'Name is required'),
-  attendeeEmail: z.string().email('Invalid email').optional(),
+  attendeeEmail: asOptionalField(z.string().email('Invalid email')),
 })
 
 export async function addDates(
