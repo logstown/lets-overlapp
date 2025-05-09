@@ -9,6 +9,7 @@ import EventDetails from './EventDetails'
 import AttendeeDetails from './AttendeeDetails'
 import { createEvent, addDates, editUser } from '@/lib/actions'
 import { useRouter } from 'next/navigation'
+import AppCard from './AppCard'
 
 export interface UserDates {
   availableDates: Date[]
@@ -134,13 +135,12 @@ const EventStepper = ({
           </li>
         ))}
       </ul>
-      <div
-        className={`card bg-base-300 mt-6 w-full shadow-xl ${
-          isNewEvent ? 'min-h-[450px]' : 'min-h-[400]'
-        }`}
+      <AppCard
+        className={`mt-6 w-full ${isNewEvent ? 'min-h-[450px]' : 'min-h-[400px]'}`}
+        bodyClassName='items-center justify-center'
       >
-        <div className='card-body items-center justify-center'>{renderStep()}</div>
-      </div>
+        {renderStep()}
+      </AppCard>
       <div className='mt-6 flex justify-between px-6'>
         <button
           className={`btn btn-secondary ${currentStep === 1 ? 'invisible' : ''}`}

@@ -9,6 +9,7 @@ import DaysLegend from '@/components/DaysLegend'
 import { User } from '@prisma/client'
 import AvailabilityTable from './_AvailabilityTable'
 import BestDates from './BestDates'
+import AppCard from '@/components/AppCard'
 
 export interface UsersDate {
   date: Date
@@ -54,48 +55,45 @@ export default async function EventResults(props: {
   return (
     <div className='grid grid-flow-row gap-10'>
       <div className='flex w-full gap-6'>
-        <div className='card bg-base-300 grow p-0 shadow-2xl sm:p-3'>
-          <div className='card-body gap-1'>
-            <h1 className='text-3xl font-semibold'>{title}</h1>
-            <p className='text-base-content/70 mt-4 w-full max-w-[65ch] text-base text-pretty'>
-              {description}
-            </p>
+        <AppCard className='grow' bodyClassName='gap-1'>
+          <h1 className='text-3xl font-semibold'>{title}</h1>
+          <p className='text-base-content/70 mt-4 w-full max-w-[65ch] text-base text-pretty'>
+            {description}
+          </p>
+        </AppCard>
+        <AppCard
+          className='hidden md:flex'
+          bodyClassName='items-center justify-center'
+        >
+          <div className='text-sm italic'>Created by</div>
+          <div className='text-center text-3xl font-bold whitespace-nowrap'>
+            {creator?.name}
           </div>
-        </div>
-        <div className='card bg-base-300 hidden p-0 shadow-2xl sm:p-3 md:flex'>
-          <div className='card-body items-center justify-center'>
-            <div className='text-sm italic'>Created by</div>
-            <div className='text-center text-3xl font-bold whitespace-nowrap'>
-              {creator?.name}
-            </div>
-            <div className='text-xs italic'>
-              {formatDistance(event.createdAt, new Date(), {
-                addSuffix: true,
-              })}
-            </div>
+          <div className='text-xs italic'>
+            {formatDistance(event.createdAt, new Date(), {
+              addSuffix: true,
+            })}
           </div>
-        </div>
+        </AppCard>
       </div>
-      <div className='card bg-base-300 w-full p-0 shadow-2xl sm:p-3'>
-        <div className='card-body'>
-          <div className='flex flex-col gap-15 py-4'>
-            {users.length > 1 && (
-              <>
-                <BestDates dates={bestDates} />
-                <AggregatedDates usersDates={usersDates} />
-              </>
-            )}
-            <AvailabilityTable
-              usersDates={usersDates}
-              users={users}
-              currentUserId={userId}
-            />
-            <div className='mt-10 flex justify-center'>
-              <DaysLegend includeUnavailable />
-            </div>
+      <AppCard className='w-full'>
+        <div className='flex flex-col gap-15 py-4'>
+          {users.length > 1 && (
+            <>
+              <BestDates dates={bestDates} />
+              <AggregatedDates usersDates={usersDates} />
+            </>
+          )}
+          <AvailabilityTable
+            usersDates={usersDates}
+            users={users}
+            currentUserId={userId}
+          />
+          <div className='mt-10 flex justify-center'>
+            <DaysLegend includeUnavailable />
           </div>
         </div>
-      </div>
+      </AppCard>
       <CopyLink id={event.id} />
       <CopyLink id={userId} isResults />
     </div>

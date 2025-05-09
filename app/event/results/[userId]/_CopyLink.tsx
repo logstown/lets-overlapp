@@ -1,5 +1,6 @@
 'use client'
 
+import AppCard from '@/components/AppCard'
 import { useState, useEffect } from 'react'
 
 export default function CopyLink({
@@ -36,24 +37,22 @@ export default function CopyLink({
 
   return (
     <>
-      <div className={`card w-full shadow-2xl ${'bg-base-300 text-base-content'}`}>
-        <div className='card-body'>
-          <h2 className='card-title mb-4 text-2xl'>
-            {isResults ? 'View Results' : 'Share with others'}
-          </h2>
-          <div className='join w-full'>
-            <input
-              type='text'
-              className='input join-item w-full'
-              value={url}
-              readOnly
-            />
-            <button className='btn join-item btn-neutral' onClick={copyToClipboard}>
-              Copy
-            </button>
-          </div>
+      <AppCard className='w-full'>
+        <h2 className='card-title mb-4 text-2xl'>
+          {isResults ? 'View Results' : 'Share with others'}
+        </h2>
+        <div className='join w-full'>
+          <input
+            type='text'
+            className='input join-item w-full'
+            value={url}
+            readOnly
+          />
+          <button className='btn join-item btn-neutral' onClick={copyToClipboard}>
+            Copy
+          </button>
         </div>
-      </div>
+      </AppCard>
       {isCopied && (
         <div className='toast absolute right-[50%] bottom-0 translate-x-[50%]'>
           <div className='alert alert-info'>

@@ -41,7 +41,7 @@ export default function AggregatedDates({
         modifiers={dateGroups}
         modifiersClassNames={modifierClassNames}
         classNames={{
-          root: 'react-day-picker shadow-lg',
+          root: 'react-day-picker shadow-2xl',
           today: 'text-base-content bg-base-100',
         }}
         hideNavigation

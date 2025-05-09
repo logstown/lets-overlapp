@@ -18,19 +18,19 @@ export default function AvailabilityTable({
       <table className='table-pin-rows table-xs sm:table-sm md:table-md table-pin-cols table text-sm sm:text-base'>
         <thead>
           <tr>
-            <th className='bg-base-300'></th>
+            <th className='bg-base-100'></th>
             {usersDates.map(({ date }) => (
-              <td className='bg-base-300 text-center' key={date.toISOString()}>
+              <td className='bg-base-100 text-center' key={date.toISOString()}>
                 {format(date, 'MMM d')}
               </td>
             ))}
-            <th className='bg-base-300'></th>
+            <th className='bg-base-100'></th>
           </tr>
         </thead>
         <tbody>
           {users.map(({ id, name, isCreator }) => (
             <tr key={id}>
-              <th className='border-base-300 bg-base-300 w-1 border-2'>
+              <th className='border-base-100 bg-base-100 w-1 border-2'>
                 <div className='flex items-center gap-2 whitespace-nowrap'>
                   {name}
                   {isCreator && <CrownIcon size={15} />}
@@ -39,7 +39,7 @@ export default function AvailabilityTable({
               {usersDates.map(({ date, availableDateUsers, preferredDateUsers }) => (
                 <td
                   key={date.toISOString()}
-                  className={`border-base-300 border-2 ${
+                  className={`border-base-100 border-2 ${
                     preferredDateUsers.includes(id)
                       ? 'bg-success'
                       : availableDateUsers.includes(id)
@@ -48,7 +48,7 @@ export default function AvailabilityTable({
                   }`}
                 ></td>
               ))}
-              <th className='border-base-300 bg-base-300 w-1 border-2'>
+              <th className='border-base-100 bg-base-100 w-1 border-2'>
                 <Link
                   href={`/event/results/${currentUserId}/edit`}
                   className={currentUserId !== id ? 'invisible' : ''}

@@ -89,25 +89,5 @@ export default function ChooseUserDates({
       />
       <DaysLegend />
     </div>
-    /* <div className='flex justify-end'>
-        {(userDates.availableDates.length > 0 || userDates.preferredDates.length > 0) && isEditing && (
-          <div className='flex gap-4'>
-            <ContinueButton
-              preferredDates={userDates.preferredDates}
-              availableDates={userDates.availableDates}
-              eventId={eventId}
-              user={user}
-            />
-            {!!user && (
-              <Link
-                href={`/event/results/${user.id}`}
-                className='btn btn-soft btn-xl'
-              >
-                Cancel
-              </Link>
-            )}
-          </div>
-        )}
-      </div> */
   )
 }
