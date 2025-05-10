@@ -11,7 +11,7 @@ export default function AddEditDatesHeader({
 }) {
   return (
     <div className='flex flex-col items-center gap-1'>
-      <h1 className='text-base-content/50 text-2xl font-medium uppercase'>
+      <h1 className='text-base-content/60 text-2xl font-medium uppercase'>
         {title}
       </h1>
       <h5 className='text-base-content/70 text-xs'>

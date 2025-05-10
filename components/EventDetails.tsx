@@ -11,10 +11,12 @@ export default function EventDetails({
   handleFormDataChange: (formData: Partial<FormDetails>) => void
 }) {
   return (
-    <div className='flex flex-col items-center gap-4 md:w-full md:flex-row md:items-start md:justify-evenly'>
+    <div className='flex flex-col items-start gap-4 md:w-full md:flex-row md:justify-evenly'>
       <div>
         <fieldset className='fieldset w-full max-w-sm'>
-          <legend className='fieldset-legend text-lg'>Event Title</legend>
+          <legend className='fieldset-legend text-base-content/60 text-lg font-medium'>
+            Event Title
+          </legend>
           <input
             type='text'
             className='input validator input-xl w-full'
@@ -29,7 +31,9 @@ export default function EventDetails({
           {/* <div className='validator-hint'>Enter event title</div> */}
         </fieldset>
         <fieldset className='fieldset w-full max-w-sm'>
-          <legend className='fieldset-legend'>Description</legend>
+          <legend className='fieldset-legend text-base-content/60 font-medium'>
+            Description
+          </legend>
           <textarea
             rows={4}
             className='textarea w-full'
@@ -49,7 +53,9 @@ export default function EventDetails({
         </fieldset>
       </div>
       <fieldset className='fieldset'>
-        <legend className='fieldset-legend text-lg'>Icon</legend>
+        <legend className='fieldset-legend text-base-content/60 text-lg font-medium'>
+          Icon
+        </legend>
         <div className='grid grid-cols-3 gap-2'>
           {eventIcons.map((icon: { event: string; fileName: string }) => (
             <button

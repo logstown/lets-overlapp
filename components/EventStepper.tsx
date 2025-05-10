@@ -34,8 +34,8 @@ const EventStepper = ({
 }) => {
   const isNewEvent = !eventId && !user
   const steps = isNewEvent
-    ? ['Choose Dates', 'Event Details', 'Attendees']
-    : ['Choose Dates', 'Your Info']
+    ? ['Choose Availability', 'Event Details', 'Attendees']
+    : ['Choose Availability', 'Your Info']
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState<FormDetails>({
     eventName: '',
@@ -130,7 +130,7 @@ const EventStepper = ({
             className={`step ${currentStep >= index + 1 ? 'step-primary' : ''}`}
           >
             <span
-              className={`${currentStep === index + 1 ? 'text-3xl font-semibold' : ''}`}
+              className={`${currentStep === index + 1 ? 'text-xl font-semibold sm:text-2xl' : ''}`}
             >
               {step}
             </span>

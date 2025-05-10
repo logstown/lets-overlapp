@@ -98,7 +98,7 @@ export default async function EventResults(props: {
             users={users}
             currentUserId={userId}
           />
-          <div className='mt-10 flex justify-center'>
+          <div className='flex justify-center'>
             <DaysLegend includeUnavailable />
           </div>
         </div>
