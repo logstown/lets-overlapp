@@ -53,7 +53,7 @@ export default async function EventResults(props: {
   const creator = event.users.find(x => x.isCreator)
 
   return (
-    <div className='grid grid-flow-row gap-10'>
+    <div className='flex flex-col gap-10'>
       <div className='flex w-full gap-6'>
         <AppCard className='grow' bodyClassName='gap-1'>
           <h1 className='text-3xl font-semibold'>{title}</h1>

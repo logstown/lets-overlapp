@@ -39,6 +39,7 @@ const EventStepper = ({
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState<FormDetails>({
     eventName: '',
+    description: '',
     attendeeName: user?.name ?? '',
     attendeeEmail: user?.email ?? '',
   })

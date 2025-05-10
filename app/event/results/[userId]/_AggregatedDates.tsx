@@ -43,6 +43,7 @@ export default function AggregatedDates({
         classNames={{
           root: 'react-day-picker shadow-2xl',
           today: 'text-base-content bg-base-100',
+          months: 'rdp-months justify-center',
         }}
         hideNavigation
       />

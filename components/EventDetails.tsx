@@ -34,6 +34,8 @@ export default function EventDetails({
           placeholder='Description (optional)'
           className='textarea w-full'
           name='description'
+          value={formData.description}
+          onChange={e => handleFormDataChange({ description: e.target.value })}
         />
       </label>
       {/* <label className='fieldset-label mt-2'>

@@ -24,6 +24,7 @@ export default function ChooseUserDates({
     today: 'text-base-content bg-base-100',
     disabled: '!text-base-content/50',
     day_button: 'rdp-day_button hover:!bg-transparent',
+    months: 'rdp-months justify-center',
   }
 
   if (isUpdating) {
