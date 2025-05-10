@@ -8,7 +8,6 @@ import { getJSDateFromStr } from '@/lib/utilities'
 import EventDetails from './EventDetails'
 import AttendeeDetails from './AttendeeDetails'
 import { createEvent, addDates, editUser } from '@/lib/actions'
-import { useRouter } from 'next/navigation'
 import AppCard from './AppCard'
 
 export interface UserDates {
@@ -21,6 +20,7 @@ export interface FormDetails {
   description?: string
   attendeeName: string
   attendeeEmail?: string
+  icon: string
 }
 
 const EventStepper = ({
@@ -42,6 +42,7 @@ const EventStepper = ({
     description: '',
     attendeeName: user?.name ?? '',
     attendeeEmail: user?.email ?? '',
+    icon: 'calendar',
   })
   const [userDates, setUserDates] = useState<UserDates>({
     availableDates: user?.availableDates.map(getJSDateFromStr) ?? [],

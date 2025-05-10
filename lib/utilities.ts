@@ -40,3 +40,42 @@ export const themes = [
   'abyss',
   'silk',
 ]
+
+export const eventIcons = [
+  {
+    event: 'Calendar',
+    fileName: 'calendar',
+  },
+  {
+    event: 'Party',
+    fileName: 'party',
+  },
+  {
+    event: 'Conversation',
+    fileName: 'chat-bubble',
+  },
+  {
+    event: 'Clock',
+    fileName: 'clock',
+  },
+  {
+    event: 'Computer',
+    fileName: 'computer',
+  },
+  {
+    event: 'Food',
+    fileName: 'food',
+  },
+  {
+    event: 'Map',
+    fileName: 'map',
+  },
+  {
+    event: 'People',
+    fileName: 'people',
+  },
+  {
+    event: 'Trophy',
+    fileName: 'trophy',
+  },
+]

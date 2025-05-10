@@ -55,11 +55,20 @@ export default async function EventResults(props: {
   return (
     <div className='flex flex-col gap-10'>
       <div className='flex w-full gap-6'>
-        <AppCard className='grow' bodyClassName='gap-1'>
-          <h1 className='text-3xl font-semibold'>{title}</h1>
-          <p className='text-base-content/70 mt-4 w-full max-w-[65ch] text-base text-pretty'>
-            {description}
-          </p>
+        <AppCard className='grow'>
+          <div className='flex items-center gap-6'>
+            <img
+              src={`/event-icons/${event.icon}.png`}
+              alt={title}
+              className='h-24 w-24 rounded-2xl'
+            />
+            <div className='flex flex-col gap-1'>
+              <h1 className='text-3xl font-semibold'>{title}</h1>
+              <p className='text-base-content/70 w-full max-w-[65ch] text-base text-pretty'>
+                {description}
+              </p>
+            </div>
+          </div>
         </AppCard>
         <AppCard
           className='hidden md:flex'

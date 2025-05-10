@@ -28,6 +28,7 @@ const newEventSchema = z.object({
   description: z.string().optional(),
   attendeeName: z.string().min(2, 'Name is required'),
   attendeeEmail: asOptionalField(z.string().email('Invalid email')),
+  icon: z.string().min(1, 'Icon is required'),
 })
 
 export async function createEvent(
@@ -49,7 +50,7 @@ export async function createEvent(
       }
     }
 
-    const { eventName, description, attendeeName, attendeeEmail } =
+    const { eventName, description, attendeeName, attendeeEmail, icon } =
       validatedFields.data
 
     user = await prisma.user.create({
@@ -63,6 +64,7 @@ export async function createEvent(
           create: {
             title: eventName,
             description,
+            icon,
           },
         },
       },

@@ -38,6 +38,7 @@ model Event {
   createdAt                DateTime @default(now())
   updatedAt                DateTime @updatedAt
   allowOthersToViewResults Boolean  @default(true)
+  icon                     String   @default("calendar")
 
   users User[]
 }
