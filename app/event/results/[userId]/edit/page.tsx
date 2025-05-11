@@ -40,6 +40,7 @@ export default async function EditEventResults(props: {
         title={user.event.title}
         createdBy={user.event.users[0].name}
         createdAt={user.event.createdAt}
+        icon={user.event.icon}
       />
       {/* <ChooseUserDates user={user} setDates={jsDates} /> */}
       <EventStepper setDates={jsDates} user={user} />

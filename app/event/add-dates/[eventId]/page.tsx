@@ -42,6 +42,7 @@ export default async function AddDates(props: {
         title={event.title}
         createdBy={event.users[0].name}
         createdAt={event.createdAt}
+        icon={event.icon}
       />
       <EventStepper setDates={jsDates} eventId={eventId} />
     </div>

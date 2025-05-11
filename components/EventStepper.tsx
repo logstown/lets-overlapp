@@ -34,7 +34,7 @@ const EventStepper = ({
 }) => {
   const isNewEvent = !eventId && !user
   const steps = isNewEvent
-    ? ['Choose Availability', 'Event Details', 'Attendees']
+    ? ['Choose Availability', 'Event Details', 'Your Info']
     : ['Choose Availability', 'Your Info']
   const [currentStep, setCurrentStep] = useState(1)
   const [formData, setFormData] = useState<FormDetails>({

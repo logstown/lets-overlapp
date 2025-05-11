@@ -31,7 +31,7 @@ export default function EventDetails({
           {/* <div className='validator-hint'>Enter event title</div> */}
         </fieldset>
         <fieldset className='fieldset w-full max-w-sm'>
-          <legend className='fieldset-legend text-base-content/60 font-medium'>
+          <legend className='fieldset-legend text-base-content/60 text-lg font-medium'>
             Description
           </legend>
           <textarea

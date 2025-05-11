@@ -8,7 +8,7 @@ export default function AppCard({
   bodyClassName?: string
 }) {
   return (
-    <div className={`card bg-base-100 !p-0 shadow-xl sm:p-3 ${className || ''}`}>
+    <div className={`card bg-base-100 !p-0 shadow-2xl sm:p-3 ${className || ''}`}>
       <div className={`card-body ${bodyClassName || ''}`}>{children}</div>
     </div>
   )
