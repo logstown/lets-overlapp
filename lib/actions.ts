@@ -4,9 +4,11 @@ import { z } from 'zod'
 import prisma from './prisma'
 import { redirect } from 'next/navigation'
 import { Resend } from 'resend'
-import { EmailTemplate } from '@/components/email-template'
+import { CreateEventEmailTemplate } from '@/components/CreateEventEmail'
 import { FormDetails } from '@/components/EventStepper'
-import { User } from '@prisma/client'
+import { User, Event } from '@prisma/client'
+import { DatesAddedEmailTemplate } from '@/components/DatesAddedEmail'
+
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 export interface ActionResponse {
@@ -36,7 +38,7 @@ export async function createEvent(
   preferredDates: string[],
   availableDates: string[],
 ): Promise<ActionResponse | undefined> {
-  let user: User | null = null
+  let user: (User & { event: Event }) | null = null
 
   try {
     const validatedFields = newEventSchema.safeParse(formData)
@@ -68,14 +70,17 @@ export async function createEvent(
           },
         },
       },
+      include: {
+        event: true,
+      },
     })
 
-    if (attendeeEmail) {
+    if (attendeeEmail && user) {
       resend.emails.send({
-        from: 'Welcome <onboarding@letsoverl.app>',
+        from: 'Welcome <donotreply@letsoverl.app>',
         to: [attendeeEmail],
-        subject: 'Hello world',
-        react: await EmailTemplate({ firstName: attendeeName }),
+        subject: `Event created: ${eventName}`,
+        react: await CreateEventEmailTemplate({ user }),
       })
     }
   } catch (error) {
@@ -102,7 +107,7 @@ export async function addDates(
   availableDates: string[],
   eventId: string,
 ): Promise<ActionResponse | undefined> {
-  let user: User | null = null
+  let user: (User & { event: Event & { users: User[] } }) | null = null
 
   try {
     const validatedFields = addDatesSchema.safeParse(formData)
@@ -130,15 +135,38 @@ export async function addDates(
           },
         },
       },
+      include: {
+        event: {
+          include: {
+            users: true,
+          },
+        },
+      },
     })
 
-    if (attendeeEmail) {
-      resend.emails.send({
-        from: 'Welcome <onboarding@letsoverl.app>',
-        to: [attendeeEmail],
-        subject: 'Hello world',
-        react: await EmailTemplate({ firstName: attendeeName }),
-      })
+    if (user) {
+      if (attendeeEmail) {
+        resend.emails.send({
+          from: 'Welcome <donotreply@letsoverl.app>',
+          to: [attendeeEmail],
+          subject: `Dates added: ${user.event.title}`,
+          react: await CreateEventEmailTemplate({ user }),
+        })
+      }
+
+      const creator = user.event.users[0]
+
+      if (creator.email) {
+        resend.emails.send({
+          from: 'Lets Overl.app <donotreply@letsoverl.app>',
+          to: [creator.email],
+          subject: `${user.name} added dates to ${user.event.title}`,
+          react: await DatesAddedEmailTemplate({
+            creator,
+            attendee: user,
+          }),
+        })
+      }
     }
   } catch (error) {
     console.error('errrrrrrror;', error)
@@ -159,7 +187,7 @@ export async function editUser(
   availableDates: string[],
   userId: string,
 ): Promise<ActionResponse | undefined> {
-  let user: User | null = null
+  let user: (User & { event: Event & { users: User[] } }) | null = null
 
   try {
     const validatedFields = addDatesSchema.safeParse(formData)
@@ -185,7 +213,29 @@ export async function editUser(
         preferredDates,
         availableDates,
       },
+      include: {
+        event: {
+          include: {
+            users: true,
+          },
+        },
+      },
     })
+
+    const creator = user?.event.users[0]
+
+    if (creator?.email) {
+      resend.emails.send({
+        from: 'Lets Overl.app <donotreply@letsoverl.app>',
+        to: [creator.email],
+        subject: `${user.name} added dates to ${user.event.title}`,
+        react: await DatesAddedEmailTemplate({
+          creator,
+          attendee: user,
+          updated: true,
+        }),
+      })
+    }
   } catch (error) {
     return {
       userId: '',

@@ -48,7 +48,10 @@ export default function CopyLink({
             value={url}
             readOnly
           />
-          <button className='btn join-item btn-neutral' onClick={copyToClipboard}>
+          <button
+            className='btn join-item btn-neutral btn-soft'
+            onClick={copyToClipboard}
+          >
             Copy
           </button>
         </div>
