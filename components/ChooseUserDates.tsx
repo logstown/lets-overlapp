@@ -28,7 +28,7 @@ export default function ChooseUserDates({
   }
 
   if (isUpdating) {
-    // classNames.day = 'text-primary'
+    classNames.day = 'text-primary'
   }
 
   const [numberOfMonths] = useState(() => {
