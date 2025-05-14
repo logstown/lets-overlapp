@@ -80,7 +80,9 @@ export default function ChooseUserDates({
         defaultMonth={minDate}
         disabled={disabledMatcher}
         numberOfMonths={numberOfMonths}
-        onDayClick={(day, modifiers) => {
+        onDayClick={(day, modifiers, e) => {
+          console.log('e', e)
+          e.preventDefault()
           console.log('day', day)
           console.log('modifiers', modifiers)
           let newAvailableDates = [...(userDates.availableDates ?? [])]
