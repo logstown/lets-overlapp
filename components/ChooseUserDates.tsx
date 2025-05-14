@@ -48,29 +48,29 @@ export default function ChooseUserDates({
     return !setDates.some(setDate => setDate.toISOString() === day.toISOString())
   }
 
-  const onSelected: DayEventHandler<React.MouseEvent> = (day, modifiers) => {
-    console.log('day', day)
-    console.log('modifiers', modifiers)
-    let newAvailableDates = [...(userDates.availableDates ?? [])]
-    let newPreferredDates = [...(userDates.preferredDates ?? [])]
+  // const onSelected: DayEventHandler<React.MouseEvent> = (day, modifiers) => {
+  //   console.log('day', day)
+  //   console.log('modifiers', modifiers)
+  //   let newAvailableDates = [...(userDates.availableDates ?? [])]
+  //   let newPreferredDates = [...(userDates.preferredDates ?? [])]
 
-    if (modifiers.availableDates) {
-      newAvailableDates = reject(newAvailableDates, d => isSameDay(day, d))
-      newPreferredDates.push(day)
-    } else if (modifiers.preferredDates) {
-      newPreferredDates = reject(newPreferredDates, d => isSameDay(day, d))
-    } else {
-      newAvailableDates.push(day)
-    }
+  //   if (modifiers.availableDates) {
+  //     newAvailableDates = reject(newAvailableDates, d => isSameDay(day, d))
+  //     newPreferredDates.push(day)
+  //   } else if (modifiers.preferredDates) {
+  //     newPreferredDates = reject(newPreferredDates, d => isSameDay(day, d))
+  //   } else {
+  //     newAvailableDates.push(day)
+  //   }
 
-    console.log('newAvailableDates', newAvailableDates)
-    console.log('newPreferredDates', newPreferredDates)
+  //   console.log('newAvailableDates', newAvailableDates)
+  //   console.log('newPreferredDates', newPreferredDates)
 
-    setUserDates({
-      availableDates: newAvailableDates,
-      preferredDates: newPreferredDates,
-    })
-  }
+  //   setUserDates({
+  //     availableDates: newAvailableDates,
+  //     preferredDates: newPreferredDates,
+  //   })
+  // }
 
   return (
     <div className='flex flex-col items-center justify-evenly gap-6'>
