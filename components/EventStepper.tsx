@@ -145,7 +145,7 @@ const EventStepper = ({
       </AppCard>
       <div className='mt-6 flex justify-between px-6'>
         <button
-          className={`btn btn-secondary ${currentStep === 1 ? 'invisible' : ''}`}
+          className={`btn btn-lg btn-secondary ${currentStep === 1 ? 'invisible' : ''}`}
           disabled={isSubmitting}
           onClick={prevStep}
         >
@@ -153,13 +153,13 @@ const EventStepper = ({
         </button>
         <div className='flex gap-4'>
           {!!user && (
-            <Link href={`/event/results/${user.id}`} className='btn btn-soft'>
+            <Link href={`/event/results/${user.id}`} className='btn btn-lg btn-soft'>
               Cancel
             </Link>
           )}
           {currentStep < steps.length && (
             <button
-              className='btn btn-secondary'
+              className='btn btn-lg btn-secondary'
               onClick={nextStep}
               disabled={
                 (userDates.availableDates.length === 0 &&
@@ -172,7 +172,7 @@ const EventStepper = ({
           )}
           {currentStep === steps.length && (
             <button
-              className='btn btn-primary'
+              className='btn btn-lg btn-primary'
               onClick={submitForm}
               disabled={formData.attendeeName === '' || isSubmitting}
             >

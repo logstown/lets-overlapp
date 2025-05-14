@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 export default function EventLayout({ children }: { children: React.ReactNode }) {
   return (
-    <>
+    <div className='pb-16'>
       <div className='navbar'>
         <div className='flex-1'>
           <Link
@@ -16,6 +16,6 @@ export default function EventLayout({ children }: { children: React.ReactNode })
         <NavbarActions />
       </div>
       <div className='mx-auto mt-4 max-w-5xl p-4'>{children}</div>
-    </>
+    </div>
   )
 }
