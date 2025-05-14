@@ -18,6 +18,7 @@ export default function ChooseUserDates({
   userDates: UserDates
   setUserDates: (userDates: UserDates) => void
 }) {
+  console.log('userDates', userDates)
   const minDate = setDates ? min(setDates) : new Date()
   const classNames: Partial<ClassNames> = {
     root: 'react-day-picker shadow-lg',
