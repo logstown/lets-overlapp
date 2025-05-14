@@ -36,7 +36,7 @@ const EventStepper = ({
   const steps = isNewEvent
     ? ['Choose Availability', 'Event Details', 'Your Info']
     : ['Choose Availability', 'Your Info']
-  const [currentStep, setCurrentStep] = useState(1)
+  const [currentStep, setCurrentStep] = useState<number>(1)
   const [formData, setFormData] = useState<FormDetails>({
     eventName: '',
     description: '',
@@ -127,7 +127,7 @@ const EventStepper = ({
         {steps.map((step, index) => (
           <li
             key={index}
-            className={`step ${currentStep >= index + 1 ? 'step-primary' : ''}`}
+            className={`step ${currentStep >= index + 1 ? 'step-secondary' : ''}`}
           >
             <span
               className={`${currentStep === index + 1 ? 'text-xl font-semibold sm:text-2xl' : ''}`}
@@ -145,7 +145,7 @@ const EventStepper = ({
       </AppCard>
       <div className='mt-6 flex justify-between px-6'>
         <button
-          className={`btn btn-lg btn-secondary ${currentStep === 1 ? 'invisible' : ''}`}
+          className={`btn btn-lg btn-primary btn-soft ${currentStep === 1 ? 'invisible' : ''}`}
           disabled={isSubmitting}
           onClick={prevStep}
         >
@@ -159,7 +159,7 @@ const EventStepper = ({
           )}
           {currentStep < steps.length && (
             <button
-              className='btn btn-lg btn-secondary'
+              className='btn btn-lg btn-primary'
               onClick={nextStep}
               disabled={
                 (userDates.availableDates.length === 0 &&
