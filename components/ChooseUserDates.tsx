@@ -80,7 +80,29 @@ export default function ChooseUserDates({
         defaultMonth={minDate}
         disabled={disabledMatcher}
         numberOfMonths={numberOfMonths}
-        onDayClick={onSelected}
+        onDayClick={(day, modifiers) => {
+          console.log('day', day)
+          console.log('modifiers', modifiers)
+          let newAvailableDates = [...(userDates.availableDates ?? [])]
+          let newPreferredDates = [...(userDates.preferredDates ?? [])]
+
+          if (modifiers.availableDates) {
+            newAvailableDates = reject(newAvailableDates, d => isSameDay(day, d))
+            newPreferredDates.push(day)
+          } else if (modifiers.preferredDates) {
+            newPreferredDates = reject(newPreferredDates, d => isSameDay(day, d))
+          } else {
+            newAvailableDates.push(day)
+          }
+
+          console.log('newAvailableDates', newAvailableDates)
+          console.log('newPreferredDates', newPreferredDates)
+
+          setUserDates({
+            availableDates: newAvailableDates,
+            preferredDates: newPreferredDates,
+          })
+        }}
         modifiers={{
           preferredDates: userDates.preferredDates,
           availableDates: userDates.availableDates,
