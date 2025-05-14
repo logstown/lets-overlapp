@@ -72,7 +72,7 @@ function getDayPickerStuff(usersDates: UsersDate[]) {
       return `${baseClasses} bg-base-300 text-base-content`
     }
 
-    let classToReturn = `${baseClasses} bg-success text-success-content`
+    const classToReturn = `${baseClasses} bg-success text-success-content`
 
     if (!dateType.startsWith('available-')) {
       return classToReturn

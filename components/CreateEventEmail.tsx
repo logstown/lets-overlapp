@@ -16,7 +16,7 @@ export const CreateEventEmailTemplate: React.FC<
     <div>
       <h3>Hi, {user.name}!</h3>
       {user.isCreator ? (
-        <p>You've created the event: {eventTitle}</p>
+        <p>You&apos;ve created the event: {eventTitle}</p>
       ) : (
         <p>Thank you for voting on dates for {eventTitle}</p>
       )}

@@ -14,7 +14,7 @@ export default function Navbar() {
             href='/'
             className='p-2 text-2xl font-semibold tracking-tight drop-shadow-2xl lg:text-3xl'
           >
-            Let's Overlapp
+            Let&apos;s Overlapp
           </Link>
         )}
       </div>

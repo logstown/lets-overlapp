@@ -39,7 +39,6 @@ export default function ChooseUserDates({
       return 2
     }
   })
-  const [isEditing, setIsEditing] = useState(false)
 
   const disabledMatcher: Matcher = (day: Date) => {
     if (!setDates) {
@@ -65,7 +64,6 @@ export default function ChooseUserDates({
       availableDates: newAvailableDates,
       preferredDates: newPreferredDates,
     })
-    setIsEditing(true)
   }
 
   return (

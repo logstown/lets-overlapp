@@ -237,6 +237,7 @@ export async function editUser(
       })
     }
   } catch (error) {
+    console.log('errrrrrrror;', error)
     return {
       userId: '',
       message: 'Error updating user',

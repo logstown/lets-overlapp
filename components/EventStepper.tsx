@@ -81,7 +81,7 @@ const EventStepper = ({
 
   const submitForm = async () => {
     setIsSubmitting(true)
-    const result = await saveData()
+    await saveData()
     setIsSubmitting(false)
   }
 
