@@ -1,4 +1,3 @@
-import { User } from '@prisma/client'
 import { format } from 'date-fns'
 import Link from 'next/link'
 import { CrownIcon, PencilIcon } from 'lucide-react'
@@ -10,7 +9,7 @@ export default function AvailabilityTable({
   currentUserId,
 }: {
   usersDates: UsersDate[]
-  users: User[]
+  users: any[]
   currentUserId: string
 }) {
   return (
