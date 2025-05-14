@@ -18,7 +18,7 @@ export default function ChooseUserDates({
   userDates: UserDates
   setUserDates: (userDates: UserDates) => void
 }) {
-  console.log('userDates', userDates)
+  console.log('setDates', setDates)
   const minDate = setDates ? min(setDates) : new Date()
   const classNames: Partial<ClassNames> = {
     root: 'react-day-picker shadow-lg',
@@ -49,6 +49,8 @@ export default function ChooseUserDates({
   }
 
   const onSelected: DayEventHandler<React.MouseEvent> = (day, modifiers) => {
+    console.log('day', day)
+    console.log('modifiers', modifiers)
     let newAvailableDates = [...(userDates.availableDates ?? [])]
     let newPreferredDates = [...(userDates.preferredDates ?? [])]
 
@@ -60,6 +62,9 @@ export default function ChooseUserDates({
     } else {
       newAvailableDates.push(day)
     }
+
+    console.log('newAvailableDates', newAvailableDates)
+    console.log('newPreferredDates', newPreferredDates)
 
     setUserDates({
       availableDates: newAvailableDates,
