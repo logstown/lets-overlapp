@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { ClassNames, DayEventHandler, DayPicker, Matcher } from 'react-day-picker'
-import { max, min, differenceInCalendarMonths, isSameDay } from 'date-fns'
+import { max, min, differenceInCalendarMonths, isSameDay, isEqual } from 'date-fns'
 import { reject } from 'lodash'
 import DaysLegend from './DaysLegend'
 import { UserDates } from './EventStepper'
@@ -44,7 +44,7 @@ export default function ChooseUserDates({
     if (!setDates) {
       return day < new Date()
     }
-    return !setDates.some(setDate => setDate.toUTCString() === day.toUTCString())
+    return !setDates.some(setDate => isEqual(setDate, day))
   }
 
   const onSelected: DayEventHandler<React.MouseEvent> = (day, modifiers) => {
