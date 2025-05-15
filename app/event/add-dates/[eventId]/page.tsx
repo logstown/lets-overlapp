@@ -32,7 +32,7 @@ export default async function AddDates(props: {
 
   const { availableDates, preferredDates } = event.users[0]
 
-  const jsDates = [...availableDates, ...preferredDates].map(getJSDateFromStr)
+  const setDates = [...availableDates, ...preferredDates]
 
   return (
     <div className='flex flex-col gap-6'>
@@ -42,7 +42,7 @@ export default async function AddDates(props: {
         createdAt={event.createdAt}
         icon={event.icon}
       />
-      <EventStepper setDates={jsDates} eventId={eventId} />
+      <EventStepper setDates={setDates} eventId={eventId} />
     </div>
   )
 }

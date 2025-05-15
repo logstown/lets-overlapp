@@ -28,11 +28,11 @@ const EventStepper = ({
   eventId,
   user,
 }: {
-  setDates?: Date[]
+  setDates?: string[]
   eventId?: string
   user?: User
 }) => {
-  console.log(setDates)
+  const setJSDates = setDates?.map(getJSDateFromStr)
   const isNewEvent = !eventId && !user
   const steps = isNewEvent
     ? ['Choose Availability', 'Event Details', 'Your Info']
@@ -86,13 +86,15 @@ const EventStepper = ({
     setIsSubmitting(false)
   }
 
+  console.log(setJSDates)
+
   const renderStep = () => {
     // ... Implement logic to render different step components based on currentStep and pass necessary props like formData and handleFormDataChange
     switch (currentStep) {
       case 1:
         return (
           <ChooseUserDates
-            setDates={setDates}
+            setDates={setJSDates}
             isUpdating={!isNewEvent}
             userDates={userDates}
             setUserDates={setUserDates}
