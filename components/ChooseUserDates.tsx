@@ -72,7 +72,6 @@ export default function ChooseUserDates({
         startMonth={new Date()}
         fixedWeeks
         defaultMonth={minDate}
-        disabled={disabledMatcher}
         numberOfMonths={numberOfMonths}
         onDayClick={onSelected}
         modifiers={{
