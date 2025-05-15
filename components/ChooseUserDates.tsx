@@ -40,12 +40,12 @@ export default function ChooseUserDates({
     }
   })
 
-  const disabledMatcher: Matcher = (day: Date) => {
-    if (!setDates) {
-      return day < new Date()
-    }
-    return !setDates.some(setDate => setDate.toISOString() === day.toISOString())
-  }
+  // const disabledMatcher: Matcher = (day: Date) => {
+  //   if (!setDates) {
+  //     return day < new Date()
+  //   }
+  //   return !setDates.some(setDate => setDate.toISOString() === day.toISOString())
+  // }
 
   const onSelected: DayEventHandler<React.MouseEvent> = (day, modifiers) => {
     let newAvailableDates = [...(userDates.availableDates ?? [])]
