@@ -1,8 +1,8 @@
 'use client'
 
 import { useState } from 'react'
-import { ClassNames, DayEventHandler, DayPicker } from 'react-day-picker'
-import { max, min, differenceInCalendarMonths, isSameDay } from 'date-fns'
+import { ClassNames, DayEventHandler, DayPicker, Matcher } from 'react-day-picker'
+import { max, min, differenceInCalendarMonths, isSameDay, isEqual } from 'date-fns'
 import { reject } from 'lodash'
 import DaysLegend from './DaysLegend'
 import { UserDates } from './EventStepper'
@@ -40,12 +40,12 @@ export default function ChooseUserDates({
     }
   })
 
-  // const disabledMatcher: Matcher = (day: Date) => {
-  //   if (!setDates) {
-  //     return day < new Date()
-  //   }
-  //   return !setDates.some(setDate => isEqual(setDate, day))
-  // }
+  const disabledMatcher: Matcher = (day: Date) => {
+    if (!setDates) {
+      return day < new Date()
+    }
+    return !setDates.some(setDate => isEqual(setDate, day))
+  }
 
   const onSelected: DayEventHandler<React.MouseEvent> = (day, modifiers) => {
     let newAvailableDates = [...(userDates.availableDates ?? [])]
@@ -74,7 +74,7 @@ export default function ChooseUserDates({
         defaultMonth={minDate}
         numberOfMonths={numberOfMonths}
         onDayClick={onSelected}
-        disabled={{ before: minDate, after: max(setDates ?? []) }}
+        disabled={disabledMatcher}
         modifiers={{
           preferredDates: userDates.preferredDates,
           availableDates: userDates.availableDates,
