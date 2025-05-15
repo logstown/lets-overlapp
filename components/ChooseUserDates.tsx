@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ClassNames, DayPicker, Matcher } from 'react-day-picker'
+import { ClassNames, DayEventHandler, DayPicker, Matcher } from 'react-day-picker'
 import { max, min, differenceInCalendarMonths, isSameDay } from 'date-fns'
 import { reject } from 'lodash'
 import DaysLegend from './DaysLegend'
@@ -18,7 +18,6 @@ export default function ChooseUserDates({
   userDates: UserDates
   setUserDates: (userDates: UserDates) => void
 }) {
-  console.log('setDates', setDates)
   const minDate = setDates ? min(setDates) : new Date()
   const classNames: Partial<ClassNames> = {
     root: 'react-day-picker shadow-lg',
@@ -48,29 +47,24 @@ export default function ChooseUserDates({
     return !setDates.some(setDate => setDate.toISOString() === day.toISOString())
   }
 
-  // const onSelected: DayEventHandler<React.MouseEvent> = (day, modifiers) => {
-  //   console.log('day', day)
-  //   console.log('modifiers', modifiers)
-  //   let newAvailableDates = [...(userDates.availableDates ?? [])]
-  //   let newPreferredDates = [...(userDates.preferredDates ?? [])]
+  const onSelected: DayEventHandler<React.MouseEvent> = (day, modifiers) => {
+    let newAvailableDates = [...(userDates.availableDates ?? [])]
+    let newPreferredDates = [...(userDates.preferredDates ?? [])]
 
-  //   if (modifiers.availableDates) {
-  //     newAvailableDates = reject(newAvailableDates, d => isSameDay(day, d))
-  //     newPreferredDates.push(day)
-  //   } else if (modifiers.preferredDates) {
-  //     newPreferredDates = reject(newPreferredDates, d => isSameDay(day, d))
-  //   } else {
-  //     newAvailableDates.push(day)
-  //   }
+    if (modifiers.availableDates) {
+      newAvailableDates = reject(newAvailableDates, d => isSameDay(day, d))
+      newPreferredDates.push(day)
+    } else if (modifiers.preferredDates) {
+      newPreferredDates = reject(newPreferredDates, d => isSameDay(day, d))
+    } else {
+      newAvailableDates.push(day)
+    }
 
-  //   console.log('newAvailableDates', newAvailableDates)
-  //   console.log('newPreferredDates', newPreferredDates)
-
-  //   setUserDates({
-  //     availableDates: newAvailableDates,
-  //     preferredDates: newPreferredDates,
-  //   })
-  // }
+    setUserDates({
+      availableDates: newAvailableDates,
+      preferredDates: newPreferredDates,
+    })
+  }
 
   return (
     <div className='flex flex-col items-center justify-evenly gap-6'>
@@ -80,31 +74,7 @@ export default function ChooseUserDates({
         defaultMonth={minDate}
         disabled={disabledMatcher}
         numberOfMonths={numberOfMonths}
-        onDayClick={(day, modifiers, e) => {
-          console.log('e', e)
-          e.preventDefault()
-          console.log('day', day)
-          console.log('modifiers', modifiers)
-          let newAvailableDates = [...(userDates.availableDates ?? [])]
-          let newPreferredDates = [...(userDates.preferredDates ?? [])]
-
-          if (modifiers.availableDates) {
-            newAvailableDates = reject(newAvailableDates, d => isSameDay(day, d))
-            newPreferredDates.push(day)
-          } else if (modifiers.preferredDates) {
-            newPreferredDates = reject(newPreferredDates, d => isSameDay(day, d))
-          } else {
-            newAvailableDates.push(day)
-          }
-
-          console.log('newAvailableDates', newAvailableDates)
-          console.log('newPreferredDates', newPreferredDates)
-
-          setUserDates({
-            availableDates: newAvailableDates,
-            preferredDates: newPreferredDates,
-          })
-        }}
+        onDayClick={onSelected}
         modifiers={{
           preferredDates: userDates.preferredDates,
           availableDates: userDates.availableDates,
