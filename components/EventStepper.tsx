@@ -32,6 +32,7 @@ const EventStepper = ({
   eventId?: string
   user?: User
 }) => {
+  console.log(setDates)
   const isNewEvent = !eventId && !user
   const steps = isNewEvent
     ? ['Choose Availability', 'Event Details', 'Your Info']
