@@ -1,6 +1,5 @@
 import prisma from '@/lib/prisma'
 import { notFound } from 'next/navigation'
-import { getJSDateFromStr } from '@/lib/utilities'
 import AddEditDatesHeader from '@/components/AddEditDatesHeader'
 import EventStepper from '@/components/EventStepper'
 
