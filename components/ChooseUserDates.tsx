@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { ClassNames, DayEventHandler, DayPicker, Matcher } from 'react-day-picker'
+import { ClassNames, DayEventHandler, DayPicker } from 'react-day-picker'
 import { max, min, differenceInCalendarMonths, isSameDay } from 'date-fns'
 import { reject } from 'lodash'
 import DaysLegend from './DaysLegend'
