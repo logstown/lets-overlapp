@@ -1,7 +1,6 @@
 import AddEditDatesHeader from '@/components/AddEditDatesHeader'
 import EventStepper from '@/components/EventStepper'
 import prisma from '@/lib/prisma'
-import { getJSDateFromStr } from '@/lib/utilities'
 import { notFound } from 'next/navigation'
 
 export default async function EditEventResults(props: {
@@ -32,7 +31,7 @@ export default async function EditEventResults(props: {
 
   const { availableDates, preferredDates } = user.event.users[0]
 
-  const jsDates = [...availableDates, ...preferredDates].map(getJSDateFromStr)
+  const jsDates = [...availableDates, ...preferredDates]
 
   return (
     <div className='flex flex-col gap-6'>
@@ -42,7 +41,6 @@ export default async function EditEventResults(props: {
         createdAt={user.event.createdAt}
         icon={user.event.icon}
       />
-      {/* <ChooseUserDates user={user} setDates={jsDates} /> */}
       <EventStepper setDates={jsDates} user={user} />
     </div>
   )
