@@ -1,6 +1,18 @@
 import { format } from 'date-fns'
+import { UsersDate } from './page'
+import { maxBy, sortBy } from 'lodash'
+import { filter } from 'lodash'
+import { getJSDateFromStr } from '@/lib/utilities'
 
-export default function BestDates({ dates }: { dates: Date[] }) {
+export default function BestDates({ usersDates }: { usersDates: UsersDate[] }) {
+  const best = maxBy(usersDates, 'score')
+  const bestDates =
+    best?.score === 0
+      ? []
+      : filter(usersDates, { score: best?.score }).map(x => getJSDateFromStr(x.date))
+
+  const dates = sortBy(bestDates)
+
   return (
     <div className='lg:text-xl'>
       {dates.length === 0 ? (

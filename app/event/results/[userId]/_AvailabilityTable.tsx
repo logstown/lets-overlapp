@@ -3,6 +3,8 @@ import Link from 'next/link'
 import { CrownIcon, PencilIcon } from 'lucide-react'
 import { UsersDate } from './page'
 import { User } from '@prisma/client'
+import _ from 'lodash'
+import { getJSDateFromStr } from '@/lib/utilities'
 
 export default function AvailabilityTable({
   usersDates,
@@ -13,13 +15,21 @@ export default function AvailabilityTable({
   users: User[]
   currentUserId: string
 }) {
+  const localUserDates = _.chain(usersDates)
+    .map(x => ({
+      ...x,
+      date: getJSDateFromStr(x.date),
+    }))
+    .sortBy('date')
+    .value()
+
   return (
     <div className='overflow-x-auto'>
       <table className='table-pin-rows table-xs sm:table-sm md:table-md table-pin-cols table text-sm sm:text-base'>
         <thead>
           <tr>
             <th className='bg-base-100'></th>
-            {usersDates.map(({ date }) => (
+            {localUserDates.map(({ date }) => (
               <td className='bg-base-100 text-center' key={date.toISOString()}>
                 {format(date, 'MMM d')}
               </td>
@@ -36,18 +46,20 @@ export default function AvailabilityTable({
                   {isCreator && <CrownIcon size={15} />}
                 </div>
               </th>
-              {usersDates.map(({ date, availableDateUsers, preferredDateUsers }) => (
-                <td
-                  key={date.toISOString()}
-                  className={`border-base-100 border-2 ${
-                    preferredDateUsers.includes(id)
-                      ? 'bg-success'
-                      : availableDateUsers.includes(id)
-                        ? 'bg-success/50'
-                        : 'bg-base-300'
-                  }`}
-                ></td>
-              ))}
+              {localUserDates.map(
+                ({ date, availableDateUsers, preferredDateUsers }) => (
+                  <td
+                    key={date.toISOString()}
+                    className={`border-base-100 border-2 ${
+                      preferredDateUsers.includes(id)
+                        ? 'bg-success'
+                        : availableDateUsers.includes(id)
+                          ? 'bg-success/50'
+                          : 'bg-base-300'
+                    }`}
+                  ></td>
+                ),
+              )}
               <th className='border-base-100 bg-base-100 w-1 border-2'>
                 <Link
                   href={`/event/results/${currentUserId}/edit`}

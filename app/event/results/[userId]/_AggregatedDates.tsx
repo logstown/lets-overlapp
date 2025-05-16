@@ -5,6 +5,7 @@ import { DayPicker } from 'react-day-picker'
 import _, { flatMap, mapValues, map } from 'lodash'
 import { useEffect, useState } from 'react'
 import { UsersDate } from './page'
+import { getJSDateFromStr } from '@/lib/utilities'
 
 export default function AggregatedDates({
   usersDates,
@@ -53,6 +54,8 @@ export default function AggregatedDates({
 
 function getDayPickerStuff(usersDates: UsersDate[]) {
   const dateGroups = _.chain(usersDates)
+    .map(x => ({ ...x, date: getJSDateFromStr(x.date) }))
+    .sortBy('date')
     .groupBy(({ score }) => {
       if (score === 1) {
         return 'preferred'

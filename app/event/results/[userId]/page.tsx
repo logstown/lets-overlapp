@@ -1,10 +1,9 @@
 import prisma from '@/lib/prisma'
 import CopyLink from './_CopyLink'
 import { notFound } from 'next/navigation'
-import _, { filter, maxBy } from 'lodash'
+import _ from 'lodash'
 import { formatDistance } from 'date-fns'
 import AggregatedDates from './_AggregatedDates'
-import { getJSDateFromStr } from '@/lib/utilities'
 import DaysLegend from '@/components/DaysLegend'
 import { User } from '@prisma/client'
 import AvailabilityTable from './_AvailabilityTable'
@@ -12,7 +11,7 @@ import BestDates from './BestDates'
 import AppCard from '@/components/AppCard'
 
 export interface UsersDate {
-  date: Date
+  date: string
   availableDateUsers: string[]
   preferredDateUsers: string[]
   score: number
@@ -47,7 +46,7 @@ export default async function EventResults(props: {
   const { event } = user
   const { users } = event
 
-  const { usersDates, bestDates } = calculateData(users)
+  const usersDates = getUsersDates(users)
   const title = event.title || 'Event Results'
   const description = event.description || ''
   const creator = event.users.find(x => x.isCreator)
@@ -89,7 +88,7 @@ export default async function EventResults(props: {
         <div className='flex flex-col gap-15 py-4'>
           {users.length > 1 && (
             <>
-              <BestDates dates={bestDates} />
+              <BestDates usersDates={usersDates} />
               <AggregatedDates usersDates={usersDates} />
             </>
           )}
@@ -109,7 +108,7 @@ export default async function EventResults(props: {
   )
 }
 
-function calculateData(users: User[]) {
+function getUsersDates(users: User[]): UsersDate[] {
   const usersDates = _.chain(users)
     .flatMap(user => [...user.availableDates, ...user.preferredDates])
     .uniq()
@@ -135,20 +134,13 @@ function calculateData(users: User[]) {
       }
 
       return {
-        date: getJSDateFromStr(date),
+        date,
         availableDateUsers,
         preferredDateUsers,
         score,
       }
     })
-    .sortBy(date => date.date)
     .value()
 
-  const best = maxBy(usersDates, 'score')
-  const bestDates =
-    best?.score === 0
-      ? []
-      : filter(usersDates, { score: best?.score }).map(x => x.date)
-
-  return { usersDates, bestDates }
+  return usersDates
 }
