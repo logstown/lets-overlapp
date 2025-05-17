@@ -4,3 +4,7 @@
     light --default,
     dracula;
 }
+
+.react-day-picker .rdp-day_button:hover {
+  background-color: transparent;
+}
