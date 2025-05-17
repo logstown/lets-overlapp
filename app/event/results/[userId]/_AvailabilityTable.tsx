@@ -24,7 +24,7 @@ export default function AvailabilityTable({
     .value()
 
   return (
-    <div className='overflow-x-auto'>
+    <div className='overflow-x-scroll sm:overflow-x-auto'>
       <table className='table-pin-rows table-xs sm:table-sm md:table-md table-pin-cols table text-sm sm:text-base'>
         <thead>
           <tr>
@@ -66,7 +66,7 @@ export default function AvailabilityTable({
                   className={currentUserId !== id ? 'invisible' : ''}
                 >
                   <button className='btn btn-xs btn-soft sm:btn-sm'>
-                    <PencilIcon className='h-3 w-3 sm:h-4 sm:w-4' />
+                    <PencilIcon className='h-2 w-2 sm:h-4 sm:w-4' />
                   </button>
                 </Link>
               </th>

@@ -4,7 +4,7 @@ export default function DaysLegend({
   includeUnavailable?: boolean
 }) {
   return (
-    <div className='bg-base-100 flex flex-col justify-center gap-2 rounded-2xl px-4 py-2 text-xs shadow-md sm:gap-4 sm:text-sm md:flex-row md:gap-8'>
+    <div className='bg-base-100 flex justify-center gap-2 rounded-2xl px-4 py-2 text-xs shadow-md sm:gap-4 sm:text-sm md:gap-8'>
       {includeUnavailable && (
         <div className='flex items-center gap-2'>
           <div className='bg-base-300 h-4 w-4'></div>

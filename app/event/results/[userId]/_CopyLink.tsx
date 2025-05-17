@@ -39,7 +39,7 @@ export default function CopyLink({
     <>
       <AppCard className='w-full'>
         <h2 className='card-title mb-4 text-2xl'>
-          {isResults ? 'View Results' : 'Share with others'}
+          {isResults ? 'Results Link' : 'Share with others to add dates'}
         </h2>
         <div className='join w-full'>
           <input

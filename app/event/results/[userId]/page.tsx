@@ -84,7 +84,7 @@ export default async function EventResults(props: {
           </div>
         </AppCard>
       </div>
-      <AppCard className='w-full'>
+      <AppCard className='w-full' bodyClassName='p-2 sm:p-4'>
         <div className='flex flex-col gap-15 py-4'>
           {users.length > 1 && (
             <>
@@ -102,7 +102,7 @@ export default async function EventResults(props: {
           </div>
         </div>
       </AppCard>
-      <CopyLink id={event.id} />
+      {user.isCreator && <CopyLink id={event.id} />}
       <CopyLink id={userId} isResults />
     </div>
   )

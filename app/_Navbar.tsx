@@ -10,11 +10,13 @@ export default function Navbar() {
     <div className='navbar px-4'>
       <div className='flex-1'>
         {pathname !== '/' && (
-          <Link
-            href='/'
-            className='p-2 text-2xl font-semibold tracking-tight drop-shadow-2xl lg:text-3xl'
-          >
-            Let&apos;s Overlapp
+          <Link href='/' className='block w-fit'>
+            <img src='/logo.png' alt='Lets Overlapp' className='h-14 dark:hidden' />
+            <img
+              src='/logo-dark.png'
+              alt='Lets Overlapp'
+              className='hidden h-14 dark:block'
+            />
           </Link>
         )}
       </div>
