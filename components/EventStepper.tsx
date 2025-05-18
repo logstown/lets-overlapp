@@ -86,8 +86,6 @@ const EventStepper = ({
     setIsSubmitting(false)
   }
 
-  console.log(setJSDates)
-
   const renderStep = () => {
     // ... Implement logic to render different step components based on currentStep and pass necessary props like formData and handleFormDataChange
     switch (currentStep) {

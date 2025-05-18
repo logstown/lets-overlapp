@@ -5,7 +5,7 @@ import { DayPicker } from 'react-day-picker'
 import _, { flatMap, mapValues, map } from 'lodash'
 import { useEffect, useState } from 'react'
 import { UsersDate } from './page'
-import { getJSDateFromStr } from '@/lib/utilities'
+import { getBestDates, getJSDateFromStr } from '@/lib/utilities'
 
 export default function AggregatedDates({
   usersDates,
@@ -107,7 +107,12 @@ function getDayPickerStuff(usersDates: UsersDate[]) {
       default:
         return classToReturn
     }
-  })
+  }) as {
+    [key: string]: string
+  }
+
+  dateGroups.best = getBestDates(usersDates)
+  modifierClassNames.best = 'ring-primary/50 ring-inset ring-3'
 
   return { dateGroups, modifierClassNames }
 }

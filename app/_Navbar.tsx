@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation'
 export default function Navbar() {
   const pathname = usePathname()
   return (
-    <div className='navbar px-4'>
+    <div className='navbar px-4 md:px-8'>
       <div className='flex-1'>
         {pathname !== '/' && (
           <Link href='/' className='block w-fit'>

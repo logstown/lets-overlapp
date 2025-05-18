@@ -25,7 +25,7 @@ export default function AvailabilityTable({
 
   return (
     <div className='overflow-x-scroll sm:overflow-x-auto'>
-      <table className='table-pin-rows table-xs sm:table-sm md:table-md table-pin-cols table text-sm sm:text-base'>
+      <table className='table-pin-rows table-xs sm:table-sm md:table-md table-pin-cols table'>
         <thead>
           <tr>
             <th className='bg-base-100'></th>
@@ -40,8 +40,8 @@ export default function AvailabilityTable({
         <tbody>
           {users.map(({ id, name, isCreator }) => (
             <tr key={id}>
-              <th className='border-base-100 bg-base-100 w-1 border-2'>
-                <div className='flex items-center gap-2 whitespace-nowrap'>
+              <th className='border-base-100 bg-base-100 w-1 border-2 border-l-0'>
+                <div className='flex items-center gap-2'>
                   {name}
                   {isCreator && <CrownIcon size={15} />}
                 </div>
@@ -60,7 +60,7 @@ export default function AvailabilityTable({
                   ></td>
                 ),
               )}
-              <th className='border-base-100 bg-base-100 w-1 border-2'>
+              <th className='border-base-100 bg-base-100 w-1 border-2 border-r-0'>
                 <Link
                   href={`/event/results/${currentUserId}/edit`}
                   className={currentUserId !== id ? 'invisible' : ''}

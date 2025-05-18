@@ -63,9 +63,11 @@ export default async function EventResults(props: {
             />
             <div className='flex flex-col gap-1'>
               <h1 className='text-3xl font-semibold'>{title}</h1>
-              <p className='text-base-content/70 w-full max-w-[65ch] text-base text-pretty'>
-                {description}
-              </p>
+              {description && (
+                <p className='text-base-content/70 w-full max-w-[65ch] text-base text-pretty'>
+                  {description}
+                </p>
+              )}
             </div>
           </div>
         </AppCard>
