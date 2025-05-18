@@ -112,7 +112,7 @@ function getDayPickerStuff(usersDates: UsersDate[]) {
   }
 
   dateGroups.best = getBestDates(usersDates)
-  modifierClassNames.best = 'ring-primary/50 ring-inset ring-3'
+  modifierClassNames.best = 'ring-primary/50 dark:ring-primary/70 ring-inset ring-3'
 
   return { dateGroups, modifierClassNames }
 }
