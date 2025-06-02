@@ -69,44 +69,16 @@ function getDayPickerStuff(usersDates: UsersDate[]) {
     .value()
 
   const modifierClassNames = mapValues(dateGroups, (dates, dateType) => {
-    const baseClasses = 'border-2 border-base-100'
+    const base = 'border-2 border-base-100'
+    if (dateType === 'unavailable') return `${base} bg-base-300 text-base-content`
+    if (dateType === 'preferred') return `${base} bg-success text-success-content`
 
-    if (dateType === 'unavailable') {
-      return `${baseClasses} bg-base-300 text-base-content`
+    if (dateType.startsWith('available-')) {
+      const level = dateType.split('-')[1]
+      return `${base} bg-success/${level} text-success-content`
     }
 
-    const classToReturn = `${baseClasses} bg-success text-success-content`
-
-    if (!dateType.startsWith('available-')) {
-      return classToReturn
-    }
-
-    const opacity = dateType.split('-')[1]
-
-    switch (opacity) {
-      case '50':
-        return `${classToReturn} bg-success/50`
-      case '55':
-        return `${classToReturn} bg-success/55`
-      case '60':
-        return `${classToReturn} bg-success/60`
-      case '65':
-        return `${classToReturn} bg-success/65`
-      case '70':
-        return `${classToReturn} bg-success/70`
-      case '75':
-        return `${classToReturn} bg-success/75`
-      case '80':
-        return `${classToReturn} bg-success/80`
-      case '85':
-        return `${classToReturn} bg-success/85`
-      case '90':
-        return `${classToReturn} bg-success/90`
-      case '95':
-        return `${classToReturn} bg-success/95`
-      default:
-        return classToReturn
-    }
+    return `${base} bg-success text-success-content`
   }) as {
     [key: string]: string
   }

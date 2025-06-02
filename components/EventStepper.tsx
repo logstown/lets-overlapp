@@ -146,8 +146,7 @@ const EventStepper = ({
       </AppCard>
       <div className='mt-6 flex justify-between px-6'>
         <button
-          className={`btn btn-lg btn-primary btn-soft ${currentStep === 1 ? 'invisible' : ''}`}
-          disabled={isSubmitting}
+          className={`btn btn-lg btn-primary btn-soft ${currentStep === 1 || isSubmitting ? 'invisible' : ''}`}
           onClick={prevStep}
         >
           Previous
@@ -177,7 +176,10 @@ const EventStepper = ({
               onClick={submitForm}
               disabled={formData.attendeeName === '' || isSubmitting}
             >
-              Submit
+              {isSubmitting && (
+                <span className='loading loading-spinner loading-xs mr-2'></span>
+              )}
+              Create Event
             </button>
           )}
         </div>

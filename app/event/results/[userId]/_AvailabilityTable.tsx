@@ -40,7 +40,7 @@ export default function AvailabilityTable({
         <tbody>
           {users.map(({ id, name, isCreator }) => (
             <tr key={id}>
-              <th className='border-base-100 bg-base-100 w-1 border-2 border-l-0'>
+              <th className='border-base-100 bg-base-100 text-base-content/70 w-1 border-2 border-l-0'>
                 <div className='flex items-center gap-2'>
                   {name}
                   {isCreator && <CrownIcon size={15} />}
