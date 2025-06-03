@@ -8,7 +8,6 @@ import { getJSDateFromStr } from '@/lib/utilities'
 import EventDetails from './EventDetails'
 import AttendeeDetails from './AttendeeDetails'
 import { createEvent, addDates, editUser } from '@/lib/actions'
-import AppCard from './AppCard'
 
 export interface UserDates {
   availableDates: Date[]
@@ -37,6 +36,14 @@ const EventStepper = ({
   const steps = isNewEvent
     ? ['Availability', 'Event Details', 'Your Info']
     : ['Availability', 'Your Info']
+
+  let saveButtonText = 'Create'
+  if (eventId) {
+    saveButtonText = 'Submit'
+  } else if (user) {
+    saveButtonText = 'Save'
+  }
+
   const [currentStep, setCurrentStep] = useState<number>(1)
   const [formData, setFormData] = useState<FormDetails>({
     eventName: '',
@@ -177,7 +184,7 @@ const EventStepper = ({
                 {isSubmitting && (
                   <span className='loading loading-spinner loading-xs mr-2'></span>
                 )}
-                Create
+                {saveButtonText}
               </button>
             )}
           </div>
