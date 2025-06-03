@@ -3,8 +3,17 @@ import Link from 'next/link'
 export default function Home() {
   return (
     <main className='flex min-h-screen flex-col items-center justify-center p-8 text-center'>
-      <h1 className='mb-4 text-5xl font-bold'>Let&apos;s Overlapp</h1>
-      <p className='mb-8 max-w-2xl text-xl'>
+      <img
+        src='/logo.png'
+        alt='Lets Overlapp'
+        className='h-40 object-contain dark:hidden'
+      />
+      <img
+        src='/logo-dark.png'
+        alt='Lets Overlapp'
+        className='hidden h-40 object-contain dark:block'
+      />
+      <p className='my-8 max-w-2xl text-xl'>
         Finding the perfect time to meet with friends shouldn&apos;t be a hassle.
         <br />
         <span className='text-accent'>Let&apos;s Overlapp</span> helps you coordinate
