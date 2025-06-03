@@ -131,60 +131,56 @@ const EventStepper = ({
             className={`step ${currentStep >= index + 1 ? 'step-secondary' : ''}`}
           >
             <span
-              className={`${currentStep === index + 1 ? 'text-xl font-semibold sm:text-2xl' : ''}`}
+              className={`${currentStep === index + 1 ? 'text-lg font-semibold sm:text-xl' : ''}`}
             >
               {step}
             </span>
           </li>
         ))}
       </ul>
-      <AppCard
-        className={`mt-6 w-full ${isNewEvent ? 'min-h-[450px]' : 'min-h-[400px]'}`}
-        bodyClassName='items-center justify-center'
-      >
-        {renderStep()}
-      </AppCard>
-      <div className='mt-6 flex justify-between px-6'>
-        <button
-          className={`btn sm:btn-lg btn-primary btn-soft ${currentStep === 1 || isSubmitting ? 'invisible' : ''}`}
-          onClick={prevStep}
-        >
-          Previous
-        </button>
-        <div className='flex gap-4'>
-          {!!user && (
-            <Link
-              href={`/event/results/${user.id}`}
-              className='btn sm:btn-lg btn-soft'
-            >
-              Cancel
-            </Link>
-          )}
-          {currentStep < steps.length && (
-            <button
-              className='btn sm:btn-lg btn-primary'
-              onClick={nextStep}
-              disabled={
-                (userDates.availableDates.length === 0 &&
-                  userDates.preferredDates.length === 0) ||
-                (currentStep > 1 && formData.eventName === '')
-              }
-            >
-              Next
-            </button>
-          )}
-          {currentStep === steps.length && (
-            <button
-              className='btn sm:btn-lg btn-primary'
-              onClick={submitForm}
-              disabled={formData.attendeeName === '' || isSubmitting}
-            >
-              {isSubmitting && (
-                <span className='loading loading-spinner loading-xs mr-2'></span>
-              )}
-              Create
-            </button>
-          )}
+      <div className='bg-base-200 mt-6 flex min-h-[460px] flex-col gap-12 rounded-lg py-6 sm:gap-0'>
+        <div className='flex w-full flex-1 items-center justify-center'>
+          {renderStep()}
+        </div>
+        <div className='flex justify-between px-6'>
+          <button
+            className={`btn btn-primary btn-soft ${currentStep === 1 || isSubmitting ? 'invisible' : ''}`}
+            onClick={prevStep}
+          >
+            Previous
+          </button>
+          <div className='flex gap-4'>
+            {!!user && (
+              <Link href={`/event/results/${user.id}`} className='btn btn-soft'>
+                Cancel
+              </Link>
+            )}
+            {currentStep < steps.length && (
+              <button
+                className='btn btn-primary'
+                onClick={nextStep}
+                disabled={
+                  (userDates.availableDates.length === 0 &&
+                    userDates.preferredDates.length === 0) ||
+                  (currentStep > 1 && formData.eventName === '')
+                }
+              >
+                Next
+              </button>
+            )}
+            {currentStep === steps.length && (
+              <button
+                className='btn btn-primary'
+                onClick={submitForm}
+                disabled={formData.attendeeName === '' || isSubmitting}
+              >
+                {isSubmitting && (
+                  <span className='loading loading-spinner loading-xs mr-2'></span>
+                )}
+                Create
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>

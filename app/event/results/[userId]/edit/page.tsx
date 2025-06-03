@@ -34,7 +34,7 @@ export default async function EditEventResults(props: {
   const jsDates = [...availableDates, ...preferredDates]
 
   return (
-    <div className='flex flex-col gap-6'>
+    <div className='flex flex-col gap-2'>
       <AddEditDatesHeader
         title={user.event.title}
         createdBy={user.event.users[0].name}
