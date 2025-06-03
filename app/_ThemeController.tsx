@@ -7,10 +7,10 @@ export default function ThemeController() {
       <input type='checkbox' className='theme-controller' value='dracula' />
 
       {/* sun icon */}
-      <SunIcon className='swap-off h-7 w-7 fill-current' />
+      <SunIcon className='swap-on h-7 w-7' strokeWidth={1.5} />
 
       {/* moon icon */}
-      <MoonIcon className='swap-on h-7 w-7 fill-current' />
+      <MoonIcon className='swap-off h-7 w-7' strokeWidth={1.5} />
     </label>
   )
 }
