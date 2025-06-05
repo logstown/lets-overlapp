@@ -7,6 +7,6 @@
 
 @variant dark (:root:has(input.theme-controller[value=dracula]:checked) &);
 
-.react-day-picker .rdp-day_button:hover {
+.react-day-picker .rdp-day_button {
   background-color: transparent;
 }

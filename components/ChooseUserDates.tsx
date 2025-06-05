@@ -4,7 +4,6 @@ import { useState } from 'react'
 import { ClassNames, DayEventHandler, DayPicker, Matcher } from 'react-day-picker'
 import { max, min, differenceInCalendarMonths, isSameDay } from 'date-fns'
 import { reject } from 'lodash'
-import DaysLegend from './DaysLegend'
 import { UserDates } from './EventStepper'
 
 export default function ChooseUserDates({
@@ -22,13 +21,13 @@ export default function ChooseUserDates({
   const classNames: Partial<ClassNames> = {
     root: 'react-day-picker shadow-lg',
     today: 'text-base-content bg-base-100',
-    disabled: '!text-base-content/50',
+    disabled: '!text-base-content/50 font-light',
     day_button: 'rdp-day_button hover:!bg-transparent',
     months: 'rdp-months justify-center',
   }
 
   if (isUpdating) {
-    classNames.day = 'text-primary'
+    classNames.day = 'text-primary font-bold'
   }
 
   const [numberOfMonths] = useState(() => {
@@ -67,7 +66,31 @@ export default function ChooseUserDates({
   }
 
   return (
-    <div className='flex flex-col items-center justify-evenly gap-6'>
+    <div className='flex flex-col items-center justify-evenly gap-10'>
+      <div className='flex flex-col items-center gap-4'>
+        {isUpdating ? (
+          <p>
+            Choose from the{' '}
+            <span className='text-primary text-lg font-bold'>offered dates</span>
+          </p>
+        ) : (
+          <p className='text-lg font-medium'>Choose possible dates for your event</p>
+        )}
+        <div className='flex gap-2'>
+          <p>
+            Tap once for{' '}
+            <span className='!bg-success/40 !text-success-content p-2 font-bold'>
+              available
+            </span>
+          </p>
+          <p>
+            Twice for{' '}
+            <span className='!bg-success !text-success-content p-2 font-bold'>
+              preferred
+            </span>
+          </p>
+        </div>
+      </div>
       <DayPicker
         startMonth={new Date()}
         fixedWeeks
@@ -86,7 +109,7 @@ export default function ChooseUserDates({
         classNames={classNames}
         hideNavigation={isUpdating}
       />
-      <DaysLegend />
+      {/* <DaysLegend /> */}
     </div>
   )
 }

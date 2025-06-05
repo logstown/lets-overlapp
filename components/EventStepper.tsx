@@ -138,7 +138,7 @@ const EventStepper = ({
             className={`step ${currentStep >= index + 1 ? 'step-secondary' : ''}`}
           >
             <span
-              className={`${currentStep === index + 1 ? 'text-lg font-semibold sm:text-xl' : ''}`}
+              className={`${currentStep === index + 1 ? 'text-base font-semibold sm:text-lg' : ''}`}
             >
               {step}
             </span>

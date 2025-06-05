@@ -75,14 +75,17 @@ export default async function EventResults(props: {
           className='hidden md:flex'
           bodyClassName='items-center justify-center'
         >
-          <div className='text-sm italic'>Created by</div>
+          <div className='text-base-content/70 text-xs text-balance'>
+            Created{' '}
+            <span className='font-bold'>
+              {formatDistance(event.createdAt, new Date(), {
+                addSuffix: true,
+              })}
+            </span>{' '}
+            by
+          </div>
           <div className='text-center text-3xl font-bold whitespace-nowrap'>
             {creator?.name}
-          </div>
-          <div className='text-xs italic'>
-            {formatDistance(event.createdAt, new Date(), {
-              addSuffix: true,
-            })}
           </div>
         </AppCard>
       </div>
@@ -132,7 +135,7 @@ function getUsersDates(users: User[]): UsersDate[] {
 
       if (preferredDateUsers.length + availableDateUsers.length === users.length) {
         score =
-          Math.round(((preferredDateUsers.length / users.length) * 50) / 5) * 5 + 50
+          Math.round(((preferredDateUsers.length / users.length) * 70) / 5) * 5 + 30
       }
 
       return {

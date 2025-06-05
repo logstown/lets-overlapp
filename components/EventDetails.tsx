@@ -12,14 +12,14 @@ export default function EventDetails({
 }) {
   return (
     <div className='flex flex-col items-start gap-4 md:w-full md:flex-row md:justify-evenly'>
-      <div>
-        <fieldset className='fieldset w-full max-w-sm'>
-          <legend className='fieldset-legend text-base-content/60 text-lg font-medium'>
+      <div className='flex w-full max-w-sm flex-col gap-4'>
+        <fieldset className='fieldset'>
+          <legend className='fieldset-legend text-base-content/60 text-base font-medium'>
             Event Title
           </legend>
           <input
             type='text'
-            className='input validator input-xl w-full'
+            className='input validator input-lg w-full'
             name='eventName'
             value={formData.eventName}
             onChange={e => handleFormDataChange({ eventName: e.target.value })}
@@ -30,12 +30,12 @@ export default function EventDetails({
           />
           {/* <div className='validator-hint'>Enter event title</div> */}
         </fieldset>
-        <fieldset className='fieldset w-full max-w-sm'>
-          <legend className='fieldset-legend text-base-content/60 text-lg font-medium'>
-            Description
+        <fieldset className='fieldset'>
+          <legend className='fieldset-legend text-base-content/60 text-base font-medium'>
+            Description (optional)
           </legend>
           <textarea
-            rows={4}
+            rows={5}
             className='textarea w-full'
             name='description'
             value={formData.description}
@@ -53,7 +53,7 @@ export default function EventDetails({
         </fieldset>
       </div>
       <fieldset className='fieldset'>
-        <legend className='fieldset-legend text-base-content/60 text-lg font-medium'>
+        <legend className='fieldset-legend text-base-content/60 text-base font-medium'>
           Icon
         </legend>
         <div className='grid grid-cols-3 gap-2'>

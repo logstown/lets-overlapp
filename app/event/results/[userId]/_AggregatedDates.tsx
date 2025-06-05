@@ -5,7 +5,7 @@ import { DayPicker } from 'react-day-picker'
 import _, { flatMap, mapValues, map } from 'lodash'
 import { useEffect, useState } from 'react'
 import { UsersDate } from './page'
-import { getBestDates, getJSDateFromStr } from '@/lib/utilities'
+import { getJSDateFromStr } from '@/lib/utilities'
 
 export default function AggregatedDates({
   usersDates,
@@ -74,17 +74,46 @@ function getDayPickerStuff(usersDates: UsersDate[]) {
     if (dateType === 'preferred') return `${base} bg-success text-success-content`
 
     if (dateType.startsWith('available-')) {
-      const level = dateType.split('-')[1]
-      return `${base} bg-success/${level} text-success-content`
+      const opacity = dateType.split('-')[1]
+      switch (opacity) {
+        case '30':
+          return `${base} text-success-content bg-success/30`
+        case '35':
+          return `${base} text-success-content bg-success/35`
+        case '40':
+          return `${base} text-success-content bg-success/40`
+        case '45':
+          return `${base} text-success-content bg-success/45`
+        case '50':
+          return `${base} text-success-content bg-success/50`
+        case '55':
+          return `${base} text-success-content bg-success/55`
+        case '60':
+          return `${base} text-success-content bg-success/60`
+        case '65':
+          return `${base} text-success-content bg-success/65`
+        case '70':
+          return `${base} text-success-content bg-success/70`
+        case '75':
+          return `${base} text-success-content bg-success/75`
+        case '80':
+          return `${base} text-success-content bg-success/80`
+        case '85':
+          return `${base} text-success-content bg-success/85`
+        case '90':
+          return `${base} text-success-content bg-success/90`
+        case '95':
+          return `${base} text-success-content bg-success/95`
+        default:
+          return `${base} text-success-content bg-success`
+      }
     }
-
-    return `${base} bg-success text-success-content`
   }) as {
     [key: string]: string
   }
 
-  dateGroups.best = getBestDates(usersDates)
-  modifierClassNames.best = 'ring-primary/50 dark:ring-primary/70 ring-inset ring-3'
+  // dateGroups.best = getBestDates(usersDates)
+  // modifierClassNames.best = 'ring-primary/50 dark:ring-primary/70 ring-inset ring-3'
 
   return { dateGroups, modifierClassNames }
 }

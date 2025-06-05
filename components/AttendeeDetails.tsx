@@ -11,14 +11,14 @@ export default function AttendeeDetails({
   handleFormDataChange: (formData: Partial<FormDetails>) => void
 }) {
   return (
-    <div className='flex flex-col gap-4'>
-      <fieldset className='fieldset w-full max-w-sm'>
-        <legend className='fieldset-legend text-base-content/60 text-lg font-medium'>
+    <div className='flex w-full max-w-sm flex-col gap-4'>
+      <fieldset className='fieldset'>
+        <legend className='fieldset-legend text-base-content/60 text-base font-medium'>
           Name
         </legend>
         <input
           type='text'
-          className='input validator input-xl w-full'
+          className='input validator input-lg w-full'
           name='name'
           value={formData.attendeeName}
           onChange={e => handleFormDataChange({ attendeeName: e.target.value })}
@@ -28,8 +28,8 @@ export default function AttendeeDetails({
           required
         />
       </fieldset>
-      <fieldset className='fieldset w-full max-w-sm'>
-        <legend className='fieldset-legend text-base-content/60 text-lg font-medium'>
+      <fieldset className='fieldset'>
+        <legend className='fieldset-legend text-base-content/60 text-base font-medium'>
           Email (optional)
           <div
             className='tooltip tooltip-top'
@@ -40,7 +40,7 @@ export default function AttendeeDetails({
         </legend>
         <input
           type='email'
-          className='input validator input-xl w-full'
+          className='input validator input-lg w-full'
           name='email'
           value={formData.attendeeEmail}
           onChange={e => handleFormDataChange({ attendeeEmail: e.target.value })}
