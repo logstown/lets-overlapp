@@ -61,7 +61,7 @@ export default function EventDetails({
             <button
               key={icon.fileName}
               className={`cursor-pointer rounded-md border-4 border-neutral-100 hover:border-neutral-300 ${
-                formData.icon === icon.fileName ? '!border-accent' : ''
+                formData.icon === icon.fileName ? '!border-primary' : ''
               }`}
               onClick={() => handleFormDataChange({ icon: icon.fileName })}
             >

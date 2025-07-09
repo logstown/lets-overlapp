@@ -43,7 +43,7 @@ export default function AvailabilityTable({
               <th className='border-base-100 bg-base-100 text-base-content/70 w-1 border-2 border-l-0'>
                 <div className='flex items-center gap-2'>
                   {name}
-                  {isCreator && <CrownIcon size={15} />}
+                  {isCreator && <CrownIcon className='text-amber-500' size={15} />}
                 </div>
               </th>
               {localUserDates.map(

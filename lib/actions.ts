@@ -77,7 +77,7 @@ export async function createEvent(
 
     if (attendeeEmail && user) {
       resend.emails.send({
-        from: 'Welcome <donotreply@letsoverl.app>',
+        from: "Let's Overlapp <donotreply@letsoverl.app>",
         to: [attendeeEmail],
         subject: `Event created: ${eventName}`,
         react: await CreateEventEmailTemplate({ user }),
@@ -147,7 +147,7 @@ export async function addDates(
     if (user) {
       if (attendeeEmail) {
         resend.emails.send({
-          from: 'Welcome <donotreply@letsoverl.app>',
+          from: "Let's Overlapp <donotreply@letsoverl.app>",
           to: [attendeeEmail],
           subject: `Dates added: ${user.event.title}`,
           react: await CreateEventEmailTemplate({ user }),
@@ -158,7 +158,7 @@ export async function addDates(
 
       if (creator.email) {
         resend.emails.send({
-          from: 'Lets Overl.app <donotreply@letsoverl.app>',
+          from: 'Lets Overlapp <donotreply@letsoverl.app>',
           to: [creator.email],
           subject: `${user.name} added dates to ${user.event.title}`,
           react: await DatesAddedEmailTemplate({
