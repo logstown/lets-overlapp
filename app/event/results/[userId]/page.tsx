@@ -75,7 +75,7 @@ export default async function EventResults(props: {
           className='hidden md:flex'
           bodyClassName='items-center justify-center'
         >
-          <div className='text-base-content/70 text-xs text-balance'>
+          <div className='text-base-content/70 text-xs text-balance whitespace-nowrap'>
             Created{' '}
             <span className='font-bold'>
               {formatDistance(event.createdAt, new Date(), {
