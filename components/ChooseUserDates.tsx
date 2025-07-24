@@ -2,7 +2,13 @@
 
 import { useState } from 'react'
 import { ClassNames, DayEventHandler, DayPicker, Matcher } from 'react-day-picker'
-import { max, min, differenceInCalendarMonths, isSameDay } from 'date-fns'
+import {
+  max,
+  min,
+  differenceInCalendarMonths,
+  isSameDay,
+  startOfToday,
+} from 'date-fns'
 import { reject } from 'lodash'
 import { UserDates } from './EventStepper'
 
@@ -41,7 +47,7 @@ export default function ChooseUserDates({
 
   const disabledMatcher: Matcher = (day: Date) => {
     if (!setDates) {
-      return day < new Date()
+      return day < startOfToday()
     }
     return !setDates.some(setDate => isSameDay(setDate, day))
   }
