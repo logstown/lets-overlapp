@@ -20,7 +20,7 @@ export default function BestDates({ usersDates }: { usersDates: UsersDate[] }) {
           )}
           <div className='text-3xl font-bold md:text-4xl'>
             {dates.map((x, i) => {
-              let str = format(x, 'MMMM d')
+              let str = format(x, 'MMM d')
               if (i < dates.length - 2) {
                 str += ', '
               } else if (i < dates.length - 1) {
