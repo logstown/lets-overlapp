@@ -30,7 +30,7 @@ const newEventSchema = z.object({
   eventName: z.string().min(2, 'Title is required'),
   description: z.string().optional(),
   attendeeName: z.string().min(2, 'Name is required'),
-  attendeeEmail: asOptionalField(z.string().email('Invalid email')),
+  attendeeEmail: asOptionalField(z.email('Invalid email')),
   icon: z.string().min(1, 'Icon is required'),
 })
 
@@ -44,11 +44,11 @@ export async function createEvent(
     const validatedFields = newEventSchema.safeParse(formData)
 
     if (!validatedFields.success) {
-      console.log(validatedFields.error.flatten().fieldErrors)
+      console.log(z.flattenError(validatedFields.error).fieldErrors)
       return {
         userId: '',
         message: 'Please fix the errors in the form',
-        errors: validatedFields.error.flatten().fieldErrors,
+        errors: z.flattenError(validatedFields.error).fieldErrors,
       }
     }
 
@@ -91,7 +91,7 @@ export async function createEvent(
 
 const addDatesSchema = z.object({
   attendeeName: z.string().min(2, 'Name is required'),
-  attendeeEmail: asOptionalField(z.string().email('Invalid email')),
+  attendeeEmail: asOptionalField(z.email('Invalid email')),
 })
 
 export async function addDates(
@@ -105,11 +105,11 @@ export async function addDates(
     const validatedFields = addDatesSchema.safeParse(formData)
 
     if (!validatedFields.success) {
-      console.log(validatedFields.error.flatten().fieldErrors)
+      console.log(z.flattenError(validatedFields.error).fieldErrors)
       return {
         userId: '',
         message: 'Please fix the errors in the form',
-        errors: validatedFields.error.flatten().fieldErrors,
+        errors: z.flattenError(validatedFields.error).fieldErrors,
       }
     }
 
@@ -175,11 +175,11 @@ export async function editUser(
     const validatedFields = addDatesSchema.safeParse(formData)
 
     if (!validatedFields.success) {
-      console.log(validatedFields.error.flatten().fieldErrors)
+      console.log(z.flattenError(validatedFields.error).fieldErrors)
       return {
         userId: '',
         message: 'Please fix the errors in the form',
-        errors: validatedFields.error.flatten().fieldErrors,
+        errors: z.flattenError(validatedFields.error).fieldErrors,
       }
     }
 
