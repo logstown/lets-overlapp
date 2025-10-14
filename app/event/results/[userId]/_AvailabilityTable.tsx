@@ -23,8 +23,6 @@ export default function AvailabilityTable({
     .sortBy('date')
     .value()
 
-  console.log(localUserDates)
-
   return (
     <div className='overflow-x-scroll sm:overflow-x-auto'>
       <table className='table-pin-rows table-xs sm:table-sm md:table-md table-pin-cols table'>
@@ -42,7 +40,7 @@ export default function AvailabilityTable({
         <tbody>
           {users.map(({ _id, name }, i) => (
             <tr key={_id}>
-              <th className='border-base-100 bg-base-100 text-base-content/70 max-w-36 border-2 border-l-0'>
+              <th className='border-base-100 bg-base-100 text-base-content/70 w-1 max-w-36 border-2 border-l-0'>
                 <div className='flex min-w-0 items-center gap-2'>
                   <span className='truncate'>{name}</span>
                   {i === 0 && <CrownIcon className='text-amber-500' size={15} />}

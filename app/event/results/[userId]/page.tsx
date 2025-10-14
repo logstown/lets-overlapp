@@ -1,5 +1,4 @@
 import CopyLink from './_CopyLink'
-import { notFound } from 'next/navigation'
 import _ from 'lodash'
 import { formatDistance } from 'date-fns'
 import AppCard from '@/components/AppCard'

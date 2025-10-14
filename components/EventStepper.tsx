@@ -160,7 +160,7 @@ const EventStepper = ({
           </li>
         ))}
       </ul>
-      <div className='bg-base-200 mt-6 flex min-h-[460px] flex-col gap-12 rounded-lg py-6 sm:gap-0'>
+      <div className='bg-base-100 mt-6 flex min-h-[460px] flex-col gap-12 rounded-lg py-6 sm:gap-0'>
         <div className='flex w-full flex-1 items-center justify-center'>
           {renderStep()}
         </div>
