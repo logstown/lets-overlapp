@@ -12,36 +12,36 @@
   },
   "dependencies": {
     "convex": "^1.27.5",
-    "daisyui": "^5.0.9",
+    "daisyui": "^5.3.1",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
     "lodash": "^4.17.21",
-    "lucide-react": "^0.482.0",
-    "next": "15.2.2",
-    "react": "^19.0.0",
-    "react-day-picker": "^9.6.2",
-    "react-dom": "^19.0.0",
-    "resend": "^4.2.0",
-    "zod": "^3.24.2"
+    "lucide-react": "^0.545.0",
+    "next": "15.5.5",
+    "react": "^19.2.0",
+    "react-day-picker": "^9.11.1",
+    "react-dom": "^19.2.0",
+    "resend": "^4.8.0",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
-    "@types/lodash": "^4.17.16",
+    "@types/lodash": "^4.17.20",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "concurrently": "^9.2.1",
     "eslint": "^9",
-    "eslint-config-next": "15.2.2",
-    "prettier": "3.4.2",
-    "prettier-plugin-tailwindcss": "^0.6.11",
+    "eslint-config-next": "15.5.5",
+    "prettier": "3.6.2",
+    "prettier-plugin-tailwindcss": "^0.7.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   },
   "pnpm": {
     "overrides": {
-      "prettier": "3.4.2"
+      "prettier": "3.6.2"
     }
   }
 }
