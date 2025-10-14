@@ -82,20 +82,6 @@ export default function ChooseUserDates({
         ) : (
           <p className='text-lg font-medium'>Choose possible dates for your event</p>
         )}
-        <div className='flex gap-2'>
-          <p>
-            Tap once for{' '}
-            <span className='!bg-success/40 !text-success-content p-2 font-bold'>
-              available
-            </span>
-          </p>
-          <p>
-            Twice for{' '}
-            <span className='!bg-success !text-success-content p-2 font-bold'>
-              preferred
-            </span>
-          </p>
-        </div>
       </div>
       <DayPicker
         startMonth={new Date()}
@@ -115,6 +101,20 @@ export default function ChooseUserDates({
         classNames={classNames}
         hideNavigation={isUpdating}
       />
+      <div className='flex gap-2 p-2'>
+        <p>
+          Tap once for{' '}
+          <span className='!bg-success/40 !text-success-content p-2 font-bold'>
+            available
+          </span>
+        </p>
+        <p>
+          Twice for{' '}
+          <span className='!bg-success !text-success-content p-2 font-bold'>
+            preferred
+          </span>
+        </p>
+      </div>
       {/* <DaysLegend /> */}
     </div>
   )

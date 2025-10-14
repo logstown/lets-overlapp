@@ -1,5 +1,5 @@
 import CopyLink from './_CopyLink'
-import { formatDistance } from 'date-fns'
+import { formatDistance, formatDistanceStrict } from 'date-fns'
 import AppCard from '@/components/AppCard'
 import { fetchQuery, preloadQuery, preloadedQueryResult } from 'convex/nextjs'
 import { api } from '@/convex/_generated/api'
@@ -55,21 +55,15 @@ export default async function EventResults(props: {
             </div>
           </div>
         </AppCard>
-        <AppCard
-          className='hidden md:flex'
-          bodyClassName='items-center justify-center'
-        >
+        <AppCard className='hidden md:flex' bodyClassName='justify-center'>
           <div className='text-base-content/70 text-xs text-balance whitespace-nowrap'>
-            Created{' '}
-            <span className='font-bold'>
-              {formatDistance(event._creationTime, new Date(), {
-                addSuffix: true,
-              })}
-            </span>{' '}
-            by
+            Created by
           </div>
-          <div className='text-center text-3xl font-bold whitespace-nowrap'>
-            {creator?.name}
+          <div className='text-3xl font-bold whitespace-nowrap'>{creator?.name}</div>
+          <div className='text-base-content/70 text-xs text-balance whitespace-nowrap'>
+            {formatDistanceStrict(event._creationTime, new Date(), {
+              addSuffix: true,
+            })}
           </div>
         </AppCard>
       </div>
