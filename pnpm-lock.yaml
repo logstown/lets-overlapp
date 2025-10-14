@@ -11,6 +11,9 @@ importers:
 
   .:
     dependencies:
+      '@react-email/render':
+        specifier: ^1.3.2
+        version: 1.3.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       convex:
         specifier: ^1.27.5
         version: 1.27.5(react@19.2.0)
@@ -42,8 +45,8 @@ importers:
         specifier: ^19.2.0
         version: 19.2.0(react@19.2.0)
       resend:
-        specifier: ^4.8.0
-        version: 4.8.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
+        specifier: ^6.1.3
+        version: 6.1.3(@react-email/render@1.3.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0))
       zod:
         specifier: ^3.25.76
         version: 3.25.76
@@ -546,8 +549,8 @@ packages:
     resolution: {integrity: sha512-nn5ozdjYQpUCZlWGuxcJY/KpxkWQs4DcbMCmKojjyrYDEAGy4Ce19NN4v5MduafTwJlbKc99UA8YhSVqq9yPZA==}
     engines: {node: '>=12.4.0'}
 
-  '@react-email/render@1.1.2':
-    resolution: {integrity: sha512-RnRehYN3v9gVlNMehHPHhyp2RQo7+pSkHDtXPvg3s0GbzM9SQMW4Qrf8GRNvtpLC4gsI+Wt0VatNRUFqjvevbw==}
+  '@react-email/render@1.3.2':
+    resolution: {integrity: sha512-oq8/BD/I/YspeuBjjdLJG6xaf9tsPYk+VWu8/mX9xWbRN0t0ExKSVm9sEBL6RsCpndQA2jbY2VgPEreIrzUgqw==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^18.0 || ^19.0 || ^19.0.0-rc
@@ -2071,9 +2074,14 @@ packages:
     resolution: {integrity: sha512-fGxEI7+wsG9xrvdjsrlmL22OMTTiHRwAMroiEeMgq8gzoLC/PQr7RsRDSTLUg/bZAZtF+TVIkHc6/4RIKrui+Q==}
     engines: {node: '>=0.10.0'}
 
-  resend@4.8.0:
-    resolution: {integrity: sha512-R8eBOFQDO6dzRTDmaMEdpqrkmgSjPpVXt4nGfWsZdYOet0kqra0xgbvTES6HmCriZEXbmGk3e0DiGIaLFTFSHA==}
+  resend@6.1.3:
+    resolution: {integrity: sha512-vHRdmU3q+nS5x7cYHZpAQ5zpZE+DV+7q6axIUiRcxYsoUpjBuW50zwdrOz+8O6vUbjGFIz4r2qkt4s+2G0y4GA==}
     engines: {node: '>=18'}
+    peerDependencies:
+      '@react-email/render': '*'
+    peerDependenciesMeta:
+      '@react-email/render':
+        optional: true
 
   resolve-from@4.0.0:
     resolution: {integrity: sha512-pb/MYmXstAkysRFx8piNI1tGFNQIFA3vkE3Gq4EuA1dF6gHp/+vgZqsCGJapvy8N3Q+4o7FwvquPJcnZ7RYy4g==}
@@ -2757,7 +2765,7 @@ snapshots:
 
   '@nolyfill/is-core-module@1.0.39': {}
 
-  '@react-email/render@1.1.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
+  '@react-email/render@1.3.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0)':
     dependencies:
       html-to-text: 9.0.5
       prettier: 3.6.2
@@ -4405,12 +4413,9 @@ snapshots:
 
   require-directory@2.1.1: {}
 
-  resend@4.8.0(react-dom@19.2.0(react@19.2.0))(react@19.2.0):
-    dependencies:
-      '@react-email/render': 1.1.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
-    transitivePeerDependencies:
-      - react
-      - react-dom
+  resend@6.1.3(@react-email/render@1.3.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0)):
+    optionalDependencies:
+      '@react-email/render': 1.3.2(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
 
   resolve-from@4.0.0: {}
 
