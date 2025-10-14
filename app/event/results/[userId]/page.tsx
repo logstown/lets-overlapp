@@ -1,5 +1,5 @@
 import CopyLink from './_CopyLink'
-import { formatDistance, formatDistanceStrict } from 'date-fns'
+import { formatDistanceStrict } from 'date-fns'
 import AppCard from '@/components/AppCard'
 import { fetchQuery, preloadQuery, preloadedQueryResult } from 'convex/nextjs'
 import { api } from '@/convex/_generated/api'
