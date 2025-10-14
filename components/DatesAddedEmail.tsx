@@ -1,16 +1,16 @@
 import * as React from 'react'
-import { User, Event } from '@prisma/client'
+import { Doc } from '@/convex/_generated/dataModel'
 
 interface DatesAddedEmailTemplateProps {
-  creator: User
-  attendee: User & { event: Event }
+  creator: Doc<'users'>
+  attendee: Doc<'users'>
+  event: Doc<'events'>
   updated?: boolean
 }
 
 export const DatesAddedEmailTemplate: React.FC<
   Readonly<DatesAddedEmailTemplateProps>
-> = ({ creator, attendee, updated }) => {
-  const event = attendee.event
+> = ({ creator, attendee, event, updated }) => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
 
   const eventTitle = <strong>{event.title}</strong>
@@ -23,7 +23,7 @@ export const DatesAddedEmailTemplate: React.FC<
       </p>
       <p>
         You can view the event results{' '}
-        <a href={`${baseUrl}/event/results/${creator.id}`}>here</a>
+        <a href={`${baseUrl}/event/results/${creator._id}`}>here</a>
       </p>
     </div>
   )

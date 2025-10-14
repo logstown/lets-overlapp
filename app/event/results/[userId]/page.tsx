@@ -1,14 +1,12 @@
-import prisma from '@/lib/prisma'
 import CopyLink from './_CopyLink'
 import { notFound } from 'next/navigation'
 import _ from 'lodash'
 import { formatDistance } from 'date-fns'
-import AggregatedDates from './_AggregatedDates'
-import DaysLegend from '@/components/DaysLegend'
-import { User } from '@prisma/client'
-import AvailabilityTable from './_AvailabilityTable'
-import BestDates from './BestDates'
 import AppCard from '@/components/AppCard'
+import { fetchQuery, preloadQuery, preloadedQueryResult } from 'convex/nextjs'
+import { api } from '@/convex/_generated/api'
+import { Id } from '@/convex/_generated/dataModel'
+import UsersDates from './_UserDates'
 
 export interface UsersDate {
   date: string
@@ -20,36 +18,24 @@ export interface UsersDate {
 export default async function EventResults(props: {
   params: Promise<{ userId: string }>
 }) {
-  const { userId } = await props.params
+  const params = await props.params
 
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
-    include: {
-      event: {
-        include: {
-          users: {
-            orderBy: {
-              createdAt: 'asc',
-            },
-          },
-        },
-      },
-    },
+  const userId = params.userId as Id<'users'>
+
+  const preloadedUsersDates = await preloadQuery(api.functions.getUsersDates, {
+    userId,
+  })
+
+  const { eventUsers } = preloadedQueryResult(preloadedUsersDates)
+  const event = await fetchQuery(api.functions.getEvent, {
+    eventId: eventUsers[0].eventId,
   })
 
   //   if (!user || (!user.isCreator && !user.event.allowOthersToViewResults)) {
-  if (!user) {
-    return notFound()
-  }
-  const { event } = user
-  const { users } = event
 
-  const usersDates = getUsersDates(users)
   const title = event.title || 'Event Results'
   const description = event.description || ''
-  const creator = event.users.find(x => x.isCreator)
+  const creator = eventUsers[0]
 
   return (
     <div className='flex flex-col gap-10'>
@@ -78,7 +64,7 @@ export default async function EventResults(props: {
           <div className='text-base-content/70 text-xs text-balance whitespace-nowrap'>
             Created{' '}
             <span className='font-bold'>
-              {formatDistance(event.createdAt, new Date(), {
+              {formatDistance(event._creationTime, new Date(), {
                 addSuffix: true,
               })}
             </span>{' '}
@@ -89,63 +75,9 @@ export default async function EventResults(props: {
           </div>
         </AppCard>
       </div>
-      <AppCard className='w-full' bodyClassName='p-2 sm:p-4'>
-        <div className='flex flex-col gap-15 py-4'>
-          {users.length > 1 && (
-            <>
-              <BestDates usersDates={usersDates} />
-              <AggregatedDates usersDates={usersDates} />
-            </>
-          )}
-          <AvailabilityTable
-            usersDates={usersDates}
-            users={users}
-            currentUserId={userId}
-          />
-          <div className='flex justify-center'>
-            <DaysLegend includeUnavailable />
-          </div>
-        </div>
-      </AppCard>
-      {user.isCreator && <CopyLink id={event.id} />}
+      <UsersDates preloadedUsersDates={preloadedUsersDates} userId={userId} />
+      {userId === creator._id && <CopyLink id={event._id} />}
       <CopyLink id={userId} isResults />
     </div>
   )
-}
-
-function getUsersDates(users: User[]): UsersDate[] {
-  const usersDates = _.chain(users)
-    .flatMap(user => [...user.availableDates, ...user.preferredDates])
-    .uniq()
-    .map(date => {
-      const availableDateUsers = users
-        .filter(user => user.availableDates.includes(date))
-        .map(x => x.id)
-      const preferredDateUsers = users
-        .filter(user => user.preferredDates.includes(date))
-        .map(x => x.id)
-      return {
-        date,
-        availableDateUsers,
-        preferredDateUsers,
-      }
-    })
-    .map(({ date, availableDateUsers, preferredDateUsers }) => {
-      let score = 0
-
-      if (preferredDateUsers.length + availableDateUsers.length === users.length) {
-        score =
-          Math.round(((preferredDateUsers.length / users.length) * 70) / 5) * 5 + 30
-      }
-
-      return {
-        date,
-        availableDateUsers,
-        preferredDateUsers,
-        score,
-      }
-    })
-    .value()
-
-  return usersDates
 }

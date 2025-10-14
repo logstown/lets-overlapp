@@ -1,6 +1,5 @@
 'use client'
 
-import { User } from '@prisma/client'
 import React, { useState } from 'react'
 import ChooseUserDates from './ChooseUserDates'
 import Link from 'next/link'
@@ -8,6 +7,8 @@ import { getJSDateFromStr } from '@/lib/utilities'
 import EventDetails from './EventDetails'
 import AttendeeDetails from './AttendeeDetails'
 import { createEvent, addDates, editUser } from '@/lib/actions'
+import { Doc, Id } from '@/convex/_generated/dataModel'
+import { filter, reject } from 'lodash'
 
 export interface UserDates {
   availableDates: Date[]
@@ -28,8 +29,8 @@ const EventStepper = ({
   user,
 }: {
   setDates?: string[]
-  eventId?: string
-  user?: User
+  eventId?: Id<'events'>
+  user?: Doc<'users'>
 }) => {
   const setJSDates = setDates?.map(getJSDateFromStr)
   const isNewEvent = !eventId && !user
@@ -53,8 +54,14 @@ const EventStepper = ({
     icon: 'calendar',
   })
   const [userDates, setUserDates] = useState<UserDates>({
-    availableDates: user?.availableDates.map(getJSDateFromStr) ?? [],
-    preferredDates: user?.preferredDates.map(getJSDateFromStr) ?? [],
+    availableDates:
+      reject(user?.availableDates, 'isPreferred')
+        .map(x => x.date)
+        .map(getJSDateFromStr) ?? [],
+    preferredDates:
+      filter(user?.availableDates, 'isPreferred')
+        .map(x => x.date)
+        .map(getJSDateFromStr) ?? [],
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -71,19 +78,27 @@ const EventStepper = ({
   }
 
   const saveData = async () => {
-    const availableDateStrs = userDates.availableDates.map(
-      date => `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
-    )
-    const preferredDateStrs = userDates.preferredDates.map(
-      date => `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
+    const availableDateObjs = userDates.availableDates.map(date => ({
+      date,
+      isPreferred: false,
+    }))
+    const preferredDateObjs = userDates.preferredDates.map(date => ({
+      date,
+      isPreferred: true,
+    }))
+    const availableDateStrs = [...availableDateObjs, ...preferredDateObjs].map(
+      ({ date, isPreferred }) => ({
+        date: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
+        isPreferred,
+      }),
     )
 
     if (eventId) {
-      return addDates(formData, preferredDateStrs, availableDateStrs, eventId)
+      return addDates(formData, availableDateStrs, eventId)
     } else if (user) {
-      return editUser(formData, preferredDateStrs, availableDateStrs, user.id)
+      return editUser(formData, availableDateStrs, user._id)
     } else {
-      return createEvent(formData, preferredDateStrs, availableDateStrs)
+      return createEvent(formData, availableDateStrs)
     }
   }
 
@@ -158,7 +173,7 @@ const EventStepper = ({
           </button>
           <div className='flex gap-4'>
             {!!user && (
-              <Link href={`/event/results/${user.id}`} className='btn btn-soft'>
+              <Link href={`/event/results/${user._id}`} className='btn btn-soft'>
                 Cancel
               </Link>
             )}

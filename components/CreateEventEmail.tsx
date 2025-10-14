@@ -1,36 +1,38 @@
+import { Doc } from '@/convex/_generated/dataModel'
 import * as React from 'react'
-import { User, Event } from '@prisma/client'
 
 interface CreateEventEmailTemplateProps {
-  user: User & { event: Event }
+  user: Doc<'users'>
+  event: Doc<'events'>
+  isCreator: boolean
 }
 
 export const CreateEventEmailTemplate: React.FC<
   Readonly<CreateEventEmailTemplateProps>
-> = ({ user }) => {
-  const event = user.event
+> = ({ user, event, isCreator }) => {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL
 
   const eventTitle = <strong>{event.title}</strong>
+
   return (
     <div>
       <h3>Hi, {user.name}!</h3>
-      {user.isCreator ? (
+      {isCreator ? (
         <p>You&apos;ve created the event: {eventTitle}</p>
       ) : (
         <p>Thank you for voting on dates for {eventTitle}</p>
       )}
-      {user.isCreator && (
+      {isCreator && (
         <p>
           Send this link to others to get their availability:{' '}
-          <a href={`${baseUrl}/event/add-dates/${event.id}`}>
-            {baseUrl}/event/add-dates/${event.id}
+          <a href={`${baseUrl}/event/add-dates/${event._id}`}>
+            {baseUrl}/event/add-dates/${event._id}
           </a>
         </p>
       )}
       <p>
         You can view the event results{' '}
-        <a href={`${baseUrl}/event/results/${user.id}`}>here</a>
+        <a href={`${baseUrl}/event/results/${user._id}`}>here</a>
       </p>
     </div>
   )

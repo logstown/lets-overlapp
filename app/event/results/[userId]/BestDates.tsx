@@ -1,11 +1,16 @@
+'use client'
+
 import { format } from 'date-fns'
 import { UsersDate } from './page'
 import { sortBy } from 'lodash'
 import { getBestDates } from '@/lib/utilities'
+import { useMemo } from 'react'
 
 export default function BestDates({ usersDates }: { usersDates: UsersDate[] }) {
-  const bestDates = getBestDates(usersDates)
-  const dates = sortBy(bestDates)
+  const dates = useMemo(() => {
+    const bestDates = getBestDates(usersDates)
+    return sortBy(bestDates)
+  }, [usersDates])
 
   return (
     <div className='lg:text-xl'>

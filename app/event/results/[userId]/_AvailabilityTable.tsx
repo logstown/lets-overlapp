@@ -2,9 +2,9 @@ import { format } from 'date-fns'
 import Link from 'next/link'
 import { CrownIcon, PencilIcon } from 'lucide-react'
 import { UsersDate } from './page'
-import { User } from '@prisma/client'
 import _ from 'lodash'
 import { getJSDateFromStr } from '@/lib/utilities'
+import { Doc, Id } from '@/convex/_generated/dataModel'
 
 export default function AvailabilityTable({
   usersDates,
@@ -12,8 +12,8 @@ export default function AvailabilityTable({
   currentUserId,
 }: {
   usersDates: UsersDate[]
-  users: User[]
-  currentUserId: string
+  users: Doc<'users'>[]
+  currentUserId: Id<'users'>
 }) {
   const localUserDates = _.chain(usersDates)
     .map(x => ({
@@ -22,6 +22,8 @@ export default function AvailabilityTable({
     }))
     .sortBy('date')
     .value()
+
+  console.log(localUserDates)
 
   return (
     <div className='overflow-x-scroll sm:overflow-x-auto'>
@@ -38,12 +40,12 @@ export default function AvailabilityTable({
           </tr>
         </thead>
         <tbody>
-          {users.map(({ id, name, isCreator }) => (
-            <tr key={id}>
+          {users.map(({ _id, name }, i) => (
+            <tr key={_id}>
               <th className='border-base-100 bg-base-100 text-base-content/70 max-w-36 border-2 border-l-0'>
                 <div className='flex min-w-0 items-center gap-2'>
                   <span className='truncate'>{name}</span>
-                  {isCreator && <CrownIcon className='text-amber-500' size={15} />}
+                  {i === 0 && <CrownIcon className='text-amber-500' size={15} />}
                 </div>
               </th>
               {localUserDates.map(
@@ -51,9 +53,9 @@ export default function AvailabilityTable({
                   <td
                     key={date.toISOString()}
                     className={`border-base-100 border-2 ${
-                      preferredDateUsers.includes(id)
+                      preferredDateUsers.includes(_id)
                         ? 'bg-success'
-                        : availableDateUsers.includes(id)
+                        : availableDateUsers.includes(_id)
                           ? 'bg-success/50'
                           : 'bg-base-300'
                     }`}
@@ -63,7 +65,7 @@ export default function AvailabilityTable({
               <th className='border-base-100 bg-base-100 w-1 border-2 border-r-0'>
                 <Link
                   href={`/event/results/${currentUserId}/edit`}
-                  className={currentUserId !== id ? 'invisible' : ''}
+                  className={currentUserId !== _id ? 'invisible' : ''}
                 >
                   <button className='btn btn-xs btn-soft sm:btn-sm'>
                     <PencilIcon className='h-2 w-2 sm:h-4 sm:w-4' />

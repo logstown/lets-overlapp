@@ -1,13 +1,14 @@
 'use server'
 
 import { z } from 'zod'
-import prisma from './prisma'
 import { redirect } from 'next/navigation'
 import { Resend } from 'resend'
 import { CreateEventEmailTemplate } from '@/components/CreateEventEmail'
 import { FormDetails } from '@/components/EventStepper'
-import { User, Event } from '@prisma/client'
 import { DatesAddedEmailTemplate } from '@/components/DatesAddedEmail'
+import { fetchMutation } from 'convex/nextjs'
+import { api } from '@/convex/_generated/api'
+import { Doc, Id } from '@/convex/_generated/dataModel'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
@@ -35,10 +36,9 @@ const newEventSchema = z.object({
 
 export async function createEvent(
   formData: FormDetails,
-  preferredDates: string[],
-  availableDates: string[],
+  availableDates: { date: string; isPreferred: boolean }[],
 ): Promise<ActionResponse | undefined> {
-  let user: (User & { event: Event }) | null = null
+  let userForRedirect: Doc<'users'> | null = null
 
   try {
     const validatedFields = newEventSchema.safeParse(formData)
@@ -55,32 +55,25 @@ export async function createEvent(
     const { eventName, description, attendeeName, attendeeEmail, icon } =
       validatedFields.data
 
-    user = await prisma.user.create({
-      data: {
-        name: attendeeName,
-        email: attendeeEmail,
-        isCreator: true,
-        preferredDates,
-        availableDates,
-        event: {
-          create: {
-            title: eventName,
-            description,
-            icon,
-          },
-        },
-      },
-      include: {
-        event: true,
-      },
+    const { user, event } = await fetchMutation(api.functions.createEvent, {
+      title: eventName,
+      description,
+      icon,
+      allowOthersToViewResults: true,
+      attendeeName,
+      attendeeEmail,
+      availableDates,
+      serverSecret: process.env.SERVER_SECRET ?? '',
     })
 
-    if (attendeeEmail && user) {
+    userForRedirect = user
+
+    if (user?.email && event) {
       resend.emails.send({
         from: "Let's Overlapp <donotreply@letsoverl.app>",
-        to: [attendeeEmail],
+        to: [user.email],
         subject: `Event created: ${eventName}`,
-        react: await CreateEventEmailTemplate({ user }),
+        react: await CreateEventEmailTemplate({ user, event, isCreator: true }),
       })
     }
   } catch (error) {
@@ -90,8 +83,8 @@ export async function createEvent(
       message: 'Error creating event',
     }
   } finally {
-    if (user) {
-      redirect(`/event/results/${user.id}`)
+    if (userForRedirect) {
+      redirect(`/event/results/${userForRedirect._id}`)
     }
   }
 }
@@ -103,11 +96,10 @@ const addDatesSchema = z.object({
 
 export async function addDates(
   formData: FormDetails,
-  preferredDates: string[],
-  availableDates: string[],
-  eventId: string,
+  availableDates: { date: string; isPreferred: boolean }[],
+  eventId: Id<'events'>,
 ): Promise<ActionResponse | undefined> {
-  let user: (User & { event: Event & { users: User[] } }) | null = null
+  let userForRedirect: Doc<'users'> | null = null
 
   try {
     const validatedFields = addDatesSchema.safeParse(formData)
@@ -123,47 +115,38 @@ export async function addDates(
 
     const { attendeeName, attendeeEmail } = validatedFields.data
 
-    user = await prisma.user.create({
-      data: {
+    const { user, event, creator } = await fetchMutation(
+      api.functions.addUserAndDates,
+      {
         name: attendeeName,
         email: attendeeEmail,
-        preferredDates,
         availableDates,
-        event: {
-          connect: {
-            id: eventId,
-          },
-        },
+        eventId,
+        serverSecret: process.env.SERVER_SECRET ?? '',
       },
-      include: {
-        event: {
-          include: {
-            users: true,
-          },
-        },
-      },
-    })
+    )
+
+    userForRedirect = user
 
     if (user) {
       if (attendeeEmail) {
         resend.emails.send({
           from: "Let's Overlapp <donotreply@letsoverl.app>",
           to: [attendeeEmail],
-          subject: `Dates added: ${user.event.title}`,
-          react: await CreateEventEmailTemplate({ user }),
+          subject: `Dates added: ${event.title}`,
+          react: await CreateEventEmailTemplate({ user, event, isCreator: false }),
         })
       }
 
-      const creator = user.event.users[0]
-
-      if (creator.email) {
+      if (creator?.email) {
         resend.emails.send({
           from: 'Lets Overlapp <donotreply@letsoverl.app>',
           to: [creator.email],
-          subject: `${user.name} added dates to ${user.event.title}`,
+          subject: `${user.name} added dates to ${event.title}`,
           react: await DatesAddedEmailTemplate({
             creator,
             attendee: user,
+            event,
           }),
         })
       }
@@ -175,19 +158,18 @@ export async function addDates(
       message: 'Error adding user',
     }
   } finally {
-    if (user) {
-      redirect(`/event/results/${user.id}`)
+    if (userForRedirect) {
+      redirect(`/event/results/${userForRedirect._id}`)
     }
   }
 }
 
 export async function editUser(
   formData: FormDetails,
-  preferredDates: string[],
-  availableDates: string[],
-  userId: string,
+  availableDates: { date: string; isPreferred: boolean }[],
+  userId: Id<'users'>,
 ): Promise<ActionResponse | undefined> {
-  let user: (User & { event: Event & { users: User[] } }) | null = null
+  let userForRedirect: Doc<'users'> | null = null
 
   try {
     const validatedFields = addDatesSchema.safeParse(formData)
@@ -203,35 +185,25 @@ export async function editUser(
 
     const { attendeeName, attendeeEmail } = validatedFields.data
 
-    user = await prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        name: attendeeName,
-        email: attendeeEmail,
-        preferredDates,
-        availableDates,
-      },
-      include: {
-        event: {
-          include: {
-            users: true,
-          },
-        },
-      },
+    const { user, event, creator } = await fetchMutation(api.functions.editUser, {
+      userId,
+      name: attendeeName,
+      email: attendeeEmail,
+      availableDates,
+      serverSecret: process.env.SERVER_SECRET ?? '',
     })
 
-    const creator = user?.event.users[0]
+    userForRedirect = user
 
     if (creator?.email) {
       resend.emails.send({
         from: 'Lets Overl.app <donotreply@letsoverl.app>',
         to: [creator.email],
-        subject: `${user.name} added dates to ${user.event.title}`,
+        subject: `${user.name} added dates to ${event.title}`,
         react: await DatesAddedEmailTemplate({
           creator,
           attendee: user,
+          event,
           updated: true,
         }),
       })
@@ -243,8 +215,8 @@ export async function editUser(
       message: 'Error updating user',
     }
   } finally {
-    if (user) {
-      redirect(`/event/results/${user.id}`)
+    if (userForRedirect) {
+      redirect(`/event/results/${userForRedirect._id}`)
     }
   }
 }

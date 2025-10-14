@@ -1,47 +1,41 @@
 import AddEditDatesHeader from '@/components/AddEditDatesHeader'
 import EventStepper from '@/components/EventStepper'
-import prisma from '@/lib/prisma'
-import { notFound } from 'next/navigation'
+import { api } from '@/convex/_generated/api'
+import { fetchQuery } from 'convex/nextjs'
+import { Id } from '@/convex/_generated/dataModel'
 
 export default async function EditEventResults(props: {
   params: Promise<{ userId: string }>
 }) {
   const { userId } = await props.params
 
-  const user = await prisma.user.findUnique({
-    where: {
-      id: userId,
-    },
-    include: {
-      event: {
-        include: {
-          users: {
-            where: {
-              isCreator: true,
-            },
-          },
-        },
-      },
-    },
+  const user = await fetchQuery(api.functions.getUser, {
+    userId: userId as Id<'users'>,
+    serverSecret: process.env.SERVER_SECRET ?? '',
   })
 
-  if (!user) {
-    return notFound()
-  }
+  const event = await fetchQuery(api.functions.getEvent, {
+    eventId: user.eventId,
+  })
 
-  const { availableDates, preferredDates } = user.event.users[0]
+  const creator = await fetchQuery(api.functions.getCreator, {
+    eventId: user.eventId,
+    serverSecret: process.env.SERVER_SECRET ?? '',
+  })
 
-  const jsDates = [...availableDates, ...preferredDates]
+  // if (!user) {
+  //   return notFound()
+  // }
 
   return (
     <div className='flex flex-col gap-2'>
       <AddEditDatesHeader
-        title={user.event.title}
-        createdBy={user.event.users[0].name}
-        createdAt={user.event.createdAt}
-        icon={user.event.icon}
+        title={event.title}
+        createdBy={creator.name}
+        createdAt={new Date(event._creationTime)}
+        icon={event.icon}
       />
-      <EventStepper setDates={jsDates} user={user} />
+      <EventStepper setDates={creator.availableDates.map(x => x.date)} user={user} />
     </div>
   )
 }
