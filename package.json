@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev": "pnpm run \"/dev:.*/\"",
     "dev:backend": "convex dev",
     "dev:frontend": "next dev --turbopack",
     "build": "next build",
@@ -38,5 +38,10 @@
     "prettier-plugin-tailwindcss": "^0.6.11",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "pnpm": {
+    "overrides": {
+      "prettier": "3.4.2"
+    }
   }
 }
