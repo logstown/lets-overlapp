@@ -1,5 +1,4 @@
 import CopyLink from './_CopyLink'
-import _ from 'lodash'
 import { formatDistance } from 'date-fns'
 import AppCard from '@/components/AppCard'
 import { fetchQuery, preloadQuery, preloadedQueryResult } from 'convex/nextjs'
