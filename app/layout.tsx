@@ -72,7 +72,7 @@ export default function RootLayout({
     <html lang='en'>
       <ConvexClientProvider>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} bg-base-200 h-screen antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} bg-base-200 min-h-screen antialiased`}
         >
           <Navbar />
           {children}

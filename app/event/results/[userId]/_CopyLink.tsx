@@ -49,7 +49,7 @@ export default function CopyLink({
             readOnly
           />
           <button
-            className='btn join-item btn-neutral btn-soft'
+            className='btn join-item btn-primary btn-soft'
             onClick={copyToClipboard}
           >
             Copy
