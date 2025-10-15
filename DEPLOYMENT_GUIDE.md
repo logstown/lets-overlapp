@@ -62,15 +62,21 @@ Step-by-step guide to deploy Let's Overlapp to production on Vercel.
    - Project Name: `lets-overlapp` (or your preferred name)
    - Framework Preset: Next.js (auto-detected)
    - Root Directory: `./`
-   - Build Command: `pnpm build` (or leave default)
+   - Build Command: Leave default (handled by `vercel.json`)
    - Output Directory: `.next` (default)
 
+   **Note:** The included `vercel.json` file automatically handles Convex deployment:
+   - Production builds: Runs `npx convex deploy --cmd 'pnpm run build'`
+   - Preview builds: Runs `pnpm run build` only
+
 4. **Add Environment Variables:**
-   Click "Environment Variables" and add:
+   Click "Environment Variables" and add the following.
+
+   **For Production Environment:**
 
    ```bash
-   # Convex (from Step 2)
-   NEXT_PUBLIC_CONVEX_URL=https://your-app-123.convex.cloud
+   # Convex Deploy Key (Production ONLY)
+   CONVEX_DEPLOY_KEY=prod:your-deploy-key-123|your-secret-456
 
    # Server Secret (same as Convex)
    SERVER_SECRET=<your-production-secret>
@@ -82,7 +88,30 @@ Step-by-step guide to deploy Let's Overlapp to production on Vercel.
    NEXT_PUBLIC_APP_URL=https://lets-overlapp.vercel.app
    ```
 
+   **For Preview Environment:**
+
+   ```bash
+   # Convex URL (point to dev deployment)
+   NEXT_PUBLIC_CONVEX_URL=https://your-dev-123.convex.cloud
+
+   # Server Secret (can be same as production or different)
+   SERVER_SECRET=<your-secret>
+
+   # Resend API Key (can be same as production)
+   RESEND_API_KEY=re_xxxxxxxxxxxxxxxxxxxxxxxxxx
+
+   # App URL (Vercel will auto-set this)
+   NEXT_PUBLIC_APP_URL=https://lets-overlapp-git-branch.vercel.app
+   ```
+
+   **How to get CONVEX_DEPLOY_KEY:**
+   1. Go to [Convex Dashboard](https://dashboard.convex.dev)
+   2. Select your project
+   3. Go to Settings → Deploy Keys
+   4. Copy the production deploy key
+
    **Important:**
+   - Only set `CONVEX_DEPLOY_KEY` for Production environment
    - Make sure `SERVER_SECRET` matches between Vercel and Convex
    - Use your production Resend API key
 
@@ -224,6 +253,21 @@ After first deployment:
 ## Troubleshooting
 
 ### Build Fails
+
+**Error:** "Detected a non-production build environment and CONVEX_DEPLOY_KEY for a production Convex deployment"
+
+This happens when Vercel tries to deploy Convex for preview builds using a production deploy key.
+
+**Solution:**
+
+- Use the included `vercel.json` file (already configured)
+- This ensures `convex deploy` only runs for production builds
+- Preview builds will use the `NEXT_PUBLIC_CONVEX_URL` you set
+
+**Or manually configure in Vercel:**
+
+- Settings → General → Build & Development Settings
+- Set Build Command to: `if [ "$VERCEL_ENV" = "production" ]; then npx convex deploy --cmd 'pnpm run build'; else pnpm run build; fi`
 
 **Error:** "Environment variable validation failed"
 
