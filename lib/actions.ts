@@ -9,8 +9,11 @@ import { DatesAddedEmailTemplate } from '@/components/DatesAddedEmail'
 import { fetchMutation } from 'convex/nextjs'
 import { api } from '@/convex/_generated/api'
 import { Doc, Id } from '@/convex/_generated/dataModel'
+import { env } from './env'
+import { logger } from './logger'
+import { rateLimit } from './rate-limit'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+const resend = new Resend(env.RESEND_API_KEY)
 
 export interface ActionResponse {
   userId: string
@@ -20,10 +23,25 @@ export interface ActionResponse {
   }
 }
 
+// Helper to sanitize user input and prevent XSS
+const sanitizeString = (str: string): string => {
+  return str
+    .trim()
+    .replace(/[<>]/g, '') // Remove < and > to prevent basic XSS
+    .slice(0, 1000) // Limit length
+}
+
 const emptyStringToUndefined = z.literal('').transform(() => undefined)
 
 const asOptionalField = <T extends z.ZodTypeAny>(schema: T) => {
   return schema.optional().or(emptyStringToUndefined)
+}
+
+// Helper function to send email without blocking
+const sendEmailAsync = (emailPromise: Promise<unknown>, context: string) => {
+  emailPromise.catch(error => {
+    logger.error(`Failed to send ${context} email`, { error: String(error) })
+  })
 }
 
 const newEventSchema = z.object({
@@ -41,10 +59,22 @@ export async function createEvent(
   let userForRedirect: Doc<'users'> | null = null
 
   try {
+    // Rate limiting
+    const rateLimitResult = await rateLimit({ interval: 60000, maxRequests: 5 })
+    if (!rateLimitResult.success) {
+      logger.warn('Rate limit exceeded for createEvent')
+      return {
+        userId: '',
+        message: 'Too many requests. Please try again later.',
+      }
+    }
+
     const validatedFields = newEventSchema.safeParse(formData)
 
     if (!validatedFields.success) {
-      console.log(z.flattenError(validatedFields.error).fieldErrors)
+      logger.debug('Validation failed for createEvent', {
+        errors: z.flattenError(validatedFields.error).fieldErrors,
+      })
       return {
         userId: '',
         message: 'Please fix the errors in the form',
@@ -55,32 +85,48 @@ export async function createEvent(
     const { eventName, description, attendeeName, attendeeEmail, icon } =
       validatedFields.data
 
+    // Sanitize user inputs
+    const sanitizedEventName = sanitizeString(eventName)
+    const sanitizedDescription = description
+      ? sanitizeString(description)
+      : undefined
+    const sanitizedAttendeeName = sanitizeString(attendeeName)
+
     const { user, event } = await fetchMutation(api.functions.createEvent, {
-      title: eventName,
-      description,
+      title: sanitizedEventName,
+      description: sanitizedDescription,
       icon,
       allowOthersToViewResults: true,
-      attendeeName,
+      attendeeName: sanitizedAttendeeName,
       attendeeEmail,
       availableDates,
-      serverSecret: process.env.SERVER_SECRET ?? '',
+      serverSecret: env.SERVER_SECRET,
     })
 
     userForRedirect = user
 
+    // Send email asynchronously without blocking
     if (user?.email && event) {
-      resend.emails.send({
-        from: "Let's Overlapp <donotreply@letsoverl.app>",
-        to: [user.email],
-        subject: `Event created: ${eventName}`,
-        react: await CreateEventEmailTemplate({ user, event, isCreator: true }),
-      })
+      sendEmailAsync(
+        resend.emails.send({
+          from: "Let's Overlapp <donotreply@letsoverl.app>",
+          to: [user.email],
+          subject: `Event created: ${sanitizedEventName}`,
+          react: await CreateEventEmailTemplate({ user, event, isCreator: true }),
+        }),
+        'event creation',
+      )
     }
+
+    logger.info('Event created successfully', {
+      eventId: event?._id,
+      userId: user?._id,
+    })
   } catch (error) {
-    console.error('**********', error)
+    logger.error('Error creating event', { error: String(error) })
     return {
       userId: '',
-      message: 'Error creating event',
+      message: 'Error creating event. Please try again.',
     }
   } finally {
     if (userForRedirect) {
@@ -102,10 +148,22 @@ export async function addDates(
   let userForRedirect: Doc<'users'> | null = null
 
   try {
+    // Rate limiting
+    const rateLimitResult = await rateLimit({ interval: 60000, maxRequests: 10 })
+    if (!rateLimitResult.success) {
+      logger.warn('Rate limit exceeded for addDates')
+      return {
+        userId: '',
+        message: 'Too many requests. Please try again later.',
+      }
+    }
+
     const validatedFields = addDatesSchema.safeParse(formData)
 
     if (!validatedFields.success) {
-      console.log(z.flattenError(validatedFields.error).fieldErrors)
+      logger.debug('Validation failed for addDates', {
+        errors: z.flattenError(validatedFields.error).fieldErrors,
+      })
       return {
         userId: '',
         message: 'Please fix the errors in the form',
@@ -115,47 +173,59 @@ export async function addDates(
 
     const { attendeeName, attendeeEmail } = validatedFields.data
 
+    // Sanitize user inputs
+    const sanitizedAttendeeName = sanitizeString(attendeeName)
+
     const { user, event, creator } = await fetchMutation(
       api.functions.addUserAndDates,
       {
-        name: attendeeName,
+        name: sanitizedAttendeeName,
         email: attendeeEmail,
         availableDates,
         eventId,
-        serverSecret: process.env.SERVER_SECRET ?? '',
+        serverSecret: env.SERVER_SECRET,
       },
     )
 
     userForRedirect = user
 
+    // Send emails asynchronously without blocking
     if (user) {
       if (attendeeEmail) {
-        resend.emails.send({
-          from: "Let's Overlapp <donotreply@letsoverl.app>",
-          to: [attendeeEmail],
-          subject: `Dates added: ${event.title}`,
-          react: await CreateEventEmailTemplate({ user, event, isCreator: false }),
-        })
+        sendEmailAsync(
+          resend.emails.send({
+            from: "Let's Overlapp <donotreply@letsoverl.app>",
+            to: [attendeeEmail],
+            subject: `Dates added: ${event.title}`,
+            react: await CreateEventEmailTemplate({ user, event, isCreator: false }),
+          }),
+          'attendee confirmation',
+        )
       }
 
       if (creator?.email) {
-        resend.emails.send({
-          from: 'Lets Overlapp <donotreply@letsoverl.app>',
-          to: [creator.email],
-          subject: `${user.name} added dates to ${event.title}`,
-          react: await DatesAddedEmailTemplate({
-            creator,
-            attendee: user,
-            event,
+        sendEmailAsync(
+          resend.emails.send({
+            from: "Let's Overlapp <donotreply@letsoverl.app>",
+            to: [creator.email],
+            subject: `${user.name} added dates to ${event.title}`,
+            react: await DatesAddedEmailTemplate({
+              creator,
+              attendee: user,
+              event,
+            }),
           }),
-        })
+          'creator notification',
+        )
       }
     }
+
+    logger.info('Dates added successfully', { eventId, userId: user?._id })
   } catch (error) {
-    console.error('errrrrrrror;', error)
+    logger.error('Error adding dates', { error: String(error), eventId })
     return {
       userId: '',
-      message: 'Error adding user',
+      message: 'Error adding dates. Please try again.',
     }
   } finally {
     if (userForRedirect) {
@@ -172,10 +242,22 @@ export async function editUser(
   let userForRedirect: Doc<'users'> | null = null
 
   try {
+    // Rate limiting
+    const rateLimitResult = await rateLimit({ interval: 60000, maxRequests: 10 })
+    if (!rateLimitResult.success) {
+      logger.warn('Rate limit exceeded for editUser')
+      return {
+        userId: '',
+        message: 'Too many requests. Please try again later.',
+      }
+    }
+
     const validatedFields = addDatesSchema.safeParse(formData)
 
     if (!validatedFields.success) {
-      console.log(z.flattenError(validatedFields.error).fieldErrors)
+      logger.debug('Validation failed for editUser', {
+        errors: z.flattenError(validatedFields.error).fieldErrors,
+      })
       return {
         userId: '',
         message: 'Please fix the errors in the form',
@@ -185,34 +267,43 @@ export async function editUser(
 
     const { attendeeName, attendeeEmail } = validatedFields.data
 
+    // Sanitize user inputs
+    const sanitizedAttendeeName = sanitizeString(attendeeName)
+
     const { user, event, creator } = await fetchMutation(api.functions.editUser, {
       userId,
-      name: attendeeName,
+      name: sanitizedAttendeeName,
       email: attendeeEmail,
       availableDates,
-      serverSecret: process.env.SERVER_SECRET ?? '',
+      serverSecret: env.SERVER_SECRET,
     })
 
     userForRedirect = user
 
+    // Send email asynchronously without blocking
     if (creator?.email) {
-      resend.emails.send({
-        from: 'Lets Overl.app <donotreply@letsoverl.app>',
-        to: [creator.email],
-        subject: `${user.name} added dates to ${event.title}`,
-        react: await DatesAddedEmailTemplate({
-          creator,
-          attendee: user,
-          event,
-          updated: true,
+      sendEmailAsync(
+        resend.emails.send({
+          from: "Let's Overlapp <donotreply@letsoverl.app>",
+          to: [creator.email],
+          subject: `${user.name} updated their dates for ${event.title}`,
+          react: await DatesAddedEmailTemplate({
+            creator,
+            attendee: user,
+            event,
+            updated: true,
+          }),
         }),
-      })
+        'user update notification',
+      )
     }
+
+    logger.info('User updated successfully', { userId, eventId: event?._id })
   } catch (error) {
-    console.log('errrrrrrror;', error)
+    logger.error('Error updating user', { error: String(error), userId })
     return {
       userId: '',
-      message: 'Error updating user',
+      message: 'Error updating user. Please try again.',
     }
   } finally {
     if (userForRedirect) {

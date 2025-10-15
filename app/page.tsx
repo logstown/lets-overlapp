@@ -1,17 +1,24 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function Home() {
   return (
     <main className='flex min-h-screen flex-col items-center justify-center p-8 text-center'>
-      <img
+      <Image
         src='/logo.png'
         alt='Lets Overlapp'
-        className='h-40 object-contain dark:hidden'
+        width={400}
+        height={160}
+        priority
+        className='h-40 w-auto object-contain dark:hidden'
       />
-      <img
+      <Image
         src='/logo-dark.png'
         alt='Lets Overlapp'
-        className='hidden h-40 object-contain dark:block'
+        width={400}
+        height={160}
+        priority
+        className='hidden h-40 w-auto object-contain dark:block'
       />
       <p className='my-8 max-w-2xl text-xl'>
         Finding the perfect time to meet with friends shouldn&apos;t be a hassle.
