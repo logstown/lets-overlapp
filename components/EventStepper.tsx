@@ -7,8 +7,8 @@ import { getJSDateFromStr } from '@/lib/utilities'
 import EventDetails from './EventDetails'
 import AttendeeDetails from './AttendeeDetails'
 import { createEvent, addDates, editUser } from '@/lib/actions'
-import { Doc, Id } from '@/convex/_generated/dataModel'
-import { filter, reject } from 'lodash'
+import { Doc } from '@/convex/_generated/dataModel'
+import AddEditDatesHeader from './AddEditDatesHeader'
 
 export interface UserDates {
   availableDates: Date[]
@@ -25,21 +25,23 @@ export interface FormDetails {
 
 const EventStepper = ({
   setDates,
-  eventId,
+  event,
+  creatorName,
   user,
 }: {
   setDates?: string[]
-  eventId?: Id<'events'>
+  event?: Doc<'events'>
+  creatorName?: string
   user?: Doc<'users'>
 }) => {
   const setJSDates = setDates?.map(getJSDateFromStr)
-  const isNewEvent = !eventId && !user
+  const isNewEvent = !setDates
   const steps = isNewEvent
     ? ['Availability', 'Event Details', 'Your Info']
     : ['Availability', 'Your Info']
 
   let saveButtonText = 'Create'
-  if (eventId) {
+  if (event) {
     saveButtonText = 'Submit'
   } else if (user) {
     saveButtonText = 'Save'
@@ -79,8 +81,8 @@ const EventStepper = ({
       date => `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
     )
 
-    if (eventId) {
-      return addDates(formData, preferredDateStrs, availableDateStrs, eventId)
+    if (event) {
+      return addDates(formData, preferredDateStrs, availableDateStrs, event._id)
     } else if (user) {
       return editUser(formData, preferredDateStrs, availableDateStrs, user._id)
     } else {
@@ -131,22 +133,28 @@ const EventStepper = ({
   }
 
   return (
-    <div className='w-full'>
-      <ul className='steps w-full text-sm sm:text-base'>
-        {steps.map((step, index) => (
-          <li
-            key={index}
-            className={`step ${currentStep >= index + 1 ? 'step-secondary' : ''}`}
-          >
-            <span
-              className={`${currentStep === index + 1 ? 'text-base font-semibold sm:text-lg' : ''}`}
-            >
-              {step}
-            </span>
-          </li>
-        ))}
-      </ul>
-      <div className='bg-base-100 mt-6 flex min-h-[460px] flex-col gap-12 rounded-lg py-6 sm:gap-0'>
+    <>
+      <div className='flex items-center'>
+        {event && creatorName ? (
+          <AddEditDatesHeader
+            title={event.title}
+            createdBy={creatorName}
+            createdAt={new Date(event._creationTime)}
+            icon={event.icon}
+          />
+        ) : (
+          <h2 className='text-2xl font-medium uppercase'>Create Event</h2>
+        )}
+        <div
+          className={`divider divider-horizontal ${!isNewEvent ? 'mt-7' : ''}`}
+        ></div>
+        <h2
+          className={`text-base-content/60 ${!isNewEvent ? 'mt-7' : ''} text-2xl font-medium uppercase`}
+        >
+          {steps[currentStep - 1]}
+        </h2>
+      </div>
+      <div className='bg-base-100 mt-6 flex min-h-[570px] flex-col gap-12 rounded-lg py-6 sm:gap-6'>
         <div className='flex w-full flex-1 items-center justify-center'>
           {renderStep()}
         </div>
@@ -191,7 +199,7 @@ const EventStepper = ({
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

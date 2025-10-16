@@ -73,11 +73,13 @@ export default function RootLayout({
     <html lang='en'>
       <ConvexClientProvider>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} bg-base-200 flex h-screen flex-col antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} bg-base-200 min-h-screen antialiased`}
         >
-          <Navbar />
-          <main className='flex-1'>{children}</main>
-          <Footer />
+          <div className='flex h-screen flex-col'>
+            <Navbar />
+            <main className='flex-grow'>{children}</main>
+            <Footer />
+          </div>
           <Analytics />
           <SpeedInsights />
         </body>

@@ -72,15 +72,15 @@ export default function ChooseUserDates({
   }
 
   return (
-    <div className='flex flex-col items-center justify-evenly gap-10'>
-      <div className='flex flex-col items-center gap-4'>
+    <div className='flex flex-col items-center gap-10'>
+      <div className='text-base-content/60 flex flex-col gap-4'>
         {isUpdating ? (
           <p>
-            Choose from the{' '}
+            Select from the{' '}
             <span className='text-primary text-lg font-bold'>offered dates</span>
           </p>
         ) : (
-          <p className='text-lg font-medium'>Choose possible dates for your event</p>
+          <p className='text-lg font-medium'>Select possible dates for your event</p>
         )}
       </div>
       <DayPicker

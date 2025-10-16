@@ -30,14 +30,11 @@ export default async function EditEventResults(props: {
   // }
 
   return (
-    <div className='flex flex-col gap-2'>
-      <AddEditDatesHeader
-        title={event.title}
-        createdBy={creator.name}
-        createdAt={new Date(event._creationTime)}
-        icon={event.icon}
-      />
-      <EventStepper setDates={setDates} user={user} />
-    </div>
+    <EventStepper
+      setDates={setDates}
+      event={event}
+      creatorName={creator.name}
+      user={user}
+    />
   )
 }
