@@ -5,12 +5,8 @@ const applicationTables = {
   users: defineTable({
     name: v.string(),
     email: v.optional(v.string()),
-    availableDates: v.array(
-      v.object({
-        date: v.string(),
-        isPreferred: v.boolean(),
-      }),
-    ),
+    availableDates: v.array(v.string()),
+    preferredDates: v.array(v.string()),
     eventId: v.id('events'),
     updatedAt: v.number(),
   }).index('by_event', ['eventId']),

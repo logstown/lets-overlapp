@@ -19,6 +19,8 @@ export default async function AddDates(props: {
     serverSecret: process.env.SERVER_SECRET ?? '',
   })
 
+  const setDates = [creator.availableDates, creator.preferredDates].flat()
+
   //   if (!event.allowOthersToPropose) {
   //     return notFound();
   //   }
@@ -31,10 +33,7 @@ export default async function AddDates(props: {
         createdAt={new Date(event._creationTime)}
         icon={event.icon}
       />
-      <EventStepper
-        setDates={creator.availableDates.map(x => x.date)}
-        eventId={eventId}
-      />
+      <EventStepper setDates={setDates} eventId={eventId} />
     </div>
   )
 }

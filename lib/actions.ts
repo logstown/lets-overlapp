@@ -54,7 +54,8 @@ const newEventSchema = z.object({
 
 export async function createEvent(
   formData: FormDetails,
-  availableDates: { date: string; isPreferred: boolean }[],
+  preferredDates: string[],
+  availableDates: string[],
 ): Promise<ActionResponse | undefined> {
   let userForRedirect: Doc<'users'> | null = null
 
@@ -100,6 +101,7 @@ export async function createEvent(
       attendeeName: sanitizedAttendeeName,
       attendeeEmail,
       availableDates,
+      preferredDates,
       serverSecret: env.SERVER_SECRET,
     })
 
@@ -142,7 +144,8 @@ const addDatesSchema = z.object({
 
 export async function addDates(
   formData: FormDetails,
-  availableDates: { date: string; isPreferred: boolean }[],
+  preferredDates: string[],
+  availableDates: string[],
   eventId: Id<'events'>,
 ): Promise<ActionResponse | undefined> {
   let userForRedirect: Doc<'users'> | null = null
@@ -182,6 +185,7 @@ export async function addDates(
         name: sanitizedAttendeeName,
         email: attendeeEmail,
         availableDates,
+        preferredDates,
         eventId,
         serverSecret: env.SERVER_SECRET,
       },
@@ -236,7 +240,8 @@ export async function addDates(
 
 export async function editUser(
   formData: FormDetails,
-  availableDates: { date: string; isPreferred: boolean }[],
+  preferredDates: string[],
+  availableDates: string[],
   userId: Id<'users'>,
 ): Promise<ActionResponse | undefined> {
   let userForRedirect: Doc<'users'> | null = null
@@ -275,6 +280,7 @@ export async function editUser(
       name: sanitizedAttendeeName,
       email: attendeeEmail,
       availableDates,
+      preferredDates,
       serverSecret: env.SERVER_SECRET,
     })
 

@@ -67,30 +67,15 @@ export const getUsersDates = query({
       .collect()
 
     const usersDates = _.chain(eventUsers)
-      .flatMap(user => user.availableDates)
-      .uniqBy('date')
-      .map(({ date }) => {
-        let { availableDateUsers, preferredDateUsers } = groupBy(
-          eventUsers,
-          user => {
-            if (
-              reject(user.availableDates, 'isPreferred')
-                .map(x => x.date)
-                .includes(date)
-            )
-              return 'availableDateUsers'
-            if (
-              filter(user.availableDates, 'isPreferred')
-                .map(x => x.date)
-                .includes(date)
-            )
-              return 'preferredDateUsers'
-
-            return 'unavailableDateUsers'
-          },
-        )
-        availableDateUsers = availableDateUsers ?? []
-        preferredDateUsers = preferredDateUsers ?? []
+      .flatMap(user => [user.availableDates, user.preferredDates].flat())
+      .uniq()
+      .map(date => {
+        const availableDateUsers = eventUsers
+          .filter(user => user.availableDates.includes(date))
+          .map(x => x._id)
+        const preferredDateUsers = eventUsers
+          .filter(user => user.preferredDates.includes(date))
+          .map(x => x._id)
 
         let score = 0
         const availableCount = availableDateUsers.length
@@ -103,8 +88,8 @@ export const getUsersDates = query({
 
         return {
           date,
-          availableDateUsers: availableDateUsers.map(x => x._id),
-          preferredDateUsers: preferredDateUsers.map(x => x._id),
+          availableDateUsers,
+          preferredDateUsers,
           score,
         }
       })
@@ -122,12 +107,8 @@ export const createEvent = mutation({
     allowOthersToViewResults: v.boolean(),
     attendeeName: v.string(),
     attendeeEmail: v.optional(v.string()),
-    availableDates: v.array(
-      v.object({
-        date: v.string(),
-        isPreferred: v.boolean(),
-      }),
-    ),
+    availableDates: v.array(v.string()),
+    preferredDates: v.array(v.string()),
     serverSecret: v.string(),
   },
   handler: async (
@@ -140,6 +121,7 @@ export const createEvent = mutation({
       attendeeName,
       attendeeEmail,
       availableDates,
+      preferredDates,
       serverSecret,
     },
   ) => {
@@ -158,6 +140,7 @@ export const createEvent = mutation({
       email: attendeeEmail,
       eventId,
       availableDates,
+      preferredDates,
       updatedAt: Date.now(),
     })
 
@@ -171,16 +154,15 @@ export const addUserAndDates = mutation({
   args: {
     name: v.string(),
     email: v.optional(v.string()),
-    availableDates: v.array(
-      v.object({
-        date: v.string(),
-        isPreferred: v.boolean(),
-      }),
-    ),
+    availableDates: v.array(v.string()),
+    preferredDates: v.array(v.string()),
     eventId: v.id('events'),
     serverSecret: v.string(),
   },
-  handler: async (ctx, { name, email, availableDates, eventId, serverSecret }) => {
+  handler: async (
+    ctx,
+    { name, email, availableDates, preferredDates, eventId, serverSecret },
+  ) => {
     if (serverSecret !== process.env.SERVER_SECRET)
       throw new Error('Invalid server secret')
 
@@ -194,6 +176,7 @@ export const addUserAndDates = mutation({
       email,
       eventId,
       availableDates,
+      preferredDates,
       updatedAt: Date.now(),
     })
 
@@ -212,15 +195,14 @@ export const editUser = mutation({
     userId: v.id('users'),
     name: v.string(),
     email: v.optional(v.string()),
-    availableDates: v.array(
-      v.object({
-        date: v.string(),
-        isPreferred: v.boolean(),
-      }),
-    ),
+    availableDates: v.array(v.string()),
+    preferredDates: v.array(v.string()),
     serverSecret: v.string(),
   },
-  handler: async (ctx, { userId, name, email, availableDates, serverSecret }) => {
+  handler: async (
+    ctx,
+    { userId, name, email, availableDates, preferredDates, serverSecret },
+  ) => {
     if (serverSecret !== process.env.SERVER_SECRET)
       throw new Error('Invalid server secret')
 
@@ -228,6 +210,7 @@ export const editUser = mutation({
       name,
       email,
       availableDates,
+      preferredDates,
       updatedAt: Date.now(),
     })
     const user = await ctx.db.get(userId)

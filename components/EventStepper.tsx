@@ -54,14 +54,8 @@ const EventStepper = ({
     icon: 'calendar',
   })
   const [userDates, setUserDates] = useState<UserDates>({
-    availableDates:
-      reject(user?.availableDates, 'isPreferred')
-        .map(x => x.date)
-        .map(getJSDateFromStr) ?? [],
-    preferredDates:
-      filter(user?.availableDates, 'isPreferred')
-        .map(x => x.date)
-        .map(getJSDateFromStr) ?? [],
+    availableDates: user?.availableDates.map(getJSDateFromStr) ?? [],
+    preferredDates: user?.preferredDates.map(getJSDateFromStr) ?? [],
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -78,27 +72,19 @@ const EventStepper = ({
   }
 
   const saveData = async () => {
-    const availableDateObjs = userDates.availableDates.map(date => ({
-      date,
-      isPreferred: false,
-    }))
-    const preferredDateObjs = userDates.preferredDates.map(date => ({
-      date,
-      isPreferred: true,
-    }))
-    const availableDateStrs = [...availableDateObjs, ...preferredDateObjs].map(
-      ({ date, isPreferred }) => ({
-        date: `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
-        isPreferred,
-      }),
+    const availableDateStrs = userDates.availableDates.map(
+      date => `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
+    )
+    const preferredDateStrs = userDates.preferredDates.map(
+      date => `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`,
     )
 
     if (eventId) {
-      return addDates(formData, availableDateStrs, eventId)
+      return addDates(formData, preferredDateStrs, availableDateStrs, eventId)
     } else if (user) {
-      return editUser(formData, availableDateStrs, user._id)
+      return editUser(formData, preferredDateStrs, availableDateStrs, user._id)
     } else {
-      return createEvent(formData, availableDateStrs)
+      return createEvent(formData, preferredDateStrs, availableDateStrs)
     }
   }
 

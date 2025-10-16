@@ -23,6 +23,8 @@ export default async function EditEventResults(props: {
     serverSecret: process.env.SERVER_SECRET ?? '',
   })
 
+  const setDates = [creator.availableDates, creator.preferredDates].flat()
+
   // if (!user) {
   //   return notFound()
   // }
@@ -35,7 +37,7 @@ export default async function EditEventResults(props: {
         createdAt={new Date(event._creationTime)}
         icon={event.icon}
       />
-      <EventStepper setDates={creator.availableDates.map(x => x.date)} user={user} />
+      <EventStepper setDates={setDates} user={user} />
     </div>
   )
 }
