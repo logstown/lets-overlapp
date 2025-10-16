@@ -3,7 +3,7 @@ import Image from 'next/image'
 
 export default function Home() {
   return (
-    <main className='flex min-h-screen flex-col items-center justify-center p-8 text-center'>
+    <main className='flex h-full flex-col items-center justify-center p-8 text-center'>
       <Image
         src='/logo.png'
         alt='Lets Overlapp'

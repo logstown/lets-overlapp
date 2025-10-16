@@ -5,7 +5,7 @@ import Navbar from './_Navbar'
 import { ConvexClientProvider } from './ConvexClientProvider'
 import { Analytics } from '@vercel/analytics/react'
 import { SpeedInsights } from '@vercel/speed-insights/next'
-import Link from 'next/link'
+import Footer from './_Footer'
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -73,42 +73,13 @@ export default function RootLayout({
     <html lang='en'>
       <ConvexClientProvider>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} bg-base-200 min-h-screen antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} bg-base-200 flex h-screen flex-col antialiased`}
         >
           <Navbar />
-          {children}
+          <main className='flex-1'>{children}</main>
+          <Footer />
           <Analytics />
           <SpeedInsights />
-          <footer className='footer sm:footer-horizontal footer-center bg-base-100 text-base-content/60 p-4'>
-            <aside className='flex w-full flex-col justify-around sm:flex-row'>
-              <p>
-                Copyright © {new Date().getFullYear()} - All right reserved by
-                Let&apos;s Overlapp
-              </p>
-              {/* <p>
-                Powered by{' '}
-                <Link
-                  className='link link-primary'
-                  href='https://convex.dev'
-                  target='_blank'
-                  rel='noopener noreferrer'
-                >
-                  Convex
-                </Link>
-              </p> */}
-              <p className='flex items-baseline gap-2'>
-                <span className='text-2xl'>👨‍💻</span>
-                <Link
-                  className='link link-primary'
-                  href='https://loganjoecks.com'
-                  target='_blank'
-                  rel='noopener noreferrer'
-                >
-                  loganjoecks.com
-                </Link>
-              </p>
-            </aside>
-          </footer>
         </body>
       </ConvexClientProvider>
     </html>
