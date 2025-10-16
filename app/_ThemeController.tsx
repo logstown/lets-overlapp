@@ -17,7 +17,7 @@ export default function ThemeController() {
 
   // Update theme and save to localStorage
   const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dracula' : 'light'
+    const newTheme = theme === 'light' ? 'dark' : 'light'
     setTheme(newTheme)
     localStorage.setItem('theme', newTheme)
     document.documentElement.setAttribute('data-theme', newTheme)
@@ -45,8 +45,8 @@ export default function ThemeController() {
       <input
         type='checkbox'
         className='theme-controller'
-        value='dracula'
-        checked={theme === 'dracula'}
+        value='dark'
+        checked={theme === 'dark'}
         onChange={toggleTheme}
       />
 

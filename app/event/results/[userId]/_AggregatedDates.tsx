@@ -77,23 +77,23 @@ function getDayPickerStuff(usersDates: UsersDate[]) {
       const opacity = dateType.split('-')[1]
       switch (opacity) {
         case '30':
-          return `${base} text-success-content bg-success/30`
+          return `${base} text-base-content bg-success/30`
         case '35':
-          return `${base} text-success-content bg-success/35`
+          return `${base} text-base-content bg-success/35`
         case '40':
-          return `${base} text-success-content bg-success/40`
+          return `${base} text-base-content bg-success/40`
         case '45':
-          return `${base} text-success-content bg-success/45`
+          return `${base} text-base-content bg-success/45`
         case '50':
-          return `${base} text-success-content bg-success/50`
+          return `${base} text-base-content bg-success/50`
         case '55':
-          return `${base} text-success-content bg-success/55`
+          return `${base} text-base-content bg-success/55`
         case '60':
-          return `${base} text-success-content bg-success/60`
+          return `${base} text-base-content bg-success/60`
         case '65':
-          return `${base} text-success-content bg-success/65`
+          return `${base} text-base-content bg-success/65`
         case '70':
-          return `${base} text-success-content bg-success/70`
+          return `${base} text-base-content bg-success/70`
         case '75':
           return `${base} text-success-content bg-success/75`
         case '80':

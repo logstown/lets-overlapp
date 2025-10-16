@@ -1,11 +1,11 @@
 @import 'tailwindcss';
-@plugin "daisyui" {
+@plugin 'daisyui' {
   themes:
     light --default,
-    dracula;
+    dark;
 }
 
-@variant dark (:root:has(input.theme-controller[value=dracula]:checked) &);
+@variant dark (:root:has(input.theme-controller[value=dark]:checked) &);
 
 .react-day-picker .rdp-day_button {
   background-color: transparent;
