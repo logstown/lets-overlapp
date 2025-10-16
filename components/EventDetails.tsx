@@ -60,7 +60,7 @@ export default function EventDetails({
           {eventIcons.map((icon: { event: string; fileName: string }) => (
             <button
               key={icon.fileName}
-              className={`cursor-pointer rounded-md border-8 border-neutral-100 hover:border-neutral-300 ${
+              className={`cursor-pointer rounded-md border-8 border-transparent hover:border-neutral-300 ${
                 formData.icon === icon.fileName ? '!border-primary' : ''
               }`}
               onClick={() => handleFormDataChange({ icon: icon.fileName })}
