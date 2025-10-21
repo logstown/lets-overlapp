@@ -143,14 +143,10 @@ const EventStepper = ({
             icon={event.icon}
           />
         ) : (
-          <h2 className='text-2xl font-medium uppercase'>Create Event</h2>
+          <h2 className='text-4xl font-medium uppercase'>Create Event</h2>
         )}
-        <div
-          className={`divider divider-horizontal ${!isNewEvent ? 'mt-7' : ''}`}
-        ></div>
-        <h2
-          className={`text-base-content/60 ${!isNewEvent ? 'mt-7' : ''} text-2xl font-medium uppercase`}
-        >
+        <div className={`divider divider-horizontal`}></div>
+        <h2 className={`text-base-content/60 text-4xl font-medium uppercase`}>
           {steps[currentStep - 1]}
         </h2>
       </div>
