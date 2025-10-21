@@ -27,9 +27,36 @@ export default function CopyLink({
     }
   }, [id, isResults])
 
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(url)
-    setIsCopied(true)
+  const copyToClipboard = async () => {
+    try {
+      // Try modern clipboard API first
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        await navigator.clipboard.writeText(url)
+        setIsCopied(true)
+      } else {
+        // Fallback for mobile browsers
+        const textArea = document.createElement('textarea')
+        textArea.value = url
+        textArea.style.position = 'fixed'
+        textArea.style.left = '-999999px'
+        textArea.style.top = '-999999px'
+        document.body.appendChild(textArea)
+        textArea.focus()
+        textArea.select()
+
+        const successful = document.execCommand('copy')
+        textArea.remove()
+
+        if (successful) {
+          setIsCopied(true)
+        } else {
+          console.error('Failed to copy text')
+        }
+      }
+    } catch (err) {
+      console.error('Failed to copy: ', err)
+    }
+
     setTimeout(() => {
       setIsCopied(false)
     }, 2000)
