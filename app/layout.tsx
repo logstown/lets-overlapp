@@ -70,10 +70,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang='en'>
+    <html lang='en' className='bg-base-200'>
       <ConvexClientProvider>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} bg-base-200 min-h-screen antialiased`}
+          className={`${geistSans.variable} ${geistMono.variable} min-h-screen antialiased`}
         >
           <div className='flex h-screen flex-col'>
             <Navbar />
