@@ -134,18 +134,20 @@ const EventStepper = ({
 
   return (
     <>
-      <div className='flex items-center'>
+      <div className='flex flex-col items-center md:flex-row'>
         {event && creatorName ? (
-          <AddEditDatesHeader
-            title={event.title}
-            createdBy={creatorName}
-            createdAt={new Date(event._creationTime)}
-            icon={event.icon}
-          />
+          <div>
+            <AddEditDatesHeader
+              title={event.title}
+              createdBy={creatorName}
+              createdAt={new Date(event._creationTime)}
+              icon={event.icon}
+            />
+          </div>
         ) : (
           <h2 className='text-4xl font-medium uppercase'>Create Event</h2>
         )}
-        <div className={`divider divider-horizontal`}></div>
+        <div className={`divider divider-vertical md:divider-horizontal`}></div>
         <h2 className={`text-base-content/60 text-4xl font-medium uppercase`}>
           {steps[currentStep - 1]}
         </h2>

@@ -11,7 +11,7 @@ export default function AttendeeDetails({
   handleFormDataChange: (formData: Partial<FormDetails>) => void
 }) {
   return (
-    <div className='flex w-full max-w-sm flex-col gap-4'>
+    <div className='flex w-full max-w-sm flex-col gap-4 px-4 md:px-0'>
       <fieldset className='fieldset'>
         <legend className='fieldset-legend text-base-content/60 text-base font-medium'>
           Name
