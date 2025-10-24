@@ -73,16 +73,6 @@ export default function ChooseUserDates({
 
   return (
     <div className='flex flex-col items-center gap-10'>
-      <div className='text-base-content/60 flex flex-col gap-4'>
-        {isUpdating ? (
-          <p>
-            Select from the{' '}
-            <span className='text-primary text-lg font-bold'>offered dates</span>
-          </p>
-        ) : (
-          <p className='text-lg font-medium'>Select possible dates for your event</p>
-        )}
-      </div>
       <DayPicker
         startMonth={new Date()}
         fixedWeeks
@@ -101,15 +91,15 @@ export default function ChooseUserDates({
         classNames={classNames}
         hideNavigation={isUpdating}
       />
-      <div className='flex gap-2 p-2'>
-        <p>
-          Tap once for{' '}
+      <div className='flex gap-10 p-2'>
+        <p className='flex flex-col items-center gap-2 sm:flex-row'>
+          <span>Tap once for</span>
           <span className='!bg-success/40 !text-success-content p-2 font-bold'>
             available
           </span>
         </p>
-        <p>
-          Twice for{' '}
+        <p className='flex flex-col items-center gap-2 sm:flex-row'>
+          <span>Twice for</span>
           <span className='!bg-success !text-success-content p-2 font-bold'>
             preferred
           </span>

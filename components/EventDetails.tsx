@@ -15,7 +15,7 @@ export default function EventDetails({
       <div className='flex w-full max-w-sm flex-col gap-4'>
         <fieldset className='fieldset'>
           <legend className='fieldset-legend text-base-content/60 text-base font-medium'>
-            Event Title
+            Title
           </legend>
           <input
             type='text'

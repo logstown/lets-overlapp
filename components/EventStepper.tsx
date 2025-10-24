@@ -37,8 +37,8 @@ const EventStepper = ({
   const setJSDates = setDates?.map(getJSDateFromStr)
   const isNewEvent = !setDates
   const steps = isNewEvent
-    ? ['Availability', 'Event Details', 'Your Info']
-    : ['Availability', 'Your Info']
+    ? ['Select possible dates', 'Event Details', 'Your Info']
+    : ['Select from the offered dates', 'Your Info']
 
   let saveButtonText = 'Create'
   if (event) {
@@ -134,29 +134,37 @@ const EventStepper = ({
 
   return (
     <>
-      <div className='flex flex-col items-center md:flex-row'>
+      <div className='flex flex-col items-center justify-between md:flex-row'>
         {event && creatorName ? (
-          <div>
-            <AddEditDatesHeader
-              title={event.title}
-              createdBy={creatorName}
-              createdAt={new Date(event._creationTime)}
-              icon={event.icon}
-            />
-          </div>
+          <AddEditDatesHeader
+            title={event.title}
+            createdBy={creatorName}
+            createdAt={new Date(event._creationTime)}
+            icon={event.icon}
+          />
         ) : (
-          <h2 className='text-4xl font-medium uppercase'>Create Event</h2>
+          <h2 className='text-4xl font-medium'>Create Event</h2>
         )}
-        <div className={`divider divider-vertical md:divider-horizontal`}></div>
-        <h2 className={`text-base-content/60 text-4xl font-medium uppercase`}>
-          {steps[currentStep - 1]}
-        </h2>
       </div>
-      <div className='bg-base-100 mt-6 flex min-h-[570px] flex-col gap-12 rounded-lg py-6 sm:gap-6'>
+      <div className='bg-base-100 mt-6 flex min-h-[575px] flex-col gap-12 rounded-lg p-6 sm:gap-6'>
+        <h2 className={`text-base-content/60 text-center text-2xl font-medium`}>
+          {currentStep === 1 ? (
+            isNewEvent ? (
+              'Select possible dates'
+            ) : (
+              <span>
+                Select from the{' '}
+                <span className='text-primary font-medium'>offered dates</span>
+              </span>
+            )
+          ) : (
+            steps[currentStep - 1]
+          )}
+        </h2>
         <div className='flex w-full flex-1 items-center justify-center'>
           {renderStep()}
         </div>
-        <div className='flex justify-between px-6'>
+        <div className='flex justify-between'>
           <button
             className={`btn btn-primary btn-soft ${currentStep === 1 || isSubmitting ? 'invisible' : ''}`}
             onClick={prevStep}
