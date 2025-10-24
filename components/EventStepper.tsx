@@ -63,10 +63,12 @@ const EventStepper = ({
 
   const nextStep = () => {
     setCurrentStep(currentStep + 1)
+    window.scrollTo({ top: 0 })
   }
 
   const prevStep = () => {
     setCurrentStep(currentStep - 1)
+    window.scrollTo({ top: 0 })
   }
 
   const handleFormDataChange = (stepData: Partial<FormDetails>) => {
